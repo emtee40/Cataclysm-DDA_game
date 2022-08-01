@@ -6160,9 +6160,7 @@ void map::update_visibility_cache( const int zlev )
     Character &player_character = get_player_character();
     visibility_variables_cache.variables_set = true; // Not used yet
     visibility_variables_cache.g_light_level = static_cast<int>( g->light_level( zlev ) );
-    visibility_variables_cache.vision_threshold = player_character.get_vision_threshold(
-                get_cache_ref(
-                    player_character.posz() ).lm[player_character.posx()][player_character.posy()].max() );
+    visibility_variables_cache.vision_threshold = player_character.get_vision_threshold();
 
     visibility_variables_cache.u_clairvoyance = player_character.clairvoyance();
     visibility_variables_cache.u_sight_impaired = player_character.sight_impaired();
@@ -7970,7 +7968,7 @@ void map::spawn_monsters_submap_group( const tripoint &gp, mongroup &group, bool
 {
     Character &player_character = get_player_character();
     const int s_range = std::min( HALF_MAPSIZE_X,
-                                  player_character.sight_range( g->light_level( player_character.posz() ) ) );
+                                  player_character.sight_range( g->incorrect_light_level( player_character.posz() ) ) );
     int pop = group.population;
     std::vector<tripoint> locations;
     if( !ignore_sight ) {
