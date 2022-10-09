@@ -2491,6 +2491,71 @@
     }
   },
   {
+    "id": "linothorax",
+    "repairs_like": "drying_linothorax",
+    "type": "ARMOR",
+    "category": "armor",
+    "name": { "str": "linothorax", "str_pl": "linothorakes" },
+    "description": "Ancient Greek armor made from laminated cloth.  Lighter and more comfortable than bronze while providing similar protection.",
+    "weight": "4.5 kg",
+    "volume": "8 L",
+    "price": 10000,
+    "price_postapoc": 1750,
+    "to_hit": -5,
+    "bashing": 2,
+    "material": [ "cotton_laminated" ],
+    "symbol": "[",
+    "looks_like": "gambeson",
+    "color": "light_gray",
+    "warmth": 15,
+    "longest_side": "76 cm",
+    "material_thickness": 10,
+    "flags": [ "VARSIZE", "STURDY", "OUTER" ],
+    "armor": [
+      {
+        "material": [
+          { "type": "cotton_laminated", "covered_by_mat": 100, "thickness": 10.0 },
+          { "type": "cotton_laminated", "covered_by_mat": 10, "thickness": 10.0 }
+        ],
+        "encumbrance": 20,
+        "//": "The yoke is attached over the tube, providing a chance of two layers taking a strike",
+        "coverage": 95,
+        "covers": [ "torso" ],
+        "specifically_covers": [ "torso_upper", "torso_lower" ]
+      },
+      {
+        "material": [ { "type": "cotton_laminated", "covered_by_mat": 100, "thickness": 10.0 } ],
+        "encumbrance": 4,
+        "//": "ranged shots should hit the sides of the shoulder panels less than melee attacks",
+        "coverage": 90,
+        "cover_ranged": 95,
+        "covers": [ "arm_l", "arm_r" ],
+        "specifically_covers": [ "arm_shoulder_l", "arm_shoulder_r" ]
+      },
+      {
+        "material": [
+          { "type": "cotton_laminated", "covered_by_mat": 100, "thickness": 3.0 },
+          { "type": "cotton_laminated", "covered_by_mat": 60, "thickness": 3.0 }
+        ],
+        "encumbrance": 8,
+        "//": "Two pteruges could overlap to block attacks",
+        "coverage": 100,
+        "covers": [ "leg_l", "leg_r" ],
+        "specifically_covers": [ "leg_hip_l", "leg_hip_r" ]
+      }
+    ]
+  },
+  {
+    "id": "drying_linothorax",
+    "type": "ARMOR",
+    "name": { "str": "drying linothorax", "str_pl": "drying linothorakes" },
+    "description": "Ancient Greek armor made from laminated cloth.  Lighter and more comfortable than bronze while providing similar protection.  The glue will need two days to dry before it can be worn.",
+    "copy-from": "linothorax",
+    "extend": { "flags": [ "CANT_WEAR", "SPAWN_ACTIVE" ] },
+    "countdown_interval": 604800,
+    "countdown_action": { "type": "transform", "target": "linothorax", "msg": "The glue finishes curing, readying the linothorax for use." }
+  },
+  {
     "id": "hazmat_suit",
     "repairs_like": "fsurvivor_suit",
     "type": "ARMOR",
