@@ -109,6 +109,9 @@ void draw_diary_border( catacurses::window *win )
 {
     const point max( getmaxx( *win ) - 1, getmaxy( *win ) - 1 );
     const point mid = max / 2;
+
+    wattron( *win, BORDER_COLOR );
+
     // left, right vertical lines
     for( int i = 0; i < 4; i++ ) {
         mvwvline( *win, point( 0     + i, 4 ), '|', max.y - 4 - 4 + 1 );
@@ -123,7 +126,6 @@ void draw_diary_border( catacurses::window *win )
     mvwhline( *win,     point( 4, max.y - 1 ), '=', max.x - 4 - 4 + 1 );
     mvwhline( *win,     point( 4, max.y - 0 ), '-', max.x - 4 - 4 + 1 );
 
-    wattron( *win, BORDER_COLOR );
     //top left corner
     mvwprintwa( *win, point_zero,
                 "    ",

@@ -164,15 +164,13 @@ void dialogue_window::print_header( const std::string &name ) const
     const int ybar = ymax - 1 - RESPONSES_LINES - 1;
     // Horizontal bar dividing history and responses
     mvwputch( d_win, point( 0, ybar ), BORDER_COLOR, LINE_XXXO );
-    mvwhline( d_win, point( 1, ybar ), LINE_OXOX, xmax - 1 );
+    mvwhline( d_win, point( 1, ybar ), BORDER_COLOR, LINE_OXOX, xmax - 1 );
     mvwputch( d_win, point( xmax - 1, ybar ), BORDER_COLOR, LINE_XOXX );
     if( is_computer ) {
-        // NOLINTNEXTLINE(cata-use-named-point-constants)
         mvwprintz( d_win, point( 2, ybar + 1 ), default_color(), _( "Your input:" ) );
     } else if( is_not_conversation ) {
         mvwprintz( d_win, point( 2, ybar + 1 ), default_color(), _( "What do you do?" ) );
     } else {
-        // NOLINTNEXTLINE(cata-use-named-point-constants)
         mvwprintz( d_win, point( 2, ybar + 1 ), default_color(), _( "Your response:" ) );
     }
 }

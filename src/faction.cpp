@@ -822,9 +822,7 @@ void faction_manager::display() const
     ui.on_redraw( [&]( const ui_adaptor & ) {
         werase( w_missions );
 
-        for( int i = 3; i < FULL_SCREEN_HEIGHT - 1; i++ ) {
-            mvwputch( w_missions, point( 30, i ), BORDER_COLOR, LINE_XOXO );
-        }
+        mvwvline( w_missions, point( 30, 3 ), BORDER_COLOR, LINE_XOXO, FULL_SCREEN_HEIGHT - 4 );
 
         const std::vector<std::pair<tab_mode, std::string>> tabs = {
             { tab_mode::TAB_MYFACTION, _( "YOUR FACTION" ) },

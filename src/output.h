@@ -198,7 +198,7 @@ std::vector<std::string> foldstring( const std::string &str, int width, char spl
  * Print text with embedded @ref color_tags, x, y are in curses system.
  * The text is not word wrapped, but may automatically be wrapped on new line characters or
  * when it reaches the border of the window (both is done by the curses system).
- * If the text contains no color tags, it's equivalent to a simple mvprintz.
+ * If the text contains no color tags, it's equivalent to a simple mvwprintz.
  *
  * @param w Window we are drawing in
  * @param p Curses-style coordinates to print text at.
@@ -335,20 +335,28 @@ std::string trimmed_name_and_value( const std::string &name, int value,
 std::string trimmed_name_and_value( const std::string &name, const std::string &value,
                                     int field_width );
 
-void wputch( const catacurses::window &w, int ch );
-void wputch( const catacurses::window &w, nc_color FG, int ch );
+void wputch( const catacurses::window &w, const nc_color &FG, int ch );
 // Using int ch is deprecated, use an UTF-8 encoded string instead
-void mvwputch( const catacurses::window &w, const point &p, int ch );
-void mvwputch( const catacurses::window &w, const point &p, nc_color FG, int ch );
-void mvwputch( const catacurses::window &w, const point &p, const std::string &ch );
-void mvwputch( const catacurses::window &w, const point &p, nc_color FG, const std::string &ch );
+void mvwputch( const catacurses::window &w, const point &p, const nc_color &FG, int ch );
+void mvwputch( const catacurses::window &w, const point &p, const nc_color &FG,
+               const std::string &ch );
 // Using int ch is deprecated, use an UTF-8 encoded string instead
-void mvwputch_inv( const catacurses::window &w, const point &p, nc_color FG, int ch );
-void mvwputch_inv( const catacurses::window &w, const point &p, nc_color FG,
+void mvwputch_inv( const catacurses::window &w, const point &p, const nc_color &FG, int ch );
+void mvwputch_inv( const catacurses::window &w, const point &p, const nc_color &FG,
                    const std::string &ch );
 // Using int ch is deprecated, use an UTF-8 encoded string instead
-void mvwputch_hi( const catacurses::window &w, const point &p, nc_color FG, int ch );
-void mvwputch_hi( const catacurses::window &w, const point &p, nc_color FG, const std::string &ch );
+void mvwputch_hi( const catacurses::window &w, const point &p, const nc_color &FG, int ch );
+void mvwputch_hi( const catacurses::window &w, const point &p, const nc_color &FG,
+                  const std::string &ch );
+// draws a colored line of characters
+void mvwhline( const catacurses::window &win, const point &p, const nc_color &color, int ch,
+               int n );
+void mvwvline( const catacurses::window &win, const point &p, const nc_color &color, int ch,
+               int n );
+// draws a filled rectangle starting at p
+void mvwrectf( const catacurses::window &win, const point &p, int ch, int w, int h );
+void mvwrectf( const catacurses::window &win, const point &p, const nc_color &color, int ch, int w,
+               int h );
 
 void mvwprintz( const catacurses::window &w, const point &p, const nc_color &FG,
                 const std::string &text );
@@ -906,7 +914,7 @@ class scrollbar
         // Sets up ability for the scrollbar to be dragged with the mouse
         scrollbar &set_draggable( input_context &ctxt );
         // draw the scrollbar to the window
-        void apply( const catacurses::window &window );
+        void apply( const catacurses::window &window, bool draw_unneeded = false );
         // Checks if the user is dragging the scrollbar with the mouse (set_draggable first)
         bool handle_dragging( const std::string &action, const std::optional<point> &coord,
                               int &position );

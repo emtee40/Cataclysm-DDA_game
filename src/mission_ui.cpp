@@ -71,9 +71,7 @@ void game::list_missions()
         const int bottom_of_page =
             std::min( top_of_page + entries_per_page - 1, static_cast<int>( umissions.size() ) - 1 );
 
-        for( int i = 3; i < TERMY - 1; i++ ) {
-            mvwputch( w_missions, point( 40, i ), BORDER_COLOR, LINE_XOXO );
-        }
+        mvwvline( w_missions, point( 40, 3 ), BORDER_COLOR, LINE_XOXO, TERMY - 4 ) ;
 
         const std::vector<std::pair<tab_mode, std::string>> tabs = {
             { tab_mode::TAB_ACTIVE, _( "ACTIVE MISSIONS" ) },
