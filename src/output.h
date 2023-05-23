@@ -208,7 +208,7 @@ std::vector<std::string> foldstring( const std::string &str, int width, char spl
  * @param base_color Base color that is used outside of any color tag.
  **/
 void print_colored_text( const catacurses::window &w, const point &p, nc_color &cur_color,
-                         const nc_color &base_color, std::string_view text,
+                         const nc_color &base_color, const std::string_view &text,
                          report_color_error color_error = report_color_error::yes );
 /**
  * Print word wrapped text (with @ref color_tags) into the window.
