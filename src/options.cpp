@@ -28,6 +28,7 @@
 #include "path_info.h"
 #include "point.h"
 #include "popup.h"
+#include "sdl_font.h"
 #include "sdltiles.h" // IWYU pragma: keep
 #include "sdlsound.h"
 #include "sounds.h"
@@ -196,7 +197,11 @@ static const std::map<std::string, std::pair<std::string, std::map<std::string, 
 &get_migrated_options()
 {
     static const std::map<std::string, std::pair<std::string, std::map<std::string, std::string>>> opt
-    = { {"DELETE_WORLD", { "WORLD_END", { {"no", "keep" }, {"yes", "delete"} } } } };
+    = { { "DELETE_WORLD", { "WORLD_END", { { "no", "keep" }, { "yes", "delete" } } } },
+        // Always migrate to "lcd" even if it is not available at the moment,
+        // so that it falls back to "blended" and is used once available.
+        { "FONT_BLENDING", { "FONT_BLENDING_MODE", { { "false", "solid" }, { "true", "lcd" } } } }
+    };
     return opt;
 }
 
@@ -2238,9 +2243,27 @@ void options_manager::add_options_graphics()
     add_option_group( "graphics", Group( "font_params", to_translation( "Font settings" ),
                                          to_translation( "Font display settings.  To change font type or source file, edit fonts.json in config directory." ) ),
     [&]( const std::string & page_id ) {
-        add( "FONT_BLENDING", page_id, to_translation( "Font blending" ),
-             to_translation( "If true, fonts will look better." ),
-             false, COPT_CURSES_HIDE
+        // Renderer may be uninitialized at this moment, so we only test if SDL ttf supports it for now.
+        const translation font_blending_mode_desc = get_lcd_blending_availability( nullptr )
+                == lcd_blending_availability::renderer_unsupported
+                ? to_translation(
+                    "Set TTF font blending mode.  Requires restart.  'Blended' may look better than 'Solid'.  "
+                    "For LCD display, 'LCD' can further improve resolution at the cost of rendering speed, "
+                    "but it is not supported by bitmap fonts and some renderers (in which case it falls back to 'Blended')." )
+                : to_translation(
+                    "Set TTF font blending mode.  Requires restart.  'Blended' may look better than 'Solid'.  "
+                    "For LCD display, 'LCD' can further improve resolution at the cost of rendering speed, "
+                    "but it is not supported by the compilation or runtime SDL2 TTF version and falls back to 'Blended'."
+                );
+        add( "FONT_BLENDING_MODE", page_id, to_translation( "Font blending mode" ),
+        font_blending_mode_desc, {
+            { "solid", to_translation( "Solid" ) },
+            { "blended", to_translation( "Blended" ) },
+            // Always listed even if not available, see get_migrated_options for details.
+            { "lcd", to_translation( "LCD" ) }
+            // Default to solid because the fonts shipped with the game (Terminus and unifont)
+            // are bitmap fonts at the default font size 16
+        }, "solid", COPT_CURSES_HIDE
            );
 
         add( "FONT_WIDTH", page_id, to_translation( "Font width" ),
