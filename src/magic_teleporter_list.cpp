@@ -168,11 +168,11 @@ class teleporter_callback : public uilist_callback
         void refresh( uilist *menu ) override {
             const int entnum = menu->selected;
             const int start_x = menu->w_width - menu->pad_right;
-            mvwputch( menu->window, point( start_x, 0 ), c_magenta, LINE_OXXX );
-            mvwputch( menu->window, point( start_x, menu->w_height - 1 ), c_magenta, LINE_XXOX );
-            for( int i = 1; i < menu->w_height - 1; i++ ) {
-                mvwputch( menu->window, point( start_x, i ), c_magenta, LINE_XOXO );
-            }
+            wattron( menu->window, c_magenta );
+            mvwaddch( menu->window, point( start_x, 0 ), LINE_OXXX );
+            mvwaddch( menu->window, point( start_x, menu->w_height - 1 ), LINE_XXOX );
+            mvwvline( menu->window, point( start_x, 1 ), LINE_XOXO, menu->w_height - 2 );
+            wattroff( menu->window, c_magenta );
             if( entnum >= 0 && static_cast<size_t>( entnum ) < index_pairs.size() ) {
                 avatar &player_character = get_avatar();
                 overmap_ui::draw_overmap_chunk( menu->window, player_character, index_pairs[entnum],

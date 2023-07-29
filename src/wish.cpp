@@ -805,7 +805,7 @@ class wish_item_callback: public uilist_callback
             for( int y = 2; y < menu->w_height - 1; y++ ) {
                 mvwprintw( menu->window, point( startx - 1, y ), padding );
             }
-            mvwhline( menu->window, point( startx, 1 ), ' ', menu->pad_right - 1 );
+            mvwhline( menu->window, point( startx, 1 ), BORDER_COLOR, ' ', menu->pad_right - 1 );
             const int entnum = menu->selected;
             if( entnum >= 0 && static_cast<size_t>( entnum ) < standard_itype_ids.size() ) {
                 item tmp = wishitem_produce( *standard_itype_ids[entnum], flags, false );

@@ -745,11 +745,11 @@ void uilist::show( ui_adaptor &ui )
                             text_color, _color_error, "%s", textformatted[i] );
         }
 
-        mvwputch( window, point( 0, text_lines + 1 ), border_color, LINE_XXXO );
-        for( int i = 1; i < w_width - 1; ++i ) {
-            mvwputch( window, point( i, text_lines + 1 ), border_color, LINE_OXOX );
-        }
-        mvwputch( window, point( w_width - 1, text_lines + 1 ), border_color, LINE_XOXX );
+        wattron( window, border_color );
+        mvwaddch( window, point( 0, text_lines + 1 ), LINE_XXXO );
+        mvwhline( window, point( 1, text_lines + 1 ), LINE_OXOX, w_width - 2 );
+        mvwaddch( window, point( w_width - 1, text_lines + 1 ), LINE_XOXX );
+        wattroff( window, border_color );
         estart += text_lines + 1; // +1 for the horizontal line.
     }
 
@@ -817,18 +817,14 @@ void uilist::show( ui_adaptor &ui )
 
     if( desc_enabled ) {
         // draw border
-        mvwputch( window, point( 0, w_height - desc_lines - 2 ), border_color, LINE_XXXO );
-        for( int i = 1; i < w_width - 1; ++i ) {
-            mvwputch( window, point( i, w_height - desc_lines - 2 ), border_color, LINE_OXOX );
-        }
-        mvwputch( window, point( w_width - 1, w_height - desc_lines - 2 ), border_color, LINE_XOXX );
+        wattron( window, border_color );
+        mvwaddch( window, point( 0, w_height - desc_lines - 2 ), LINE_XXXO );
+        mvwhline( window, point( 1, w_height - desc_lines - 2 ), LINE_OXOX, w_width - 2 );
+        mvwaddch( window, point( w_width - 1, w_height - desc_lines - 2 ), LINE_XOXX );
+        wattroff( window, border_color );
 
         // clear previous desc the ugly way
-        for( int y = desc_lines + 1; y > 1; --y ) {
-            for( int x = 2; x < w_width - 2; ++x ) {
-                mvwputch( window, point( x, w_height - y ), text_color, " " );
-            }
-        }
+        mvwrectf( window, point( 2, 2 ), text_color, ' ', w_width - 4, desc_lines );
 
         if( static_cast<size_t>( selected ) < entries.size() ) {
             fold_and_print( window, point( 2, w_height - desc_lines - 1 ), w_width - 4, text_color,

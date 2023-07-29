@@ -1053,11 +1053,12 @@ void iexamine::vending( Character &you, const tripoint &examp )
         const int page_size = std::min( num_items, list_lines );
 
         werase( w );
-        wborder( w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX,
-                 LINE_OXXO, LINE_OOXX, LINE_XXOO, LINE_XOOX );
+        draw_border( w );
+        wattron( w, BORDER_COLOR );
         mvwhline( w, point( 1, first_item_offset - 1 ), LINE_OXOX, w_items_w - 2 );
         mvwaddch( w, point( 0, first_item_offset - 1 ), LINE_XXXO ); // |-
         mvwaddch( w, point( w_items_w - 1, first_item_offset - 1 ), LINE_XOXX ); // -|
+        wattroff( w, BORDER_COLOR );
 
         trim_and_print( w, point( 2, 1 ), w_items_w - 3, c_light_gray,
                         _( "Money left: %s" ), format_money( money ) );
@@ -1090,16 +1091,12 @@ void iexamine::vending( Character &you, const tripoint &examp )
 
         werase( w_item_info );
         // | {line}|
-        // 12      3
         fold_and_print( w_item_info, point( 2, 1 ), w_info_w - 3, c_light_gray, cur_item->info( true ) );
-        wborder( w_item_info, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX,
-                 LINE_OXXO, LINE_OOXX, LINE_XXOO, LINE_XOOX );
+        draw_border( w_item_info );
 
-        //+<{name}>+
-        //12      34
-        const std::string name = utf8_truncate( cur_item->display_name(),
-                                                static_cast<size_t>( w_info_w - 4 ) );
-        mvwprintw( w_item_info, point_east, "<%s>", name );
+        //+{name}+
+        nc_color color = c_light_gray;
+        trim_and_print( w_item_info, point_east, w_info_w - 2, color, cur_item->display_name() );
         wnoutrefresh( w_item_info );
     } );
 

@@ -1631,9 +1631,7 @@ void inventory_column::draw( const catacurses::window &win, const point &p,
                                      &entry );
 
         if( selected && visible_cells() > 1 ) {
-            for( int hx = x1; hx < hx_max; ++hx ) {
-                mvwputch( win, point( hx, yy ), h_white, ' ' );
-            }
+            mvwhline( win, point( x1, yy ), h_white, ' ', hx_max - x1 );
         }
 
         cata_assert( entry.denial.has_value() );
@@ -2422,7 +2420,7 @@ void inventory_selector::draw_header( const catacurses::window &w ) const
                     hint );
 
     int const bottom = border + get_header_height();
-    mvwhline( w, point( border, bottom ), LINE_OXOX, getmaxx( w ) - 2 * border );
+    mvwhline( w, point( border, bottom ), BORDER_COLOR, LINE_OXOX, getmaxx( w ) - 2 * border );
 
     if( display_stats ) {
         size_t y = border;
@@ -2691,8 +2689,8 @@ void inventory_selector::draw_frame( const catacurses::window &w ) const
     draw_border( w );
 
     const int y = border + get_header_height();
-    mvwhline( w, point( 0, y ), LINE_XXXO, 1 );
-    mvwhline( w, point( getmaxx( w ) - border, y ), LINE_XOXX, 1 );
+    mvwhline( w, point( 0, y ), BORDER_COLOR, LINE_XXXO, 1 );
+    mvwhline( w, point( getmaxx( w ) - border, y ), BORDER_COLOR, LINE_XOXX, 1 );
 }
 
 std::pair<std::string, nc_color> inventory_selector::get_footer( navigation_mode m ) const
@@ -2735,10 +2733,12 @@ void inventory_selector::draw_footer( const catacurses::window &w ) const
             const int y = getmaxy( w ) - border;
 
             mvwprintz( w, point( x1, y ), footer.second, footer.first );
-            mvwputch( w, point( x1 - 1, y ), c_light_gray, ' ' );
-            mvwputch( w, point( x2 + 1, y ), c_light_gray, ' ' );
-            mvwputch( w, point( x1 - 2, y ), c_light_gray, LINE_XOXX );
-            mvwputch( w, point( x2 + 2, y ), c_light_gray, LINE_XXXO );
+            wattron( w, c_light_gray );
+            mvwaddch( w, point( x1 - 1, y ), ' ' );
+            mvwaddch( w, point( x2 + 1, y ), ' ' );
+            mvwaddch( w, point( x1 - 2, y ), LINE_XOXX );
+            mvwaddch( w, point( x2 + 2, y ), LINE_XXXO );
+            wattroff( w, c_light_gray );
         }
     }
 }

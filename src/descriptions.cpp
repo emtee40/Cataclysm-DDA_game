@@ -90,9 +90,7 @@ void game::extended_description( const tripoint &p )
                    ctxt.get_desc( "TERRAIN" ), ctxt.get_desc( "VEHICLE" ), ctxt.get_desc( "QUIT" ) );
 
         // Set up line drawings
-        for( int i = 0; i < TERMX; i++ ) {
-            mvwputch( w_head, point( i, top - 1 ), c_white, LINE_OXOX );
-        }
+        mvwhline( w_head, point( 0, top - 1 ), c_white, LINE_OXOX, TERMX );
 
         wnoutrefresh( w_head );
 

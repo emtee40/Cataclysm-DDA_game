@@ -1137,46 +1137,51 @@ void draw_caravan_borders( const catacurses::window &w, int current_window )
         col = c_yellow;
     }
 
-    mvwputch( w, point_zero, col, LINE_OXXO );
-    for( int i = 1; i <= 38; i++ ) {
-        mvwputch( w, point( i, 0 ), col, LINE_OXOX );
-        mvwputch( w, point( i, 11 ), col, LINE_OXOX );
-    }
-    for( int i = 1; i <= 10; i++ ) {
-        mvwputch( w, point( 0, i ), col, LINE_XOXO );
-        mvwputch( w, point( 39, i ), c_yellow, LINE_XOXO ); // Shared border, always yellow
-    }
-    mvwputch( w, point( 0, 11 ), col, LINE_XXXO );
+    wattron( w, col );
+    mvwaddch( w, point_zero, LINE_OXXO );
+    // NOLINTNEXTLINE(cata-use-named-point-constants)
+    mvwhline( w, point( 1,  0 ), LINE_OXOX, 38 );
+    mvwhline( w, point( 1, 11 ), LINE_OXOX, 38 );
+    // NOLINTNEXTLINE(cata-use-named-point-constants)
+    mvwvline( w, point( 0,  1 ), LINE_XOXO, 10 );
+    mvwaddch( w, point( 0, 11 ), LINE_XXXO );
+    wattroff( w, col );
 
+    wattron( w, c_yellow );
+    mvwvline( w, point( 39, 1 ), LINE_XOXO, 10 ); // Shared border, always yellow
     // These are shared with the items window, and so are always "on"
-    mvwputch( w, point( 39, 0 ), c_yellow, LINE_OXXX );
-    mvwputch( w, point( 39, 11 ), c_yellow, LINE_XOXX );
+    mvwaddch( w, point( 39, 0 ), LINE_OXXX );
+    mvwaddch( w, point( 39, 11 ), LINE_XOXX );
+    wattroff( w, c_yellow );
 
     col = ( current_window == 1 ? c_yellow : c_light_gray );
     // Next, draw the borders for the item description window--always "off" & gray
-    for( int i = 12; i <= 23; i++ ) {
-        mvwputch( w, point( 0, i ), c_light_gray, LINE_XOXO );
-        mvwputch( w, point( 39, i ), col,      LINE_XOXO );
-    }
-    for( int i = 1; i <= 38; i++ ) {
-        mvwputch( w, point( i, FULL_SCREEN_HEIGHT - 1 ), c_light_gray, LINE_OXOX );
-    }
+    mvwvline( w, point( 39, 12 ), col, LINE_XOXO, 12 );
 
-    mvwputch( w, point( 0, FULL_SCREEN_HEIGHT - 1 ), c_light_gray, LINE_XXOO );
-    mvwputch( w, point( 39, FULL_SCREEN_HEIGHT - 1 ), c_light_gray, LINE_XXOX );
+    wattron( w, c_light_gray );
+
+    mvwvline( w, point( 0,  12 ), LINE_XOXO, 12 );
+
+    mvwhline( w, point( 1, FULL_SCREEN_HEIGHT - 1 ), LINE_OXOX, 38 );
+
+    mvwaddch( w, point( 0, FULL_SCREEN_HEIGHT - 1 ), LINE_XXOO );
+    mvwaddch( w, point( 39, FULL_SCREEN_HEIGHT - 1 ), LINE_XXOX );
+
+    wattroff( w, c_light_gray );
 
     // Finally, draw the item section borders
-    for( int i = 40; i <= FULL_SCREEN_WIDTH - 2; i++ ) {
-        mvwputch( w, point( i, 0 ), col, LINE_OXOX );
-        mvwputch( w, point( i, FULL_SCREEN_HEIGHT - 1 ), col, LINE_OXOX );
-    }
-    for( int i = 1; i <= FULL_SCREEN_HEIGHT - 2; i++ ) {
-        mvwputch( w, point( FULL_SCREEN_WIDTH - 1, i ), col, LINE_XOXO );
-    }
+    wattron( w, col );
 
-    mvwputch( w, point( 39, FULL_SCREEN_HEIGHT - 1 ), col, LINE_XXOX );
-    mvwputch( w, point( FULL_SCREEN_WIDTH - 1, 0 ), col, LINE_OOXX );
-    mvwputch( w, point( FULL_SCREEN_WIDTH - 1, FULL_SCREEN_HEIGHT - 1 ), col, LINE_XOOX );
+    mvwhline( w, point( 40,                      0 ), LINE_OXOX, FULL_SCREEN_WIDTH - 41 );
+    mvwhline( w, point( 40, FULL_SCREEN_HEIGHT - 1 ), LINE_OXOX, FULL_SCREEN_WIDTH - 41 );
+
+    mvwvline( w, point( FULL_SCREEN_WIDTH - 1,   1 ), LINE_XOXO, FULL_SCREEN_HEIGHT - 2 );
+
+    mvwaddch( w, point( 39, FULL_SCREEN_HEIGHT - 1 ), LINE_XXOX );
+    mvwaddch( w, point( FULL_SCREEN_WIDTH - 1, 0 ), LINE_OOXX );
+    mvwaddch( w, point( FULL_SCREEN_WIDTH - 1, FULL_SCREEN_HEIGHT - 1 ), LINE_XOOX );
+
+    wattroff( w, col );
 
     // Quick reminded about help.
     // NOLINTNEXTLINE(cata-text-style): literal question mark

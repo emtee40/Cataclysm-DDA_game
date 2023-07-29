@@ -95,27 +95,17 @@ void distraction_manager_gui::show()
                         _( get_configurable_distractions()[currentLine].description.c_str() ) );
 
         // Draw horizontal line and corner pieces of the table
-        for( int x = 0; x < 78; x++ ) {
-            if( x == 60 ) {
-                mvwputch( w_header, point( x, iHeaderHeight - 2 ), c_light_gray, LINE_OXXX );
-                mvwputch( w_header, point( x, iHeaderHeight - 1 ), c_light_gray, LINE_XOXO );
-            } else {
-                mvwputch( w_header, point( x, iHeaderHeight - 2 ), c_light_gray, LINE_OXOX );
-            }
-        }
+        wattron( w_header, c_light_gray );
+        mvwhline( w_header, point( 0, iHeaderHeight - 2 ), LINE_OXOX, 78 );
+        mvwaddch( w_header, point( 60, iHeaderHeight - 2 ), LINE_OXXX );
+        mvwaddch( w_header, point( 60, iHeaderHeight - 1 ), LINE_XOXO );
+        wattroff( w_header, c_light_gray );
 
         wnoutrefresh( w_header );
 
         // Clear table
-        for( int y = 0; y < iContentHeight; y++ ) {
-            for( int x = 0; x < 79; x++ ) {
-                if( x == 60 ) {
-                    mvwputch( w, point( x, y ), c_light_gray, LINE_XOXO );
-                } else {
-                    mvwputch( w, point( x, y ), c_black, ' ' );
-                }
-            }
-        }
+        mvwrectf( w, point_zero, c_black, ' ', 79, iContentHeight );
+        mvwvline( w, point( 60, 0 ), c_light_gray, LINE_XOXO, iContentHeight ) ;
 
         draw_scrollbar( w_border, currentLine, iContentHeight, number_of_distractions, point( 0,
                         iHeaderHeight + 1 ) );

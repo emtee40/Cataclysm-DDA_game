@@ -2159,12 +2159,12 @@ class spellcasting_callback : public uilist_callback
         }
 
         void refresh( uilist *menu ) override {
-            mvwputch( menu->window, point( menu->w_width - menu->pad_right, 0 ), c_magenta, LINE_OXXX );
-            mvwputch( menu->window, point( menu->w_width - menu->pad_right, menu->w_height - 1 ), c_magenta,
-                      LINE_XXOX );
-            for( int i = 1; i < menu->w_height - 1; i++ ) {
-                mvwputch( menu->window, point( menu->w_width - menu->pad_right, i ), c_magenta, LINE_XOXO );
-            }
+            wattron( menu->window, c_magenta );
+            mvwaddch( menu->window, point( menu->w_width - menu->pad_right, 0 ), LINE_OXXX );
+            mvwaddch( menu->window, point( menu->w_width - menu->pad_right, menu->w_height - 1 ), LINE_XXOX );
+            mvwvline( menu->window, point( menu->w_width - menu->pad_right, 1 ), LINE_XOXO,
+                      menu->w_height - 2 );
+            wattroff( menu->window, c_magenta );
             std::string ignore_string = casting_ignore ? _( "Ignore Distractions" ) :
                                         _( "Popup Distractions" );
             mvwprintz( menu->window, point( menu->w_width - menu->pad_right + 2, 0 ),
@@ -2700,11 +2700,11 @@ static void draw_spellbook_info( const spell_type &sp, uilist *menu )
 
 void spellbook_callback::refresh( uilist *menu )
 {
-    mvwputch( menu->window, point( menu->pad_left, 0 ), c_magenta, LINE_OXXX );
-    mvwputch( menu->window, point( menu->pad_left, menu->w_height - 1 ), c_magenta, LINE_XXOX );
-    for( int i = 1; i < menu->w_height - 1; i++ ) {
-        mvwputch( menu->window, point( menu->pad_left, i ), c_magenta, LINE_XOXO );
-    }
+    wattron( menu->window, c_magenta );
+    mvwaddch( menu->window, point( menu->pad_left, 0 ), LINE_OXXX );
+    mvwaddch( menu->window, point( menu->pad_left, menu->w_height - 1 ), LINE_XXOX );
+    mvwvline( menu->window, point( menu->pad_left, 1 ), LINE_XOXO, menu->w_height - 2 );
+    wattroff( menu->window, c_magenta );
     if( menu->selected >= 0 && static_cast<size_t>( menu->selected ) < spells.size() ) {
         draw_spellbook_info( spells[menu->selected], menu );
     }
