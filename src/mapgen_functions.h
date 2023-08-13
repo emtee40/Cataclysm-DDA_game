@@ -50,7 +50,6 @@ void mapgen_rock_partial( mapgendata &dat );
 void mapgen_open_air( mapgendata &dat );
 void mapgen_rift( mapgendata &dat );
 void mapgen_hellmouth( mapgendata &dat );
-void mapgen_subway( mapgendata &dat );
 void mapgen_lake_shore( mapgendata &dat );
 void mapgen_ocean_shore( mapgendata &dat );
 void mapgen_ravine_edge( mapgendata &dat );
