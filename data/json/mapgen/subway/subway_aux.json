@@ -1,0 +1,17 @@
+[
+  {
+    "type": "palette",
+    "id": "subway_tmp_palette",
+    "terrain": {
+      ".": "t_rock_floor",
+      "^": "t_railroad_rubble",
+      "-": "t_railroad_tie",
+      "|": "t_railroad_tie",
+      "/": "t_railroad_tie_d",
+      "D": "t_railroad_track_d",
+      "x": "t_railroad_track_on_tie",
+      "X": "t_railroad_track",
+      "S": "t_buffer_stop"
+    }
+  }
+]

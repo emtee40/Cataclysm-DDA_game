@@ -1,0 +1,59 @@
+[
+  {
+    "type": "mapgen",
+    "method": "json",
+    "om_terrain": "subway_end",
+    "object": {
+      "rotation": [ 0 ],
+      "fallback_predecessor_mapgen": "empty_rock",
+      "place_nested": [ { "chunks": [ "24x24_subway_end" ], "x": 0, "y": 0 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "method": "json",
+    "om_terrain": "lab_subway_end",
+    "object": {
+      "rotation": [ 0 ],
+      "fallback_predecessor_mapgen": "deep_rock",
+      "place_nested": [ { "chunks": [ "24x24_subway_end" ], "x": 0, "y": 0 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "method": "json",
+    "nested_mapgen_id": "24x24_subway_end",
+    "object": {
+      "mapgensize": [ 24, 24 ],
+      "rotation": [ 0, 3 ],
+      "rows": [
+        "                        ",
+        "  ....................  ",
+        " ...................... ",
+        "...^^^^^^^....^^^^^^^...",
+        "...^S^^^S^....^S^^^S^...",
+        "...^X^^^X^....^X^^^X^...",
+        "...^X^^^X^....^X^^^X^...",
+        "...-x---x-....-x---x-...",
+        "...^X^^^X^....^X^^^X^...",
+        "...^X^^^X^....^X^^^X^...",
+        "...-x---x-....-x---x-...",
+        "...^X^^^X^....^X^^^X^...",
+        "...^D^^^D^....^X^^^X^...",
+        "...^XD^^XD....-x---x-...",
+        "...^X/D^X/D...^X^^^X^...",
+        "...^X^/DX^/D..^X^^^X^...",
+        "...^X^^/D^./D.-x---x-...",
+        "...^X^^^XD../D^X^^^X^...",
+        "...^X^^^X/D../DX^^^X^...",
+        "...^X^^^X^/D../D^^^X^...",
+        "...^X^^^X^./D.^XD^^X^...",
+        "...^X^^^X^../D^X/D^X^...",
+        "...-x---x-.../DX^/DX^...",
+        "...^X^^^X^..../D^^/D^..."
+      ],
+      "palettes": [ "subway_tmp_palette" ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  }
+]
