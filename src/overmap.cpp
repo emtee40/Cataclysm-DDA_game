@@ -103,11 +103,10 @@ static const oter_str_id oter_road_nesw( "road_nesw" );
 static const oter_str_id oter_road_nesw_manhole( "road_nesw_manhole" );
 static const oter_str_id oter_sewer_end_north( "sewer_end_north" );
 static const oter_str_id oter_sewer_isolated( "sewer_isolated" );
-static const oter_str_id oter_sewer_sub_station( "sewer_sub_station" );
 static const oter_str_id oter_solid_earth( "solid_earth" );
 static const oter_str_id oter_subway_end_north( "subway_end_north" );
+static const oter_str_id oter_subway_end_south( "subway_end_south" );
 static const oter_str_id oter_subway_isolated( "subway_isolated" );
-static const oter_str_id oter_underground_sub_station( "underground_sub_station" );
 
 static const oter_type_str_id oter_type_ants_queen( "ants_queen" );
 static const oter_type_str_id oter_type_bridge( "bridge" );
@@ -131,6 +130,8 @@ static const oter_type_str_id oter_type_slimepit_bottom( "slimepit_bottom" );
 static const oter_type_str_id oter_type_slimepit_down( "slimepit_down" );
 static const oter_type_str_id oter_type_solid_earth( "solid_earth" );
 static const oter_type_str_id oter_type_sub_station( "sub_station" );
+static const oter_type_str_id oter_type_sewer_sub_station( "sewer_sub_station" );
+static const oter_type_str_id oter_type_underground_sub_station( "underground_sub_station" );
 
 static const overmap_location_id overmap_location_land( "land" );
 static const overmap_location_id overmap_location_swamp( "swamp" );
@@ -3574,7 +3575,6 @@ bool overmap::generate_sub( const int z )
             const oter_id oter_id_here = ter_unsafe( p );
             const oter_t &oter_here = *oter_id_here;
             const oter_id oter_above = ter_unsafe( p + tripoint_above );
-            const oter_id oter_ground = ter_unsafe( tripoint_om_omt( p.xy(), 0 ) );
 
             if( oter_here.get_type_id() == oter_type_sewer_connector ) {
                 om_direction::type rotation = oter_here.get_dir();
@@ -3587,19 +3587,17 @@ bool overmap::generate_sub( const int z )
                 ter_set( p, oter_subway_end_north.id()->get_rotated( rotation ) );
                 subway_points.emplace_back( p.xy() );
             }
-
-            if( oter_ground->get_type_id() == oter_type_sub_station ) {
-                if( z == -1 ) {
-                    ter_set( p, oter_sewer_sub_station.id() );
-                    requires_sub = true;
-                    continue;
-                } else if( z == -2 ) {
-                    ter_set( p, oter_subway_isolated.id() );
-                    subway_points.emplace_back( i, j - 1 );
-                    subway_points.emplace_back( i, j );
-                    subway_points.emplace_back( i, j + 1 );
-                    continue;
-                }
+            
+            if( oter_here.get_type_id() == oter_type_sewer_sub_station ) {
+                requires_sub = true;
+            }
+            
+            if( oter_here.get_type_id() == oter_type_underground_sub_station ) {
+                om_direction::type rotation = oter_here.get_dir();
+                ter_set( p + displace( rotation ), oter_subway_isolated.id() );
+                ter_set( p - displace( rotation ), oter_subway_isolated.id() );
+                subway_points.emplace_back( p.xy() + displace( rotation ) );
+                subway_points.emplace_back( p.xy() - displace( rotation ) );
             }
 
             auto above_action_it = oter_above_actions.find( oter_above->get_type_id().id() );
@@ -3700,12 +3698,6 @@ bool overmap::generate_sub( const int z )
     const overmap_connection_id &overmap_connection_subway_tunnel =
         settings->overmap_connection.subway_connection;
     connect_closest_points( subway_points, z, *overmap_connection_subway_tunnel );
-
-    for( auto &i : subway_points ) {
-        if( ( ter( tripoint_om_omt( i, z + 2 ) )->get_type_id() == oter_type_sub_station ) ) {
-            ter_set( tripoint_om_omt( i, z ), oter_underground_sub_station.id() );
-        }
-    }
 
     // The first lab point is adjacent to a lab, set it a depot (as long as track was actually laid).
     const auto create_train_depots = [this, z,

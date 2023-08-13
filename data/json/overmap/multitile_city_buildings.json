@@ -1317,7 +1317,9 @@
     "locations": [ "land" ],
     "overmaps": [
       { "point": [ 0, 0, 0 ], "overmap": "sub_station_north" },
-      { "point": [ 0, 0, 1 ], "overmap": "sub_station_roof_north" }
+      { "point": [ 0, 0, 1 ], "overmap": "sub_station_roof_north" },
+      { "point": [ 0, 0, -1 ], "overmap": "sewer_sub_station_north" },
+      { "point": [ 0, 0, -2 ], "overmap": "underground_sub_station_north" }
     ]
   },
   {
