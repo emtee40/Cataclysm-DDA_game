@@ -83,7 +83,7 @@
   {
     "type": "overmap_location",
     "id": "subway",
-    "terrains": [ "subway", "underground_sub_station" ]
+    "terrains": [ "subway" ]
   },
   {
     "type": "overmap_location",
