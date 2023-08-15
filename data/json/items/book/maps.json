@@ -32,7 +32,6 @@
       "radius": 90,
       "terrain": [
         "lab_subway",
-        "microlab_sub_connector",
         "microlab_sub_station",
         "central_lab_train_depot",
         "lab_train_depot",

@@ -101,12 +101,8 @@ static const oter_str_id oter_river_sw( "river_sw" );
 static const oter_str_id oter_river_west( "river_west" );
 static const oter_str_id oter_road_nesw( "road_nesw" );
 static const oter_str_id oter_road_nesw_manhole( "road_nesw_manhole" );
-static const oter_str_id oter_sewer_end_north( "sewer_end_north" );
 static const oter_str_id oter_sewer_isolated( "sewer_isolated" );
 static const oter_str_id oter_solid_earth( "solid_earth" );
-static const oter_str_id oter_subway_end_north( "subway_end_north" );
-static const oter_str_id oter_subway_end_south( "subway_end_south" );
-static const oter_str_id oter_subway_isolated( "subway_isolated" );
 
 static const oter_type_str_id oter_type_ants_queen( "ants_queen" );
 static const oter_type_str_id oter_type_bridge( "bridge" );
@@ -121,17 +117,16 @@ static const oter_type_str_id oter_type_ice_lab_core( "ice_lab_core" );
 static const oter_type_str_id oter_type_ice_lab_stairs( "ice_lab_stairs" );
 static const oter_type_str_id oter_type_lab_core( "lab_core" );
 static const oter_type_str_id oter_type_lab_stairs( "lab_stairs" );
-static const oter_type_str_id oter_type_microlab_sub_connector( "microlab_sub_connector" );
 static const oter_type_str_id oter_type_railroad_bridge( "railroad_bridge" );
 static const oter_type_str_id oter_type_road( "road" );
 static const oter_type_str_id oter_type_road_nesw_manhole( "road_nesw_manhole" );
-static const oter_type_str_id oter_type_sewer_connector( "sewer_connector" );
 static const oter_type_str_id oter_type_slimepit_bottom( "slimepit_bottom" );
 static const oter_type_str_id oter_type_slimepit_down( "slimepit_down" );
 static const oter_type_str_id oter_type_solid_earth( "solid_earth" );
-static const oter_type_str_id oter_type_sub_station( "sub_station" );
+static const oter_type_str_id oter_type_sewer( "sewer" );
 static const oter_type_str_id oter_type_sewer_sub_station( "sewer_sub_station" );
-static const oter_type_str_id oter_type_underground_sub_station( "underground_sub_station" );
+static const oter_type_str_id oter_type_subway( "subway" );
+static const oter_type_str_id oter_type_lab_subway( "lab_subway" );
 
 static const overmap_location_id overmap_location_land( "land" );
 static const overmap_location_id overmap_location_swamp( "swamp" );
@@ -3574,30 +3569,19 @@ bool overmap::generate_sub( const int z )
             tripoint_om_omt p( i, j, z );
             const oter_id oter_id_here = ter_unsafe( p );
             const oter_t &oter_here = *oter_id_here;
+            const oter_type_str_id oter_type_here = oter_here.get_type_id();
             const oter_id oter_above = ter_unsafe( p + tripoint_above );
-
-            if( oter_here.get_type_id() == oter_type_sewer_connector ) {
-                om_direction::type rotation = oter_here.get_dir();
-                ter_set( p, oter_sewer_end_north.id()->get_rotated( rotation ) );
-                sewer_points.emplace_back( p.xy() );
-            }
-
-            if( oter_here.get_type_id() == oter_type_microlab_sub_connector ) {
-                om_direction::type rotation = oter_here.get_dir();
-                ter_set( p, oter_subway_end_north.id()->get_rotated( rotation ) );
+            
+            if( oter_type_here == oter_type_sewer ) {
                 subway_points.emplace_back( p.xy() );
             }
             
-            if( oter_here.get_type_id() == oter_type_sewer_sub_station ) {
+            if( oter_type_here == oter_type_sewer_sub_station ) {
                 requires_sub = true;
             }
             
-            if( oter_here.get_type_id() == oter_type_underground_sub_station ) {
-                om_direction::type rotation = oter_here.get_dir();
-                ter_set( p + displace( rotation ), oter_subway_isolated.id() );
-                ter_set( p - displace( rotation ), oter_subway_isolated.id() );
-                subway_points.emplace_back( p.xy() + displace( rotation ) );
-                subway_points.emplace_back( p.xy() - displace( rotation ) );
+            if( oter_type_here == oter_type_subway || oter_type_here == oter_type_lab_subway ) {
+                subway_points.emplace_back( p.xy() );
             }
 
             auto above_action_it = oter_above_actions.find( oter_above->get_type_id().id() );
