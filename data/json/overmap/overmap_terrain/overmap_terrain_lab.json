@@ -167,7 +167,7 @@
     "type": "overmap_terrain",
     "id": "lab_train_depot",
     "name": "science train depot",
-    "sym": "L",
+    "sym": "S",
     "color": "light_blue",
     "see_cost": 5,
     "extras": "subway",
