@@ -55,5 +55,87 @@
       "palettes": [ "subway_tmp_palette" ],
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
+  },
+  {
+    "type": "mapgen",
+    "method": "json",
+    "om_terrain": [ "sub_ramp_above" ],
+    "object": {
+      "fallback_predecessor_mapgen": "deep_rock",
+      "rows": [
+        " ..^X^^^X^....^X^^^X^.. ",
+        " ..-x---x-....-x---x-.. ",
+        " ..^X^^^X^....^X^^^X^.. ",
+        " ..^X^^^X^....^X^^^X^.. ",
+        " ..-x---x-....-x---x-.. ",
+        " ..^X^^^X^....^X^^^X^.. ",
+        " ..^X^^^X^....^X^^^X^.. ",
+        " ..-x---x-....-x---x-.. ",
+        " dddzdddzddddddzdddzddd ",
+        " DDD>DDD>DDDDDD>DDD>DDD ",
+        " ********************** ",
+        " ********************** ",
+        " ********************** ",
+        " ********************** ",
+        " ********************** ",
+        " ********************** ",
+        " ********************** ",
+        " ********************** ",
+        " ********************** ",
+        " ********************** ",
+        " ********************** ",
+        " ********************** ",
+        " ********************** ",
+        " ********************** "
+      ],
+      "palettes": [ "subway_tmp_palette" ],
+      "terrain": {
+        "z": "t_railroad_ramp_down_high",
+        "d": "t_concrete_ramp_down_high",
+        "D": "t_concrete_ramp_down_low",
+        ">": "t_railroad_ramp_down_low"
+      }
+    }
+  },
+  {
+    "type": "mapgen",
+    "method": "json",
+    "om_terrain": [ "sub_ramp_below" ],
+    "object": {
+      "fallback_predecessor_mapgen": "deep_rock",
+      "rows": [
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        " DDD>DDD>DDDDDD>DDD>DDD ",
+        " dddzdddzddddddzdddzddd ",
+        " ''^X^^^X^''''^X^^^X^'' ",
+        " ''^X^^^X^''''^X^^^X^'' ",
+        " ''-x---x-''''-x---x-'' ",
+        " ''^X^^^X^''''^X^^^X^'' ",
+        " ''^X^^^X^''''^X^^^X^'' ",
+        " ''-x---x-''''-x---x-'' ",
+        " ''^X^^^X^''''^X^^^X^'' ",
+        " ''^X^^^X^''''^X^^^X^'' ",
+        " ''-x---x-''''-x---x-'' ",
+        " ''^X^^^X^''''^X^^^X^'' ",
+        " ''^X^^^X^''''^X^^^X^'' ",
+        " ''-x---x-''''-x---x-'' ",
+        " ''^X^^^X^''''^X^^^X^'' "
+      ],
+      "palettes": [ "subway_tmp_palette" ],
+      "terrain": {
+        "z": "t_railroad_ramp_up_low",
+        "d": "t_concrete_ramp_up_low",
+        "D": "t_concrete_ramp_up_high",
+        ">": "t_railroad_ramp_up_high"
+      }
+    }
   }
 ]

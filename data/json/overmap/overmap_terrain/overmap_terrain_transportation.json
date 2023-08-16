@@ -199,7 +199,8 @@
     "name": "subway ramp",
     "sym": "S",
     "color": "dark_gray",
-    "see_cost": 5
+    "see_cost": 5,
+    "flags": [ "REQUIRES_PREDECESSOR" ]
   },
   {
     "type": "overmap_terrain",

@@ -5,6 +5,8 @@
     "//": "Need to add conditional wall hole for shaft and make it rotate. Need to deal with sub_ramp + add -2 -> -4 ramp. Is the subway/lab_subway distinction still needed? (Maps). Need to deaal with retirement community. cargo_station_A wrong track type?  Migration.",
     "terrain": {
       ".": "t_rock_floor",
+      "'": "t_rock_floor_no_roof",
+      "*": "t_open_air",
       "^": "t_railroad_rubble",
       "-": "t_railroad_tie",
       "|": "t_railroad_tie",
