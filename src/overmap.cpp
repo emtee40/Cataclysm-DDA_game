@@ -5746,7 +5746,7 @@ bool overmap::build_lab(
             adjacent_labs = 0;
             for( const point &offset : four_adjacent_offsets ) {
                 if( is_ot_match( "lab", ter( train + offset ), ot_match_type::contains ) &&
-                    !is_ot_match( "lab_subway", ter( train + offset ), ot_match_type::contains ) ) {
+                    !is_ot_match( "lab_subway", ter( train + offset ), ot_match_type::type ) ) {
                     ++adjacent_labs;
                 }
             }
@@ -5760,7 +5760,7 @@ bool overmap::build_lab(
             // next is rail connection
             for( const point &offset : four_adjacent_offsets ) {
                 if( is_ot_match( "lab", ter( train + offset ), ot_match_type::contains ) &&
-                    !is_ot_match( "lab_subway", ter( train + offset ), ot_match_type::contains ) ) {
+                    !is_ot_match( "lab_subway", ter( train + offset ), ot_match_type::type ) ) {
                     lab_train_points->push_back( train.xy() - offset );
                     break;
                 }
@@ -5782,7 +5782,7 @@ bool overmap::build_lab(
             adjacent_labs = 0;
             for( const point &offset : four_adjacent_offsets ) {
                 if( is_ot_match( "lab", ter( cell + offset ), ot_match_type::contains ) &&
-                    !is_ot_match( "lab_subway", ter( cell + offset ), ot_match_type::contains ) ) {
+                    !is_ot_match( "lab_subway", ter( cell + offset ), ot_match_type::type ) ) {
                     ++adjacent_labs;
                 }
             }
