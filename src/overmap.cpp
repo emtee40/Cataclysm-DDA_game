@@ -3571,15 +3571,12 @@ bool overmap::generate_sub( const int z )
             const oter_t &oter_here = *oter_id_here;
             const oter_type_str_id oter_type_here = oter_here.get_type_id();
             const oter_id oter_above = ter_unsafe( p + tripoint_above );
-            
             if( oter_type_here == oter_type_sewer ) {
                 subway_points.emplace_back( p.xy() );
             }
-            
             if( oter_type_here == oter_type_sewer_sub_station ) {
                 requires_sub = true;
             }
-            
             if( oter_type_here == oter_type_subway || oter_type_here == oter_type_lab_subway ) {
                 subway_points.emplace_back( p.xy() );
             }
