@@ -97,7 +97,57 @@
     "ugliness": 0,
     "description": "Once per season you may engage in a strenous ritual to reconstruct the mind of someone who's mind was destroyed in the Cataclysm.",
     "category": [ "HOMULLUS" ],
+    "threshreq": [ "THRESH_HOMULLUS" ],
     "spells_learned": [ [ "rebuild_mind", 1 ] ]
+  },
+  {
+    "type": "mutation",
+    "id": "TRASH_TO_TREASURE",
+    "name": { "str": "Trash to Treasure" },
+    "points": 0,
+    "visibility": 0,
+    "ugliness": 0,
+    "description": "The Dollkin summons a repair kit that has the ability to repair almost anything.",
+    "category": [ "HOMULLUS" ],
+    "//": "Ideally I can add a mend activity that will remove the fried electronics flag.",
+    "spells_learned": [ [ "dollkin_repair_kit", 1 ] ]
+  },
+  {
+    "type": "mutation",
+    "id": "FOE_HONEY",
+    "name": { "str": "Foe Honey" },
+    "points": 0,
+    "visibility": 0,
+    "ugliness": 0,
+    "description": "The Dollkin's enemies within the target area become covered in a sickly sweet goop that summons angry vermin to attack and distract them.",
+    "category": [ "HOMULLUS" ],
+    "//": "Cross between tindalos fog and boomer bile.",
+    "spells_learned": [ [ "foe_honey", 1 ] ]
+  },
+  {
+    "type": "mutation",
+    "id": "CLICHED_CURSE",
+    "name": { "str": "Cliched Curse" },
+    "points": 0,
+    "visibility": 0,
+    "ugliness": 0,
+    "description": "Once per season you may curse an enemy to die in the most cliched way possible.",
+    "category": [ "HOMULLUS" ],
+    "threshreq": [ "THRESH_HOMULLUS" ],
+    "//": "Build an EOC finds where you are inside, outside, in city, in wilderness, above ground or below ground and based on where you are something horrificly damaging occurs to yoru enemy.  In a city maybe a piano falls on them, in the wilderness maybe a meteor crashes onto their head.",
+    "spells_learned": [ [ "cliched_curse", 1 ] ]
+  },
+  {
+    "type": "mutation",
+    "id": "FIND_THE_PRIZE",
+    "name": { "str": "Find the Prize" },
+    "points": 0,
+    "visibility": 0,
+    "ugliness": 0,
+    "description": "Once per week you mentally search for a valuable location.",
+    "category": [ "HOMULLUS" ],
+    "//": "Find valuable locations.",
+    "spells_learned": [ [ "find_the_prize", 1 ] ]
   },
   {
     "type": "mutation",
@@ -131,6 +181,17 @@
     "description": "Upon gaining this ability the Undine's eyes begin reflecting their mood with colors of the deep waters, pitch black when angry or sad and green-blue when pleased.  Glare no longer impacts them.",
     "category": [ "HOMULLUS" ],
     "integrated_armor": [ "integrated_homullus_eyes" ]
+  },
+    {
+    "type": "mutation",
+    "id": "TRUST_ME",
+    "name": { "str": "Trust Me" },
+    "points": 1,
+    "visibility": 0,
+    "ugliness": 0,
+    "description": "You are much more succesful at lying to people now.",
+    "category": [ "HOMULLUS" ],
+    "social_modifiers": { "lie": 40 },
   },
   {
     "type": "mutation",
