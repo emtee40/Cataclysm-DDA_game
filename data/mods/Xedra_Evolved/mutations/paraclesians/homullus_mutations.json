@@ -79,6 +79,28 @@
   },
   {
     "type": "mutation",
+    "id": "CHARM_FERAL",
+    "name": { "str": "Whispers of Sanity" },
+    "points": 0,
+    "visibility": 0,
+    "ugliness": 0,
+    "description": "The Dollkin gains the ability to speak whispers into the remaining thoughts of a feral and convince the feral in question that you are not a foe.",
+    "category": [ "HOMULLUS" ],
+    "spells_learned": [ [ "charm_feral", 1 ] ]
+  },
+  {
+    "type": "mutation",
+    "id": "CURE_FERAL",
+    "name": { "str": "Rebuild the shattered Mind" },
+    "points": 0,
+    "visibility": 0,
+    "ugliness": 0,
+    "description": "Once per season you may engage in a strenous ritual to reconstruct the mind of someone who's mind was destroyed in the Cataclysm.",
+    "category": [ "HOMULLUS" ],
+    "spells_learned": [ [ "rebuild_mind", 1 ] ]
+  },
+  {
+    "type": "mutation",
     "id": "NO_TRACE_YET_I_WISH",
     "name": { "str": "No Trace Yet I Wish" },
     "points": 0,
@@ -93,7 +115,7 @@
     "type": "mutation",
     "id": "NO_TRACE_YET_I_WISH_active",
     "name": { "str": "No Trace Yet I Wish (on)" },
-    "description": "Your photophore is glowing softly.",
+    "description": "You don't currently produce scent.",
     "copy-from": "NO_TRACE_YET_I_WISH",
     "valid": false,
     "transform": { "target": "NO_TRACE_YET_I_WISH", "msg_transform": "Your body begins producing scent.", "active": false, "moves": 10 },
@@ -109,5 +131,17 @@
     "description": "Upon gaining this ability the Undine's eyes begin reflecting their mood with colors of the deep waters, pitch black when angry or sad and green-blue when pleased.  Glare no longer impacts them.",
     "category": [ "HOMULLUS" ],
     "integrated_armor": [ "integrated_homullus_eyes" ]
+  },
+  {
+    "type": "mutation",
+    "id": "DEATH_IS_BUT_A_DOOR",
+    "name": { "str": "Death is but a door" },
+    "points": 7,
+    "visibility": 0,
+    "ugliness": 0,
+    "description": "Upon gaining this ability the Undine's eyes begin reflecting their mood with colors of the deep waters, pitch black when angry or sad and green-blue when pleased.  Glare no longer impacts them.",
+    "category": [ "HOMULLUS" ],
+    "threshreq": [ "THRESH_HOMULLUS" ],
+    "//": "A once a month ability that allows the Homullus to be reborn instantly upon death in a nearby HUMAN monster.  If one is not nearby the power will fail."
   }
 ]
