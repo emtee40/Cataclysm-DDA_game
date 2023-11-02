@@ -257,6 +257,18 @@
   },
   {
     "type": "mutation",
+    "id": "MEND_BROKEN_ELECTRONICS",
+    "name": { "str": "Gadgeteer's Touch" },
+    "points": 4,
+    "visibility": 0,
+    "ugliness": 0,
+    "description": "You can make some simple repairs to items that have been broken by water or EMP.",
+    "category": [ "HOMULLUS" ],
+    "prereqs": [ "TOOLMAKERS_GIFT", "NET_SPIDERS_TOUCH" ],
+    "integrated_armor": [ "integrated_homullus_electrohack" ]
+  },
+  {
+    "type": "mutation",
     "id": "BACKSTAGE",
     "name": { "str": "Backstage" },
     "points": 0,
