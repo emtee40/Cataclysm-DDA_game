@@ -189,7 +189,7 @@
     "points": 1,
     "visibility": 2,
     "ugliness": 0,
-    "description": "Upon gaining this ability the Undine's eyes begin reflecting their mood with colors of the deep waters, pitch black when angry or sad and green-blue when pleased.  Glare no longer impacts them.",
+    "description": "Upon gaining this ability the Homullus's eyes begin change to look like doll's eyes  always staring at the world.  Glare no longer impacts them.",
     "category": [ "HOMULLUS" ],
     "integrated_armor": [ "integrated_homullus_eyes" ]
   },
@@ -215,5 +215,16 @@
     "category": [ "HOMULLUS" ],
     "threshreq": [ "THRESH_HOMULLUS" ],
     "//": "A once a month ability that allows the Homullus to be reborn instantly upon death in a nearby HUMAN monster.  If one is not nearby the power will fail."
+  },
+  {
+    "type": "mutation",
+    "id": "ACCOUNTING_ERROR",
+    "name": { "str": "Accounting Error" },
+    "points": 1,
+    "visibility": 0,
+    "ugliness": 0,
+    "description": "The Homullus is able to make traders make an error and give them extra credit towards goods.",
+    "category": [ "HOMULLUS" ],
+    "//": "Eoc probably?"
   }
 ]
