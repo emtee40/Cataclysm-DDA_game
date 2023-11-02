@@ -90,6 +90,17 @@
   },
   {
     "type": "mutation",
+    "id": "NAMASTE_AWAY",
+    "name": { "str": "Namaste Away" },
+    "points": 0,
+    "visibility": 0,
+    "ugliness": 0,
+    "description": "By crossing a few wires in a feral human's mind the Dollkin is able to change the feral into a less dangerous version.",
+    "category": [ "HOMULLUS" ],
+    "spells_learned": [ [ "reduce_feral_threat", 1 ] ]
+  },
+  {
+    "type": "mutation",
     "id": "CURE_FERAL",
     "name": { "str": "Rebuild the shattered Mind" },
     "points": 0,
@@ -182,7 +193,7 @@
     "category": [ "HOMULLUS" ],
     "integrated_armor": [ "integrated_homullus_eyes" ]
   },
-    {
+  {
     "type": "mutation",
     "id": "TRUST_ME",
     "name": { "str": "Trust Me" },
