@@ -1,8 +1,8 @@
 [
-	{
+  {
     "type": "mutation",
     "id": "HOMULLUS_SKIN_1",
-    "name": { "str": "mannequin skin" },
+    "name": { "str": "Mannequin Skin" },
     "points": 0,
     "visibility": 2,
     "ugliness": 0,
@@ -14,7 +14,7 @@
   {
     "type": "mutation",
     "id": "HOMULLUS_SKIN_2",
-    "name": { "str": "porcelain skin" },
+    "name": { "str": "Porcelain Skin" },
     "points": 2,
     "visibility": 10,
     "ugliness": -3,
@@ -41,12 +41,12 @@
   {
     "type": "mutation",
     "id": "HOMULLUS_SKIN_3",
-    "name": { "str": "latex skin" },
+    "name": { "str": "Latex Skin" },
     "points": 3,
     "visibility": 10,
     "ugliness": -6,
     "mixed_effect": true,
-    "description": "Your skin has become latex like.  It provides some additional protection and attractiveness but heals at a much slower rate.",
+    "description": "Your skin has become latex-like.  It provides some additional protection and attractiveness but heals at a much slower rate.",
     "types": [ "SKIN" ],
     "prereqs": [ "HOMULLUS_SKIN_2" ],
     "threshreq": [ "THRESH_HOMULLUS" ],
@@ -106,7 +106,7 @@
     "points": 0,
     "visibility": 0,
     "ugliness": 0,
-    "description": "Once per season you may engage in a strenous ritual to reconstruct the mind of someone who's mind was destroyed in the Cataclysm.",
+    "description": "Once per season, you may engage in a strenuous ritual to reconstruct the mind of someone whose mind was destroyed in the Cataclysm.",
     "category": [ "HOMULLUS" ],
     "threshreq": [ "THRESH_HOMULLUS" ],
     "spells_learned": [ [ "rebuild_mind", 1 ] ]
@@ -169,7 +169,12 @@
     "ugliness": 0,
     "description": "The Homullus gains the ability to stop emitting scent at will.  They can use this to control when scent tracking creatures will be able to find them.",
     "category": [ "HOMULLUS" ],
-    "transform": { "target": "NO_TRACE_YET_I_WISH_active", "msg_transform": "Your body stops producing scent.", "active": true, "moves": 10 },
+    "transform": {
+      "target": "NO_TRACE_YET_I_WISH_active",
+      "msg_transform": "Your body stops producing scent.",
+      "active": true,
+      "moves": 10
+    },
     "active": true
   },
   {
