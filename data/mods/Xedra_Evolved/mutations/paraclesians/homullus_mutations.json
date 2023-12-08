@@ -69,7 +69,7 @@
   {
     "type": "mutation",
     "id": "SUMMON_FERAL",
-    "name": { "str": "Summon the lost and the damned" },
+    "name": { "str": "Lost and the Damned" },
     "points": 0,
     "visibility": 0,
     "ugliness": 0,
@@ -102,7 +102,7 @@
   {
     "type": "mutation",
     "id": "CURE_FERAL",
-    "name": { "str": "Rebuild the shattered Mind" },
+    "name": { "str": "Rebuild the Shattered Mind" },
     "points": 0,
     "visibility": 0,
     "ugliness": 0,
@@ -212,7 +212,7 @@
   {
     "type": "mutation",
     "id": "DEATH_IS_BUT_A_DOOR",
-    "name": { "str": "Death is but a door" },
+    "name": { "str": "Death Is But A Door" },
     "points": 7,
     "visibility": 0,
     "ugliness": 0,
