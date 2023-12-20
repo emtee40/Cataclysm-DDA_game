@@ -835,10 +835,10 @@ void overmap::unserialize_omap( const JsonValue &jsin, const cata_path &json_pat
 
         // If this is not a shore, we'll make our subsurface ocean cubes and beds.
         if( !shore ) {
-            for( int z = -1; z > settings->overmap_ocean.ocean_depth; z-- ) {
+            for( int z = -1; z > settings->overmap_ocean->ocean_depth; z-- ) {
                 ter_set( tripoint_om_omt( p.xy(), z ), oter_ocean_water_cube );
             }
-            ter_set( tripoint_om_omt( p.xy(), settings->overmap_ocean.ocean_depth ), oter_ocean_bed );
+            ter_set( tripoint_om_omt( p.xy(), settings->overmap_ocean->ocean_depth ), oter_ocean_bed );
             layer[p.z() + OVERMAP_DEPTH].terrain[p.x()][p.y()] = oter_ocean_surface;
         }
     }

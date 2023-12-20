@@ -182,7 +182,11 @@ struct overmap_feature_flag_settings {
     overmap_feature_flag_settings() = default;
 };
 
-struct overmap_forest_settings {
+om_settings_forest_id const bogus_forest_id;
+
+struct om_settings_forest {
+    om_settings_forest() = default;
+
     double noise_threshold_forest = 0.25;
     double noise_threshold_forest_thick = 0.3;
     double noise_threshold_swamp_adjacent_water = 0.3;
@@ -190,13 +194,66 @@ struct overmap_forest_settings {
     int river_floodplain_buffer_distance_min = 3;
     int river_floodplain_buffer_distance_max = 15;
 
-    overmap_forest_settings() = default;
+    om_settings_forest_id id;
+    std::vector<std::pair<om_settings_forest_id, mod_id>> src;
+    bool was_loaded = false;
+    static void load_om_settings_forest( const JsonObject &jo, const std::string &src );
+    void load( const JsonObject &jo, std:: string_view );
+    const std::vector<om_settings_forest> &get_all();
+    bool is_valid() const;
+    static void reset_om_settings_forest();
 };
+
+om_settings_ravine_id const bogus_ravine_id;
+
+struct om_settings_ravine {
+    om_settings_ravine() = default;
+
+    int num_ravines = 0;
+    int ravine_range = 45;
+    int ravine_width = 1;
+    int ravine_depth = -3;
+
+    om_settings_ravine_id id;
+    std::vector<std::pair<om_settings_ravine_id, mod_id>> src;
+    bool was_loaded = false;
+    static void load_om_settings_ravine( const JsonObject &jo, const std::string &src );
+    void load( const JsonObject &jo, std:: string_view );
+    const std::vector<om_settings_ravine> &get_all();
+    bool is_valid() const;
+    static void reset_om_settings_ravine();
+};
+
+
 
 struct shore_extendable_overmap_terrain_alias {
     std::string overmap_terrain;
     ot_match_type match_type = ot_match_type::exact;
     oter_str_id alias;
+};
+
+om_settings_ocean_id const bogus_ocean_id;
+
+struct om_settings_ocean {
+    om_settings_ocean() = default;
+
+    double noise_threshold_ocean = 0.25;
+    int ocean_size_min = 100;
+    int ocean_depth = -9;
+    int ocean_start_north = 500;
+    int ocean_start_east = 10;
+    int ocean_start_west = 1000;
+    int ocean_start_south = 0;
+
+    om_settings_ocean_id id;
+    std::vector<std::pair<om_settings_ocean_id, mod_id>> src;
+    bool was_loaded = false;
+    static void load_om_settings_ocean( const JsonObject &jo, const std::string &src );
+    void load( const JsonObject &jo, std:: string_view );
+    const std::vector<om_settings_ocean> &get_all();
+    bool is_valid() const;
+    void deserialize( const JsonObject &jo );
+    static void reset_om_settings_ocean();
 };
 
 struct overmap_lake_settings {
@@ -209,27 +266,6 @@ struct overmap_lake_settings {
 
     void finalize();
     overmap_lake_settings() = default;
-};
-
-struct overmap_ocean_settings {
-    double noise_threshold_ocean = 0.25;
-    int ocean_size_min = 100;
-    int ocean_depth = -9;
-    int ocean_start_north = 0;
-    int ocean_start_east = 10;
-    int ocean_start_west = 0;
-    int ocean_start_south = 0;
-    overmap_ocean_settings() = default;
-};
-
-struct overmap_ravine_settings {
-    int num_ravines = 0;
-    int ravine_range = 45;
-    int ravine_width = 1;
-    int ravine_depth = -3;
-
-    void finalize();
-    overmap_ravine_settings() = default;
 };
 
 struct map_extras {
@@ -270,10 +306,10 @@ struct regional_settings {
     forest_trail_settings forest_trail;
     weather_generator weather;
     overmap_feature_flag_settings overmap_feature_flag;
-    overmap_forest_settings overmap_forest;
+    om_settings_forest_id overmap_forest;
+    om_settings_ravine_id overmap_ravine;
+    om_settings_ocean_id overmap_ocean;
     overmap_lake_settings overmap_lake;
-    overmap_ocean_settings overmap_ocean;
-    overmap_ravine_settings overmap_ravine;
     region_terrain_and_furniture_settings region_terrain_and_furniture;
 
     std::unordered_map<std::string, map_extras> region_extras;

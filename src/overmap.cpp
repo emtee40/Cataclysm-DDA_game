@@ -4543,9 +4543,9 @@ void overmap::place_forests()
             const float n = f.noise_at( p.xy() );
 
             // If the noise here meets our threshold, turn it into a forest.
-            if( n + forest_size_adjust > settings->overmap_forest.noise_threshold_forest_thick ) {
+            if( n + forest_size_adjust > settings->overmap_forest->noise_threshold_forest_thick ) {
                 ter_set( p, oter_forest_thick );
-            } else if( n + forest_size_adjust > settings->overmap_forest.noise_threshold_forest ) {
+            } else if( n + forest_size_adjust > settings->overmap_forest->noise_threshold_forest ) {
                 ter_set( p, oter_forest );
             }
         }
@@ -4727,10 +4727,10 @@ float overmap::calculate_ocean_gradient( const point_om_omt &p, const point_abs_
 
 void overmap::place_oceans()
 {
-    int northern_ocean = settings->overmap_ocean.ocean_start_north;
-    int eastern_ocean = settings->overmap_ocean.ocean_start_east;
-    int western_ocean = settings->overmap_ocean.ocean_start_west;
-    int southern_ocean = settings->overmap_ocean.ocean_start_south;
+    int northern_ocean = settings->overmap_ocean->ocean_start_north;
+    int eastern_ocean = settings->overmap_ocean->ocean_start_east;
+    int western_ocean = settings->overmap_ocean->ocean_start_west;
+    int southern_ocean = settings->overmap_ocean->ocean_start_south;
 
     const om_noise::om_noise_layer_ocean f( global_base_point(), g->get_seed() );
     const point_abs_om this_om = pos();
@@ -4750,7 +4750,7 @@ void overmap::place_oceans()
             // It's too soon!  Too soon for an ocean!!  ABORT!!!
             return false;
         }
-        return f.noise_at( p ) + ocean_adjust > settings->overmap_ocean.noise_threshold_ocean;
+        return f.noise_at( p ) + ocean_adjust > settings->overmap_ocean->noise_threshold_ocean;
     };
 
     const oter_id ocean_surface( "ocean_surface" );
@@ -4779,7 +4779,7 @@ void overmap::place_oceans()
             // you could change this, if you want little tiny oceans all over the place.
             // I'm not sure why you'd want that.  Use place_lakes, my friend.
             if( ocean_points.size() < static_cast<std::vector<point>::size_type>
-                ( settings->overmap_ocean.ocean_size_min ) ) {
+                ( settings->overmap_ocean->ocean_size_min ) ) {
                 continue;
             }
 
@@ -4815,10 +4815,10 @@ void overmap::place_oceans()
                 ter_set( tripoint_om_omt( p, 0 ), shore ? ocean_shore : ocean_surface );
 
                 if( !shore ) {
-                    for( int z = -1; z > settings->overmap_ocean.ocean_depth; z-- ) {
+                    for( int z = -1; z > settings->overmap_ocean->ocean_depth; z-- ) {
                         ter_set( tripoint_om_omt( p, z ), ocean_water_cube );
                     }
-                    ter_set( tripoint_om_omt( p, settings->overmap_ocean.ocean_depth ), ocean_bed );
+                    ter_set( tripoint_om_omt( p, settings->overmap_ocean->ocean_depth ), ocean_bed );
                 }
             }
 
@@ -5037,8 +5037,8 @@ void overmap::place_swamps()
                 std::vector<point_om_omt> buffered_points =
                     closest_points_first(
                         pos.xy(),
-                        rng( settings->overmap_forest.river_floodplain_buffer_distance_min,
-                             settings->overmap_forest.river_floodplain_buffer_distance_max ) );
+                        rng( settings->overmap_forest->river_floodplain_buffer_distance_min,
+                             settings->overmap_forest->river_floodplain_buffer_distance_max ) );
                 for( const point_om_omt &p : buffered_points )  {
                     if( !inbounds( p ) ) {
                         continue;
@@ -5064,12 +5064,12 @@ void overmap::place_swamps()
             // If this was a part of our buffered floodplain, and the noise here meets the threshold, and the one_in rng
             // triggers, then we should flood this location and make it a swamp.
             const bool should_flood = ( floodplain[x][y] > 0 && !one_in( floodplain[x][y] ) && f.noise_at( { x, y } )
-                                        > settings->overmap_forest.noise_threshold_swamp_adjacent_water );
+                                        > settings->overmap_forest->noise_threshold_swamp_adjacent_water );
 
             // If this location meets our isolated swamp threshold, regardless of floodplain values, we'll make it
             // into a swamp.
             const bool should_isolated_swamp = f.noise_at( pos.xy() ) >
-                                               settings->overmap_forest.noise_threshold_swamp_isolated;
+                                               settings->overmap_forest->noise_threshold_swamp_isolated;
             if( should_flood || should_isolated_swamp )  {
                 ter_set( pos, oter_forest_water );
             }
@@ -5333,7 +5333,7 @@ void overmap::calculate_forestosity()
     // make sure forest size never totally overwhelms the map
     forest_size_adjust = std::min( forest_size_adjust,
                                    get_option<float>( "OVERMAP_FOREST_LIMIT" ) - static_cast<float>
-                                   ( settings->overmap_forest.noise_threshold_forest ) );
+                                   ( settings->overmap_forest->noise_threshold_forest ) );
 }
 
 void overmap::calculate_urbanity()
@@ -5844,7 +5844,7 @@ bool overmap::build_slimepit( const tripoint_om_omt &origin, int s )
 
 void overmap::place_ravines()
 {
-    if( settings->overmap_ravine.num_ravines == 0 ) {
+    if( settings->overmap_ravine->num_ravines == 0 ) {
         return;
     }
 
@@ -5864,20 +5864,20 @@ void overmap::place_ravines()
     // A path is generated for each of ravine, and all its constituent points are stored within the
     // rift_points set. In the code block below, the set is then used to determine edges and place the
     // actual terrain pieces of the ravine.
-    for( int n = 0; n < settings->overmap_ravine.num_ravines; n++ ) {
-        const point_rel_omt offset( rng( -settings->overmap_ravine.ravine_range,
-                                         settings->overmap_ravine.ravine_range ),
-                                    rng( -settings->overmap_ravine.ravine_range, settings->overmap_ravine.ravine_range ) );
+    for( int n = 0; n < settings->overmap_ravine->num_ravines; n++ ) {
+        const point_rel_omt offset( rng( -settings->overmap_ravine->ravine_range,
+                                         settings->overmap_ravine->ravine_range ),
+                                    rng( -settings->overmap_ravine->ravine_range, settings->overmap_ravine->ravine_range ) );
         const point_om_omt origin( rng( 0, OMAPX ), rng( 0, OMAPY ) );
         const point_om_omt destination = origin + offset;
-        if( !inbounds( destination, settings->overmap_ravine.ravine_width * 3 ) ) {
+        if( !inbounds( destination, settings->overmap_ravine->ravine_width * 3 ) ) {
             continue;
         }
         const auto path = pf::greedy_path( origin, destination, point_om_omt( OMAPX, OMAPY ), estimate );
         for( const auto &node : path.nodes ) {
-            for( int i = 1 - settings->overmap_ravine.ravine_width; i < settings->overmap_ravine.ravine_width;
+            for( int i = 1 - settings->overmap_ravine->ravine_width; i < settings->overmap_ravine->ravine_width;
                  i++ ) {
-                for( int j = 1 - settings->overmap_ravine.ravine_width; j < settings->overmap_ravine.ravine_width;
+                for( int j = 1 - settings->overmap_ravine->ravine_width; j < settings->overmap_ravine->ravine_width;
                      j++ ) {
                     const point_om_omt n = node.pos + point( j, i );
                     if( inbounds( n, 1 ) ) {
@@ -5901,8 +5901,8 @@ void overmap::place_ravines()
                 }
             }
         }
-        for( int z = 0; z >= settings->overmap_ravine.ravine_depth; z-- ) {
-            if( z == settings->overmap_ravine.ravine_depth ) {
+        for( int z = 0; z >= settings->overmap_ravine->ravine_depth; z-- ) {
+            if( z == settings->overmap_ravine->ravine_depth ) {
                 ter_set( tripoint_om_omt( p, z ), edge ? rift_floor_edge : rift_floor );
             } else {
                 ter_set( tripoint_om_omt( p, z ), edge ? rift_edge : rift );

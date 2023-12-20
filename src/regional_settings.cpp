@@ -34,6 +34,51 @@ void read_and_set_or_throw( const JsonObject &jo, const std::string &member, T &
     }
 }
 
+namespace
+{
+generic_factory<om_settings_forest> om_forest_factory( "om_settings_forest" );
+} // namespace
+
+template<>
+const om_settings_forest &string_id<om_settings_forest>::obj() const
+{
+    return om_forest_factory.obj( *this );
+}
+template<>
+bool string_id<om_settings_forest>::is_valid() const
+{
+    return om_forest_factory.is_valid( *this );
+}
+void om_settings_forest::load_om_settings_forest( const JsonObject &jo, const std::string &src )
+{
+    om_forest_factory.load( jo, src );
+}
+void om_settings_forest::load( const JsonObject &jo, const std::string_view )
+{
+    // if these settings aren't loaded, we just revert to the defaults.
+    optional( jo, was_loaded, "noise_threshold_forest", noise_threshold_forest );
+    optional( jo, was_loaded, "noise_threshold_forest_thick", noise_threshold_forest_thick );
+    optional( jo, was_loaded, "noise_threshold_swamp_adjacent_water",
+              noise_threshold_swamp_adjacent_water );
+    optional( jo, was_loaded, "noise_threshold_swamp_isolated", noise_threshold_swamp_isolated );
+    optional( jo, was_loaded, "river_floodplain_buffer_distance_min",
+              river_floodplain_buffer_distance_min );
+    optional( jo, was_loaded, "river_floodplain_buffer_distance_max",
+              river_floodplain_buffer_distance_max );
+}
+const std::vector<om_settings_forest> &om_settings_forest::get_all()
+{
+    return om_forest_factory.get_all();
+}
+void om_settings_forest::reset_om_settings_forest()
+{
+    om_forest_factory.reset();
+}
+bool om_settings_forest::is_valid() const
+{
+    return om_forest_factory.is_valid( this->id );
+}
+
 static void load_forest_biome_component(
     const JsonObject &jo, forest_biome_component &forest_biome_component, const bool overlay )
 {
@@ -231,6 +276,48 @@ static void load_forest_trail_settings( const JsonObject &jo,
     }
 }
 
+
+namespace
+{
+generic_factory<om_settings_ravine> om_ravine_factory( "om_settings_ravine" );
+} // namespace
+
+template<>
+const om_settings_ravine &string_id<om_settings_ravine>::obj() const
+{
+    return om_ravine_factory.obj( *this );
+}
+template<>
+bool string_id<om_settings_ravine>::is_valid() const
+{
+    return om_ravine_factory.is_valid( *this );
+}
+void om_settings_ravine::load_om_settings_ravine( const JsonObject &jo, const std::string &src )
+{
+    om_ravine_factory.load( jo, src );
+}
+void om_settings_ravine::load( const JsonObject &jo, const std::string_view )
+{
+    // if these settings aren't loaded, we just revert to the defaults.
+    optional( jo, was_loaded, "num_ravines", num_ravines );
+    optional( jo, was_loaded, "ravine_width", ravine_width );
+    optional( jo, was_loaded, "ravine_range",
+              ravine_range );
+    optional( jo, was_loaded, "ravine_depth", ravine_depth );
+}
+const std::vector<om_settings_ravine> &om_settings_ravine::get_all()
+{
+    return om_ravine_factory.get_all();
+}
+void om_settings_ravine::reset_om_settings_ravine()
+{
+    om_ravine_factory.reset();
+}
+bool om_settings_ravine::is_valid() const
+{
+    return om_ravine_factory.is_valid( this->id );
+}
+
 static void load_overmap_feature_flag_settings( const JsonObject &jo,
         overmap_feature_flag_settings &overmap_feature_flag_settings,
         const bool strict, const bool overlay )
@@ -276,50 +363,48 @@ static void load_overmap_feature_flag_settings( const JsonObject &jo,
     }
 }
 
-static void load_overmap_forest_settings(
-    const JsonObject &jo, overmap_forest_settings &overmap_forest_settings, const bool strict,
-    const bool overlay )
-{
-    if( !jo.has_object( "overmap_forest_settings" ) ) {
-        if( strict ) {
-            jo.throw_error( "\"overmap_forest_settings\": { … } required for default" );
-        }
-    } else {
-        JsonObject overmap_forest_settings_jo = jo.get_object( "overmap_forest_settings" );
-        read_and_set_or_throw<double>( overmap_forest_settings_jo, "noise_threshold_forest",
-                                       overmap_forest_settings.noise_threshold_forest, !overlay );
-        read_and_set_or_throw<double>( overmap_forest_settings_jo, "noise_threshold_forest_thick",
-                                       overmap_forest_settings.noise_threshold_forest_thick, !overlay );
-        read_and_set_or_throw<double>( overmap_forest_settings_jo, "noise_threshold_swamp_adjacent_water",
-                                       overmap_forest_settings.noise_threshold_swamp_adjacent_water, !overlay );
-        read_and_set_or_throw<double>( overmap_forest_settings_jo, "noise_threshold_swamp_isolated",
-                                       overmap_forest_settings.noise_threshold_swamp_isolated, !overlay );
-        read_and_set_or_throw<int>( overmap_forest_settings_jo, "river_floodplain_buffer_distance_min",
-                                    overmap_forest_settings.river_floodplain_buffer_distance_min, !overlay );
-        read_and_set_or_throw<int>( overmap_forest_settings_jo, "river_floodplain_buffer_distance_max",
-                                    overmap_forest_settings.river_floodplain_buffer_distance_max, !overlay );
-    }
-}
 
-static void load_overmap_ravine_settings(
-    const JsonObject &jo, overmap_ravine_settings &overmap_ravine_settings, const bool strict,
-    const bool overlay )
+namespace
 {
-    if( !jo.has_object( "overmap_ravine_settings" ) ) {
-        if( strict ) {
-            jo.throw_error( "\"overmap_ravine_settings\": { … } required for default" );
-        }
-    } else {
-        JsonObject overmap_ravine_settings_jo = jo.get_object( "overmap_ravine_settings" );
-        read_and_set_or_throw<int>( overmap_ravine_settings_jo, "num_ravines",
-                                    overmap_ravine_settings.num_ravines, !overlay );
-        read_and_set_or_throw<int>( overmap_ravine_settings_jo, "ravine_range",
-                                    overmap_ravine_settings.ravine_range, !overlay );
-        read_and_set_or_throw<int>( overmap_ravine_settings_jo, "ravine_width",
-                                    overmap_ravine_settings.ravine_width, !overlay );
-        read_and_set_or_throw<int>( overmap_ravine_settings_jo, "ravine_depth",
-                                    overmap_ravine_settings.ravine_depth, !overlay );
-    }
+generic_factory<om_settings_ocean> om_ocean_factory( "om_settings_ocean" );
+} // namespace
+
+template<>
+const om_settings_ocean &string_id<om_settings_ocean>::obj() const
+{
+    return om_ocean_factory.obj( *this );
+}
+template<>
+bool string_id<om_settings_ocean>::is_valid() const
+{
+    return om_ocean_factory.is_valid( *this );
+}
+void om_settings_ocean::load_om_settings_ocean( const JsonObject &jo, const std::string &src )
+{
+    om_ocean_factory.load( jo, src );
+}
+void om_settings_ocean::load( const JsonObject &jo, const std::string_view )
+{
+    // if these settings aren't loaded, we just revert to the defaults.
+    optional( jo, was_loaded, "noise_threshold_ocean", noise_threshold_ocean );
+    optional( jo, was_loaded, "ocean_size_min", ocean_size_min );
+    optional( jo, was_loaded, "ocean_depth", ocean_depth );
+    optional( jo, was_loaded, "ocean_start_north", ocean_start_north );
+    optional( jo, was_loaded, "ocean_start_east", ocean_start_east );
+    optional( jo, was_loaded, "ocean_start_west", ocean_start_west );
+    optional( jo, was_loaded, "ocean_start_south", ocean_start_south );
+}
+const std::vector<om_settings_ocean> &om_settings_ocean::get_all()
+{
+    return om_ocean_factory.get_all();
+}
+void om_settings_ocean::reset_om_settings_ocean()
+{
+    om_ocean_factory.reset();
+}
+bool om_settings_ocean::is_valid() const
+{
+    return om_ocean_factory.is_valid( this->id );
 }
 
 static void load_overmap_lake_settings( const JsonObject &jo,
@@ -366,33 +451,6 @@ static void load_overmap_lake_settings( const JsonObject &jo,
                 overmap_lake_settings.shore_extendable_overmap_terrain_aliases.emplace_back( alias );
             }
         }
-    }
-}
-
-static void load_overmap_ocean_settings( const JsonObject &jo,
-        overmap_ocean_settings &overmap_ocean_settings,
-        const bool strict, const bool overlay )
-{
-    if( !jo.has_object( "overmap_ocean_settings" ) && get_option<bool>( "OVERMAP_PLACE_OCEANS" ) ) {
-        if( strict ) {
-            jo.throw_error( "OVERMAP_PLACE_OCEANS set to true, but \"overmap_ocean_settings\" not defined in region_settings" );
-        }
-    } else {
-        JsonObject overmap_ocean_settings_jo = jo.get_object( "overmap_ocean_settings" );
-        read_and_set_or_throw<double>( overmap_ocean_settings_jo, "noise_threshold_ocean",
-                                       overmap_ocean_settings.noise_threshold_ocean, !overlay );
-        read_and_set_or_throw<int>( overmap_ocean_settings_jo, "ocean_size_min",
-                                    overmap_ocean_settings.ocean_size_min, !overlay );
-        read_and_set_or_throw<int>( overmap_ocean_settings_jo, "ocean_depth",
-                                    overmap_ocean_settings.ocean_depth, !overlay );
-        read_and_set_or_throw<int>( overmap_ocean_settings_jo, "ocean_start_north",
-                                    overmap_ocean_settings.ocean_start_north, !overlay );
-        read_and_set_or_throw<int>( overmap_ocean_settings_jo, "ocean_start_east",
-                                    overmap_ocean_settings.ocean_start_east, !overlay );
-        read_and_set_or_throw<int>( overmap_ocean_settings_jo, "ocean_start_west",
-                                    overmap_ocean_settings.ocean_start_west, !overlay );
-        read_and_set_or_throw<int>( overmap_ocean_settings_jo, "ocean_start_south",
-                                    overmap_ocean_settings.ocean_start_south, !overlay );
     }
 }
 
@@ -558,13 +616,13 @@ void load_region_settings( const JsonObject &jo )
 
     load_overmap_feature_flag_settings( jo, new_region.overmap_feature_flag, strict, false );
 
-    load_overmap_forest_settings( jo, new_region.overmap_forest, strict, false );
+    optional( jo, false, "overmap_forest_settings", new_region.overmap_forest, bogus_forest_id );
+
+    optional( jo, false, "overmap_ravine_settings", new_region.overmap_ravine, bogus_ravine_id );
+
+    optional( jo, false, "overmap_ocean_settings", new_region.overmap_ocean, bogus_ocean_id );
 
     load_overmap_lake_settings( jo, new_region.overmap_lake, strict, false );
-
-    load_overmap_ocean_settings( jo, new_region.overmap_ocean, strict, false );
-
-    load_overmap_ravine_settings( jo, new_region.overmap_ravine, strict, false );
 
     load_region_terrain_and_furniture_settings( jo, new_region.region_terrain_and_furniture, strict,
             false );
@@ -577,6 +635,18 @@ void check_region_settings()
     for( const std::pair<const std::string, regional_settings> &p : region_settings_map ) {
         const std::string &region_name = p.first;
         const regional_settings &region = p.second;
+        if( !region.overmap_forest.is_valid() ) {
+            debugmsg( "Region '%s' has invalid forest settings object '%s'", region_name,
+                      region.overmap_forest.str() );
+        }
+        if( !region.overmap_ravine.is_valid() ) {
+            debugmsg( "Region '%s' has invalid ravine settings object '%s'", region_name,
+                      region.overmap_ravine.str() );
+        }
+        if( !region.overmap_ocean.is_valid() ) {
+            debugmsg( "Region '%s' has invalid ocean settings object '%s'", region_name,
+                      region.overmap_ocean.str() );
+        }
         for( const std::pair<const std::string, map_extras> &p2 : region.region_extras ) {
             const std::string extras_name = p2.first;
             const map_extras &extras = p2.second;
@@ -707,11 +777,14 @@ void apply_region_overlay( const JsonObject &jo, regional_settings &region )
 
     load_overmap_feature_flag_settings( jo, region.overmap_feature_flag, false, true );
 
-    load_overmap_forest_settings( jo, region.overmap_forest, false, true );
+    optional( jo, region.overmap_forest->was_loaded, "overmap_forest_settings",
+              region.overmap_forest, bogus_forest_id );
+    optional( jo, region.overmap_ravine->was_loaded, "overmap_ravine_settings",
+              region.overmap_ravine, bogus_ravine_id );
+    optional( jo, region.overmap_ocean->was_loaded, "overmap_ocean_settings",
+              region.overmap_ocean, bogus_ocean_id );
 
     load_overmap_lake_settings( jo, region.overmap_lake, false, true );
-
-    load_overmap_ravine_settings( jo, region.overmap_ravine, false, true );
 
     load_region_terrain_and_furniture_settings( jo, region.region_terrain_and_furniture, false, true );
 }

@@ -415,6 +415,9 @@ void DynamicDataLoader::initialize()
     add( "construction_group", &construction_groups::load );
     add( "construction", &load_construction );
     add( "mapgen", &load_mapgen );
+    add( "om_settings_forest", &om_settings_forest::load_om_settings_forest );
+    add( "om_settings_ravine", &om_settings_ravine::load_om_settings_ravine );
+    add( "om_settings_ocean", &om_settings_ocean::load_om_settings_ocean );
     add( "overmap_land_use_code", &overmap_land_use_codes::load );
     add( "overmap_connection", &overmap_connections::load );
     add( "overmap_location", &overmap_locations::load );
@@ -605,6 +608,9 @@ void DynamicDataLoader::unload_data()
     mutations_category.clear();
     npc_class::reset_npc_classes();
     npc_template::reset();
+    om_settings_forest::reset_om_settings_forest();
+    om_settings_ravine::reset_om_settings_ravine();
+    om_settings_ocean::reset_om_settings_ocean();
     option_slider::reset();
     overmap_connections::reset();
     overmap_land_use_codes::reset();
