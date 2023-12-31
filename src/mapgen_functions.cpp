@@ -52,8 +52,6 @@ static const oter_str_id oter_river_west( "river_west" );
 static const oter_str_id oter_slimepit( "slimepit" );
 static const oter_str_id oter_slimepit_down( "slimepit_down" );
 
-static const vspawn_id VehicleSpawn_default_subway_deadend( "default_subway_deadend" );
-
 class npc_template;
 
 tripoint rotate_point( const tripoint &p, int rotations )
