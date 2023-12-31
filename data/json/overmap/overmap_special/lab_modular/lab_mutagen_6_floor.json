@@ -127,7 +127,10 @@
       { "point": [ 1, 2, -6 ], "overmap": "lab_2x2_MUT_tier_2_SE_north" },
       { "point": [ -4, 0, 0 ], "locations": [ "land", "road" ] }
     ],
-    "connections": [ { "point": [ -4, 0, 0 ], "connection": "local_road", "terrain": "road", "from": [ -3, 0, 0 ] }, { "point": [ 2, 0, -4 ], "connection": "subway_tunnel", "terrain": "lab_subway", "from": [ 1, 0, -4 ] } ],
+    "connections": [
+      { "point": [ -4, 0, 0 ], "connection": "local_road", "terrain": "road", "from": [ -3, 0, 0 ] },
+      { "point": [ 2, 0, -4 ], "connection": "subway_tunnel", "terrain": "lab_subway", "from": [ 1, 0, -4 ] }
+    ],
     "city_distance": [ 3, -1 ],
     "city_sizes": [ 1, 16 ],
     "occurrences": [ 30, 100 ],

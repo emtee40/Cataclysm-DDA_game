@@ -3757,7 +3757,10 @@
     "city_distance": [ 1, -1 ],
     "occurrences": [ 0, 3 ],
     "rotate": false,
-    "connections": [ { "point": [ 0, -1, -2 ], "terrain": "subway", "connection": "subway_tunnel", "from": [ 0, 0, -2 ] }, { "point": [ 0, 2, -4 ], "terrain": "lab_subway", "connection": "subway_tunnel", "from": [ 0, 1, -4 ] } ]
+    "connections": [
+      { "point": [ 0, -1, -2 ], "terrain": "subway", "connection": "subway_tunnel", "from": [ 0, 0, -2 ] },
+      { "point": [ 0, 2, -4 ], "terrain": "lab_subway", "connection": "subway_tunnel", "from": [ 0, 1, -4 ] }
+    ]
   },
   {
     "type": "overmap_special",
