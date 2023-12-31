@@ -131,11 +131,16 @@
   },
   {
     "type": "overmap_terrain",
-    "id": "sub_station",
+    "abstract": "generic_sub_station",
     "name": "subway station",
     "sym": "S",
     "color": "yellow",
-    "see_cost": 5,
+    "see_cost": 5
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "sub_station",
+    "copy-from": "generic_sub_station",
     "extras": "build",
     "mondensity": 2,
     "flags": [ "KNOWN_DOWN", "SIDEWALK" ]
@@ -143,10 +148,8 @@
   {
     "type": "overmap_terrain",
     "id": "sub_station_roof",
+    "copy-from": "generic_sub_station",
     "name": "subway station roof",
-    "sym": "S",
-    "color": "yellow",
-    "see_cost": 5,
     "extras": "build",
     "mondensity": 2,
     "flags": [ "KNOWN_DOWN", "SIDEWALK" ]
@@ -154,53 +157,48 @@
   {
     "type": "overmap_terrain",
     "id": "sewer_sub_station",
-    "name": "subway station (sewer level)",
-    "sym": "S",
-    "color": "yellow",
-    "see_cost": 5,
+    "copy-from": "generic_sub_station",
     "extras": "subway",
     "flags": [ "KNOWN_UP", "KNOWN_DOWN" ]
   },
   {
     "type": "overmap_terrain",
     "id": "underground_sub_station",
-    "name": "subway station (underground level)",
-    "sym": "S",
-    "color": "yellow",
-    "see_cost": 5,
+    "copy-from": "generic_sub_station",
     "extras": "subway",
     "flags": [ "KNOWN_UP" ]
   },
   {
     "type": "overmap_terrain",
-    "id": "subway",
+    "abstract": "generic_subway",
     "name": "subway",
     "color": "dark_gray",
     "see_cost": 5,
+    "travel_cost_type": "dirt_road",
+    "flags": [ "REQUIRES_PREDECESSOR" ]
+  },
+  {
+    "type": "overmap_terrain",
+    "id": "subway",
+    "copy-from": "generic_subway",
     "extras": "subway",
     "spawns": { "group": "GROUP_SUBWAY", "population": [ 1, 3 ], "chance": 66 },
-    "travel_cost_type": "dirt_road",
-    "flags": [ "LINEAR", "REQUIRES_PREDECESSOR" ]
+    "extend": { "flags": [ "LINEAR" ] }
   },
   {
     "type": "overmap_terrain",
     "id": "lab_subway",
-    "name": "subway",
-    "color": "dark_gray",
-    "see_cost": 5,
+    "copy-from": "generic_subway",
     "extras": "lab_subway",
     "spawns": { "group": "GROUP_SUBWAY_LAB", "population": [ 1, 3 ], "chance": 50 },
-    "travel_cost_type": "dirt_road",
-    "flags": [ "LINEAR", "REQUIRES_PREDECESSOR" ]
+    "extend": { "flags": [ "LINEAR" ] }
   },
   {
     "type": "overmap_terrain",
     "id": [ "sub_ramp_above", "sub_ramp_below" ],
+    "copy-from": "generic_subway",
     "name": "subway ramp",
-    "sym": "S",
-    "color": "dark_gray",
-    "see_cost": 5,
-    "flags": [ "REQUIRES_PREDECESSOR" ]
+    "sym": "S"
   },
   {
     "type": "overmap_terrain",
