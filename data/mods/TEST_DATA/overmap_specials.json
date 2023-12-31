@@ -286,10 +286,7 @@
       [
         {
           "name": "subway_chunk_at_-4",
-          "chunk": [
-            { "overmap": "microlab_sub_entry", "pos": [ 0, 0, 0 ] },
-            { "overmap": "microlab_sub_station", "pos": [ 0, -1, 0 ] }
-          ],
+          "chunk": [ { "overmap": "microlab_sub_entry", "pos": [ 0, 0, 0 ] }, { "overmap": "microlab_sub_station", "pos": [ 0, -1, 0 ] } ],
           "max": 1
         }
       ],
