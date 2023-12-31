@@ -5765,8 +5765,9 @@ bool overmap::build_lab(
 
             adjacent_labs = 0;
             for( const point &offset : four_adjacent_offsets ) {
-                if( is_ot_match( "lab", ter( train + offset ), ot_match_type::contains ) &&
-                    !( oter_type_lab_subway == ter( train + offset ).get_type_id() ) ) ) {
+                const oter_id offset_oter = ter( train + offset );
+                if( is_ot_match( "lab", offset_oter, ot_match_type::contains ) &&
+                    !( oter_type_lab_subway == offset_oter->get_type_id() ) ) {
                     ++adjacent_labs;
                 }
             }
@@ -5779,8 +5780,9 @@ bool overmap::build_lab(
             lab_train_points->push_back( train.xy() ); // possible train depot
             // next is rail connection
             for( const point &offset : four_adjacent_offsets ) {
-                if( is_ot_match( "lab", ter( train + offset ), ot_match_type::contains ) &&
-                    !( oter_type_lab_subway == ter( train + offset ).get_type_id() ) ) {
+                const oter_id offset_oter = ter( train + offset );
+                if( is_ot_match( "lab", offset_oter, ot_match_type::contains ) &&
+                    !( oter_type_lab_subway == offset_oter->get_type_id() ) ) {
                     lab_train_points->push_back( train.xy() - offset );
                     break;
                 }
@@ -5801,8 +5803,9 @@ bool overmap::build_lab(
 
             adjacent_labs = 0;
             for( const point &offset : four_adjacent_offsets ) {
-                if( is_ot_match( "lab", ter( cell + offset ), ot_match_type::contains ) &&
-                    !( oter_type_lab_subway == ter( cell + offset ).get_type_id() ) ) {
+                const oter_id offset_oter = ter( cell + offset );
+                if( is_ot_match( "lab", offset_oter, ot_match_type::contains ) &&
+                    !( oter_type_lab_subway == offset_oter->get_type_id() ) ) {
                     ++adjacent_labs;
                 }
             }
