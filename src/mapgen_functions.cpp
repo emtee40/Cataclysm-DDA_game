@@ -52,18 +52,11 @@ static const oter_str_id oter_river_west( "river_west" );
 static const oter_str_id oter_slimepit( "slimepit" );
 static const oter_str_id oter_slimepit_down( "slimepit_down" );
 
-static const ter_str_id ter_t_buffer_stop( "t_buffer_stop" );
 static const ter_str_id ter_t_clay( "t_clay" );
 static const ter_str_id ter_t_dirt( "t_dirt" );
 static const ter_str_id ter_t_grass( "t_grass" );
 static const ter_str_id ter_t_lava( "t_lava" );
 static const ter_str_id ter_t_open_air( "t_open_air" );
-static const ter_str_id ter_t_railroad_rubble( "t_railroad_rubble" );
-static const ter_str_id ter_t_railroad_tie( "t_railroad_tie" );
-static const ter_str_id ter_t_railroad_tie_d( "t_railroad_tie_d" );
-static const ter_str_id ter_t_railroad_track( "t_railroad_track" );
-static const ter_str_id ter_t_railroad_track_d( "t_railroad_track_d" );
-static const ter_str_id ter_t_railroad_track_on_tie( "t_railroad_track_on_tie" );
 static const ter_str_id ter_t_rock( "t_rock" );
 static const ter_str_id ter_t_rock_floor( "t_rock_floor" );
 static const ter_str_id ter_t_sand( "t_sand" );
@@ -75,8 +68,6 @@ static const ter_str_id ter_t_water_dp( "t_water_dp" );
 static const ter_str_id ter_t_water_moving_dp( "t_water_moving_dp" );
 static const ter_str_id ter_t_water_moving_sh( "t_water_moving_sh" );
 static const ter_str_id ter_t_water_sh( "t_water_sh" );
-
-static const vspawn_id VehicleSpawn_default_subway_deadend( "default_subway_deadend" );
 
 class npc_template;
 

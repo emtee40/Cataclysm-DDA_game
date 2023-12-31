@@ -117,16 +117,16 @@ static const oter_type_str_id oter_type_ice_lab_core( "ice_lab_core" );
 static const oter_type_str_id oter_type_ice_lab_stairs( "ice_lab_stairs" );
 static const oter_type_str_id oter_type_lab_core( "lab_core" );
 static const oter_type_str_id oter_type_lab_stairs( "lab_stairs" );
+static const oter_type_str_id oter_type_lab_subway( "lab_subway" );
 static const oter_type_str_id oter_type_railroad_bridge( "railroad_bridge" );
 static const oter_type_str_id oter_type_road( "road" );
 static const oter_type_str_id oter_type_road_nesw_manhole( "road_nesw_manhole" );
+static const oter_type_str_id oter_type_sewer( "sewer" );
+static const oter_type_str_id oter_type_sewer_sub_station( "sewer_sub_station" );
 static const oter_type_str_id oter_type_slimepit_bottom( "slimepit_bottom" );
 static const oter_type_str_id oter_type_slimepit_down( "slimepit_down" );
 static const oter_type_str_id oter_type_solid_earth( "solid_earth" );
-static const oter_type_str_id oter_type_sewer( "sewer" );
-static const oter_type_str_id oter_type_sewer_sub_station( "sewer_sub_station" );
 static const oter_type_str_id oter_type_subway( "subway" );
-static const oter_type_str_id oter_type_lab_subway( "lab_subway" );
 
 static const overmap_location_id overmap_location_land( "land" );
 static const overmap_location_id overmap_location_swamp( "swamp" );
@@ -5766,7 +5766,7 @@ bool overmap::build_lab(
             adjacent_labs = 0;
             for( const point &offset : four_adjacent_offsets ) {
                 if( is_ot_match( "lab", ter( train + offset ), ot_match_type::contains ) &&
-                    !is_ot_match( "lab_subway", ter( train + offset ), ot_match_type::type ) ) {
+                    !( oter_type_lab_subway == ter( train + offset ).get_type_id() ) ) ) {
                     ++adjacent_labs;
                 }
             }
@@ -5780,7 +5780,7 @@ bool overmap::build_lab(
             // next is rail connection
             for( const point &offset : four_adjacent_offsets ) {
                 if( is_ot_match( "lab", ter( train + offset ), ot_match_type::contains ) &&
-                    !is_ot_match( "lab_subway", ter( train + offset ), ot_match_type::type ) ) {
+                    !( oter_type_lab_subway == ter( train + offset ).get_type_id() ) ) {
                     lab_train_points->push_back( train.xy() - offset );
                     break;
                 }
@@ -5802,7 +5802,7 @@ bool overmap::build_lab(
             adjacent_labs = 0;
             for( const point &offset : four_adjacent_offsets ) {
                 if( is_ot_match( "lab", ter( cell + offset ), ot_match_type::contains ) &&
-                    !is_ot_match( "lab_subway", ter( cell + offset ), ot_match_type::type ) ) {
+                    !( oter_type_lab_subway == ter( cell + offset ).get_type_id() ) ) {
                     ++adjacent_labs;
                 }
             }
