@@ -122,7 +122,6 @@ static const oter_type_str_id oter_type_railroad_bridge( "railroad_bridge" );
 static const oter_type_str_id oter_type_road( "road" );
 static const oter_type_str_id oter_type_road_nesw_manhole( "road_nesw_manhole" );
 static const oter_type_str_id oter_type_sewer( "sewer" );
-static const oter_type_str_id oter_type_sewer_sub_station( "sewer_sub_station" );
 static const oter_type_str_id oter_type_slimepit_bottom( "slimepit_bottom" );
 static const oter_type_str_id oter_type_slimepit_down( "slimepit_down" );
 static const oter_type_str_id oter_type_solid_earth( "solid_earth" );
@@ -3572,12 +3571,8 @@ bool overmap::generate_sub( const int z )
             const oter_type_str_id oter_type_here = oter_here.get_type_id();
             const oter_id oter_above = ter_unsafe( p + tripoint_above );
             if( oter_type_here == oter_type_sewer ) {
-                subway_points.emplace_back( p.xy() );
-            }
-            if( oter_type_here == oter_type_sewer_sub_station ) {
-                requires_sub = true;
-            }
-            if( oter_type_here == oter_type_subway || oter_type_here == oter_type_lab_subway ) {
+                sewer_points.emplace_back( p.xy() );
+            } else if( oter_type_here == oter_type_subway || oter_type_here == oter_type_lab_subway ) {
                 subway_points.emplace_back( p.xy() );
             }
 
