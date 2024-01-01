@@ -1,6 +1,7 @@
 #include <memory>
 #include <vector>
 
+#include "json.h"
 #include "all_enum_values.h"
 #include "calendar.h"
 #include "cata_catch.h"

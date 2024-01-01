@@ -9,8 +9,8 @@
 #include "coordinate_conversions.h"
 #include "cuboid_rectangle.h"
 #include "enums.h"
-#include "game_constants.h"
 #include "line.h"
+#include "map_scale_constants.h"
 #include "point.h"
 #include "debug.h"
 
