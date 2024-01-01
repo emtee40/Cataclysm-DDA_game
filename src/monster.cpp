@@ -64,6 +64,9 @@
 #include "trap.h"
 #include "type_id.h"
 #include "units.h"
+#include "veh_type.h"
+#include "vehicle.h"
+#include "vpart_position.h"
 #include "viewer.h"
 #include "weakpoint.h"
 #include "weather.h"
@@ -82,6 +85,9 @@ static const efftype_id effect_beartrap( "beartrap" );
 static const efftype_id effect_bleed( "bleed" );
 static const efftype_id effect_blind( "blind" );
 static const efftype_id effect_bouldering( "bouldering" );
+static const efftype_id effect_cramped_space( "cramped_space" );
+static const efftype_id effect_critter_underfed( "critter_underfed" );
+static const efftype_id effect_critter_well_fed( "critter_well_fed" );
 static const efftype_id effect_crushed( "crushed" );
 static const efftype_id effect_deaf( "deaf" );
 static const efftype_id effect_disarmed( "disarmed" );
@@ -109,21 +115,21 @@ static const efftype_id effect_paralyzepoison( "paralyzepoison" );
 static const efftype_id effect_pet( "pet" );
 static const efftype_id effect_photophobia( "photophobia" );
 static const efftype_id effect_poison( "poison" );
+static const efftype_id effect_psi_stunned( "psi_stunned" );
 static const efftype_id effect_ridden( "ridden" );
 static const efftype_id effect_run( "run" );
+static const efftype_id effect_slippery_terrain( "slippery_terrain" );
 static const efftype_id effect_spooked( "spooked" );
 static const efftype_id effect_spooked_recent( "spooked_recent" );
 static const efftype_id effect_stunned( "stunned" );
 static const efftype_id effect_supercharged( "supercharged" );
 static const efftype_id effect_tied( "tied" );
 static const efftype_id effect_tpollen( "tpollen" );
-static const efftype_id effect_critter_underfed( "critter_underfed" );
 static const efftype_id effect_venom_dmg( "venom_dmg" );
 static const efftype_id effect_venom_player1( "venom_player1" );
 static const efftype_id effect_venom_player2( "venom_player2" );
 static const efftype_id effect_venom_weaken( "venom_weaken" );
 static const efftype_id effect_webbed( "webbed" );
-static const efftype_id effect_critter_well_fed( "critter_well_fed" );
 static const efftype_id effect_worked_on( "worked_on" );
 
 static const emit_id emit_emit_shock_cloud( "emit_shock_cloud" );
@@ -588,7 +594,7 @@ void monster::try_reproduce()
     // add a decreasing chance of additional spawns when "catching up" an existing animal.
     int chance = -1;
     while( true ) {
-        if( *baby_timer > calendar::turn ) {
+        if( !baby_timer.has_value() || *baby_timer > calendar::turn ) {
             return;
         }
 
@@ -1178,7 +1184,8 @@ bool monster::is_symbol_highlighted() const
 nc_color monster::color_with_effects() const
 {
     nc_color ret = type->color;
-    if( has_effect( effect_beartrap ) || has_effect( effect_stunned ) || has_effect( effect_downed ) ||
+    if( has_effect( effect_beartrap ) || has_effect( effect_stunned ) ||
+        has_effect( effect_psi_stunned ) || has_effect( effect_downed ) ||
         has_effect( effect_tied ) ||
         has_effect( effect_lightsnare ) || has_effect( effect_heavysnare ) ) {
         ret = hilite( ret );
@@ -1287,7 +1294,8 @@ bool monster::can_act() const
 {
     return moves > 0 &&
            ( effects->empty() ||
-             ( !has_effect( effect_stunned ) && !has_effect( effect_downed ) && !has_effect( effect_webbed ) ) );
+             ( !has_effect( effect_stunned ) && !has_effect( effect_psi_stunned ) &&
+               !has_effect( effect_downed ) && !has_effect( effect_webbed ) ) );
 }
 
 int monster::sight_range( const float light_level ) const
@@ -2882,14 +2890,14 @@ void monster::die( Creature *nkiller )
                 continue;
             }
             if( corpse ) {
-                corpse->force_insert_item( it, item_pocket::pocket_type::CONTAINER );
+                corpse->force_insert_item( it, pocket_type::CONTAINER );
             } else {
                 get_map().add_item_or_charges( pos(), it );
             }
         }
         for( const item &it : dissectable_inv ) {
             if( corpse ) {
-                corpse->put_in( it, item_pocket::pocket_type::CORPSE );
+                corpse->put_in( it, pocket_type::CORPSE );
             } else {
                 get_map().add_item( pos(), it );
             }
@@ -3028,7 +3036,7 @@ void monster::drop_items_on_death( item *corpse )
 
         // add stuff that could be worn or strapped to the creature
         if( it.is_armor() ) {
-            corpse->force_insert_item( it, item_pocket::pocket_type::CONTAINER );
+            corpse->force_insert_item( it, pocket_type::CONTAINER );
         }
     }
 
@@ -3051,7 +3059,7 @@ void monster::drop_items_on_death( item *corpse )
             if( current_best.second != nullptr ) {
                 current_best.second->insert_item( it );
             } else {
-                corpse->force_insert_item( it, item_pocket::pocket_type::CONTAINER );
+                corpse->force_insert_item( it, pocket_type::CONTAINER );
             }
         }
     }
@@ -3079,7 +3087,7 @@ void monster::spawn_dissectables_on_death( item *corpse )
                 dissectable.faults.emplace( flt );
             }
             if( corpse ) {
-                corpse->put_in( dissectable, item_pocket::pocket_type::CORPSE );
+                corpse->put_in( dissectable, pocket_type::CORPSE );
             } else {
                 get_map().add_item_or_charges( pos(), dissectable );
             }
@@ -3312,6 +3320,77 @@ void monster::process_effects()
         }
     }
 
+    // Check to see if critter slips on bile or whatever.
+    if( has_effect( effect_slippery_terrain ) && !is_immune_effect( effect_downed ) && !flies() &&
+        !digging() && !has_effect( effect_downed ) ) {
+        map &here = get_map();
+        if( here.has_flag( ter_furn_flag::TFLAG_FLAT, pos() ) ) {
+            int intensity = get_effect_int( effect_slippery_terrain );
+            intensity -= 1;
+            //ROAD tiles are hard, flat surfaces, and easier to slip on.
+            if( here.has_flag( ter_furn_flag::TFLAG_ROAD, pos() ) ) {
+                intensity++;
+            }
+            int slipchance = ( round( get_speed() / 50 ) - round( get_dodge() / 3 ) );
+            if( intensity + slipchance > dice( 1, 12 ) ) {
+                add_effect( effect_downed, rng( 1_turns, 2_turns ) );
+                add_msg_if_player_sees( pos(), m_info, _( "The %1s slips and falls!" ),
+                                        name() );
+            }
+        }
+    }
+
+    // Apply or remove the cramped_space effect, which needs specific information about the monster's surroundings.
+    map &here = get_map();
+    const tripoint z_pos = pos();
+    const optional_vpart_position vp = here.veh_at( z_pos );
+    if( has_effect( effect_cramped_space ) && !vp.has_value() ) {
+        remove_effect( effect_cramped_space );
+    }
+    if( vp.has_value() ) {
+        vehicle &veh = vp->vehicle();
+        units::volume capacity = 0_ml;
+        units::volume free_cargo = 0_ml;
+        auto cargo_parts = veh.get_parts_at( z_pos, "CARGO", part_status_flag::any );
+        for( vehicle_part *&part : cargo_parts ) {
+            vehicle_stack contents = veh.get_items( *part );
+            const vpart_info &vpinfo = part->info();
+            if( !vp.part_with_feature( "CARGO_PASSABLE", true ) ) {
+                capacity += vpinfo.size;
+                free_cargo += contents.free_volume();
+            }
+        }
+        const creature_size size = get_size();
+        if( capacity > 0_ml ) {
+            // Open-topped vehicle parts have more room, and are always free space for fliers.
+            if( !veh.enclosed_at( z_pos ) ) {
+                free_cargo *= 1.2;
+                if( flies() ) {
+                    remove_effect( effect_cramped_space );
+                    return;
+                }
+            }
+            if( ( size == creature_size::tiny && free_cargo < 15625_ml ) ||
+                ( size == creature_size::small && free_cargo < 31250_ml ) ||
+                ( size == creature_size::medium && free_cargo < 62500_ml ) ||
+                ( size == creature_size::large && free_cargo < 125000_ml ) ||
+                ( size == creature_size::huge && free_cargo < 250000_ml ) ) {
+                if( !has_effect( effect_cramped_space ) ) {
+                    add_effect( effect_cramped_space, 2_turns, true );
+                }
+                return;
+            }
+        }
+        if( get_size() == creature_size::huge && !vp.part_with_feature( "AISLE", true ) &&
+            !vp.part_with_feature( "HUGE_OK", true ) ) {
+            if( !has_effect( effect_cramped_space ) ) {
+                add_effect( effect_cramped_space, 2_turns, true );
+            }
+            return;
+        }
+        remove_effect( effect_cramped_space );
+    }
+
     Creature::process_effects();
 }
 
@@ -3522,7 +3601,7 @@ void monster::init_from_item( item &itm )
         if( !up_time.empty() ) {
             upgrade_time = std::stoi( up_time );
         }
-        for( item *it : itm.all_items_top( item_pocket::pocket_type::CONTAINER ) ) {
+        for( item *it : itm.all_items_top( pocket_type::CONTAINER ) ) {
             if( it->is_armor() ) {
                 it->set_flag( STATIC( flag_id( "FILTHY" ) ) );
             }
@@ -3530,7 +3609,7 @@ void monster::init_from_item( item &itm )
             itm.remove_item( *it );
         }
         //Move dissectables (installed bionics, etc)
-        for( item *dissectable : itm.all_items_top( item_pocket::pocket_type::CORPSE ) ) {
+        for( item *dissectable : itm.all_items_top( pocket_type::CORPSE ) ) {
             dissectable_inv.push_back( *dissectable );
             itm.remove_item( *dissectable );
         }

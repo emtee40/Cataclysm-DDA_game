@@ -43,7 +43,6 @@
 #include "item.h"
 #include "item_factory.h"
 #include "item_group.h"
-#include "item_pocket.h"
 #include "itype.h"
 #include "json.h"
 #include "level_cache.h"
@@ -66,6 +65,7 @@
 #include "output.h"
 #include "overmap.h"
 #include "overmapbuffer.h"
+#include "pocket_type.h"
 #include "point.h"
 #include "ret_val.h"
 #include "rng.h"
@@ -2261,6 +2261,7 @@ class jmapgen_loot : public jmapgen_piece
             } else {
                 result_group.add_group_entry( group, 100 );
             }
+            result_group.finalize( itype_id::NULL_ID() );
         }
 
         void apply( const mapgendata &dat, const jmapgen_int &x, const jmapgen_int &y,
@@ -5408,10 +5409,14 @@ void map::draw_lab( mapgendata &dat )
             }
         } else { // We're below ground, and no sewers
             // Set up the boundaries of walls (connect to adjacent lab squares)
-            tw = is_ot_match( "lab", dat.north(), ot_match_type::contains ) ? 0 : 2;
-            rw = is_ot_match( "lab", dat.east(), ot_match_type::contains ) ? 1 : 2;
-            bw = is_ot_match( "lab", dat.south(), ot_match_type::contains ) ? 1 : 2;
-            lw = is_ot_match( "lab", dat.west(), ot_match_type::contains ) ? 0 : 2;
+            tw = ( is_ot_match( "lab", dat.north(), ot_match_type::contains ) &&
+                   !is_ot_match( "lab_subway", dat.north(), ot_match_type::contains ) ) ? 0 : 2;
+            rw = ( is_ot_match( "lab", dat.east(), ot_match_type::contains ) &&
+                   !is_ot_match( "lab_subway", dat.east(), ot_match_type::contains ) ) ? 1 : 2;
+            bw = ( is_ot_match( "lab", dat.south(), ot_match_type::contains ) &&
+                   !is_ot_match( "lab_subway", dat.south(), ot_match_type::contains ) ) ? 1 : 2;
+            lw = ( is_ot_match( "lab", dat.west(), ot_match_type::contains ) &&
+                   !is_ot_match( "lab_subway", dat.west(), ot_match_type::contains ) ) ? 0 : 2;
 
             int boarders = 0;
             if( tw == 0 ) {
@@ -5963,10 +5968,14 @@ void map::draw_lab( mapgendata &dat )
             set_temperature_mod( p2 + point( SEEX, SEEY ), temperature_d );
         }
 
-        tw = is_ot_match( "lab", dat.north(), ot_match_type::contains ) ? 0 : 2;
-        rw = is_ot_match( "lab", dat.east(), ot_match_type::contains ) ? 1 : 2;
-        bw = is_ot_match( "lab", dat.south(), ot_match_type::contains ) ? 1 : 2;
-        lw = is_ot_match( "lab", dat.west(), ot_match_type::contains ) ? 0 : 2;
+        tw = ( is_ot_match( "lab", dat.north(), ot_match_type::contains ) &&
+               !is_ot_match( "lab_subway", dat.north(), ot_match_type::contains ) ) ? 0 : 2;
+        rw = ( is_ot_match( "lab", dat.east(), ot_match_type::contains ) &&
+               !is_ot_match( "lab_subway", dat.east(), ot_match_type::contains ) ) ? 1 : 2;
+        bw = ( is_ot_match( "lab", dat.south(), ot_match_type::contains ) &&
+               !is_ot_match( "lab_subway", dat.south(), ot_match_type::contains ) ) ? 1 : 2;
+        lw = ( is_ot_match( "lab", dat.west(), ot_match_type::contains ) &&
+               !is_ot_match( "lab_subway", dat.west(), ot_match_type::contains ) ) ? 0 : 2;
 
         const int hardcoded_finale_map_weight = 500; // weight of all hardcoded maps.
         // If you remove the usage of "lab_finale_1level" here, remove it from mapgen_factory::get_usages above as well.
@@ -6509,7 +6518,7 @@ std::vector<item *> map::place_items(
         if( e->is_tool() || e->is_gun() || e->is_magazine() ) {
             if( rng( 0, 99 ) < magazine && e->magazine_default() && !e->magazine_integral() &&
                 !e->magazine_current() ) {
-                e->put_in( item( e->magazine_default(), e->birthday() ), item_pocket::pocket_type::MAGAZINE_WELL );
+                e->put_in( item( e->magazine_default(), e->birthday() ), pocket_type::MAGAZINE_WELL );
             }
             if( rng( 0, 99 ) < ammo && e->ammo_default() && e->ammo_remaining() == 0 ) {
                 e->ammo_set( e->ammo_default() );

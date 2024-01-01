@@ -80,9 +80,15 @@ void talker_monster::add_effect( const efftype_id &new_effect, const time_durati
     me_mon->add_effect( new_effect, dur, bodypart_str_id( bp ), permanent, intensity, force );
 }
 
-void talker_monster::remove_effect( const efftype_id &old_effect )
+void talker_monster::remove_effect( const efftype_id &old_effect, const std::string &bp )
 {
-    me_mon->remove_effect( old_effect );
+    bodypart_id target_part;
+    if( "RANDOM" == bp ) {
+        target_part = get_player_character().random_body_part( true );
+    } else {
+        target_part = bodypart_str_id( bp );
+    }
+    me_mon->remove_effect( old_effect, target_part );
 }
 
 void talker_monster::mod_pain( int amount )
@@ -168,6 +174,11 @@ int talker_monster_const::get_grab_strength() const
     add_msg_debug( debugmode::DF_TALKER, "Grab strength of monster %s = %d", me_mon_const->name(),
                    me_mon_const->get_grab_strength() );
     return  me_mon_const->get_grab_strength();
+}
+
+bool talker_monster_const::can_see_location( const tripoint &pos ) const
+{
+    return me_mon_const->sees( pos );
 }
 
 int talker_monster_const::get_volume() const

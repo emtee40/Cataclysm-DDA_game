@@ -28,7 +28,6 @@
 #include "input.h"
 #include "inventory.h"
 #include "item.h"
-#include "item_pocket.h"
 #include "itype.h"
 #include "iuse.h"
 #include "game_inventory.h"
@@ -44,6 +43,7 @@
 #include "overmapbuffer.h"
 #include "pickup.h"
 #include "player_activity.h"
+#include "pocket_type.h"
 #include "requirements.h"
 #include "ret_val.h"
 #include "rng.h"
@@ -87,6 +87,7 @@ static const itype_id itype_fungal_seeds( "fungal_seeds" );
 static const itype_id itype_large_repairkit( "large_repairkit" );
 static const itype_id itype_marloss_seed( "marloss_seed" );
 static const itype_id itype_null( "null" );
+static const itype_id itype_pseudo_magazine( "pseudo_magazine" );
 static const itype_id itype_small_repairkit( "small_repairkit" );
 static const itype_id itype_soldering_iron( "soldering_iron" );
 static const itype_id itype_water( "water" );
@@ -677,9 +678,9 @@ bool vehicle::start_engine( vehicle_part &vp )
         return false;
     }
 
+    Character &player_character = get_player_character();
     const bool out_of_fuel = !auto_select_fuel( vp );
     if( out_of_fuel ) {
-        Character &player_character = get_player_character();
         if( vpi.fuel_type == fuel_type_muscle ) {
             // Muscle engines cannot start with broken limbs
             if( vpi.has_flag( "MUSCLE_ARMS" ) && !player_character.has_two_arms_lifting() ) {
@@ -694,6 +695,20 @@ bool vehicle::start_engine( vehicle_part &vp )
                      item::nname( vpi.fuel_type ) );
             return false;
         }
+    }
+
+    if( has_part( player_character.pos(), "NEED_LEG" ) &&
+        player_character.get_working_leg_count() < 1 &&
+        !has_part( player_character.pos(), "IGNORE_LEG_REQUIREMENT" ) ) {
+        add_msg( _( "You need at least one leg to control the %s." ), vp.name() );
+        return false;
+    }
+    if( has_part( player_character.pos(), "INOPERABLE_SMALL" ) &&
+        ( player_character.get_size() == creature_size::small ||
+          player_character.get_size() == creature_size::tiny ) &&
+        !has_part( player_character.pos(), "IGNORE_HEIGHT_REQUIREMENT" ) ) {
+        add_msg( _( "You are too short to reach the pedals!" ) );
+        return false;
     }
 
     const double dmg = vp.damage_percent();
@@ -1779,13 +1794,19 @@ int vehicle::prepare_tool( item &tool ) const
     }
     item mag_mod( "pseudo_magazine_mod" );
     mag_mod.set_flag( STATIC( flag_id( "IRREMOVABLE" ) ) );
-    if( !tool.put_in( mag_mod, item_pocket::pocket_type::MOD ).success() ) {
+    if( !tool.put_in( mag_mod, pocket_type::MOD ).success() ) {
         debugmsg( "tool %s has no space for a %s, this is likely a bug",
                   tool.typeId().str(), mag_mod.type->nname( 1 ) );
     }
-    item mag( tool.magazine_default() );
+    itype_id mag_type;
+    if( tool.can_link_up() ) {
+        mag_type = itype_pseudo_magazine;
+    } else {
+        mag_type = tool.magazine_default();
+    }
+    item mag( mag_type );
     mag.clear_items(); // no initial ammo
-    if( !tool.put_in( mag, item_pocket::pocket_type::MAGAZINE_WELL ).success() ) {
+    if( !tool.put_in( mag, pocket_type::MAGAZINE_WELL ).success() ) {
         debugmsg( "inserting %s into %s's MAGAZINE_WELL pocket failed",
                   mag.typeId().str(), tool.typeId().str() );
         return 0;

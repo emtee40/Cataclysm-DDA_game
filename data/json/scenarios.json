@@ -11,6 +11,18 @@
   },
   {
     "type": "scenario",
+    "id": "friend_liam",
+    "name": "Friends to the End",
+    "points": -10,
+    "description": "You and your friends always talked about what you'd do when the world ended… now it's come true, and you've made your way to a remote cabin your friend Liam always said to head for.  It's been a hell of a journey.  You hope Liam and the others made it in one piece.",
+    "allowed_locs": [ "sloc_liam_cabin" ],
+    "start_name": "Liam's Cabin",
+    "eoc": [ "scenario_liam" ],
+    "missions": [ "MISSION_FIND_LIAM" ],
+    "flags": [ "CITY_START", "LONE_START" ]
+  },
+  {
+    "type": "scenario",
     "id": "squatter",
     "name": "Squatter",
     "points": -1,
@@ -1327,7 +1339,7 @@
   {
     "type": "scenario",
     "id": "road_start",
-    "name": "Middle of nowhere",
+    "name": "Middle of Nowhere",
     "points": 1,
     "description": "During your escape you got lost and ended up at the wrong location.  Get your bearings and make a plan.  You'll need it.",
     "start_name": "Middle of Nowhere",
@@ -1343,5 +1355,17 @@
     "start_name": "Underground",
     "allowed_locs": [ "sloc_sewer" ],
     "reveal_locale": false
+  },
+  {
+    "type": "scenario",
+    "id": "last_stand_start",
+    "name": "Challenge - Last Stand",
+    "points": -1,
+    "description": "Together with some others you decided to take up arms against the horde.  Now you are reconsidering whether that was a wise choice.",
+    "start_name": "Intersection",
+    "allowed_locs": [ "sloc_nesw_manhole" ],
+    "requirement": "achievement_kill_10_monsters",
+    "map_extra": "mx_laststand",
+    "flags": [ "CITY_START", "LONE_START" ]
   }
 ]
