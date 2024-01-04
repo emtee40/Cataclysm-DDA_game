@@ -22,35 +22,163 @@
   {
     "type": "mapgen",
     "method": "json",
-    "nested_mapgen_id": "24x24_subway_end",
+    "nested_mapgen_id": "24x24_subway_end_double",
+    "object": {
+      "mapgensize": [ 24, 24 ],
+      "rotation": [ 0 ],
+      "place_nested": [
+      {
+          "chunks": "24x24_subway_end_east",
+          "x": 0,
+          "y": 0
+        },
+      {
+          "chunks": "24x24_subway_end_west",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "else_chunks": [ "null", "24x24_subway_end_double_cross_east" ],
+          "x": 0,
+          "y": 0,
+          "neighbors": {
+            "south_west": [
+              { "om_terrain": "subway", "om_terrain_match_type": "TYPE" },
+              { "om_terrain": "lab_subway", "om_terrain_match_type": "TYPE" }
+            ]
+          }
+        },
+        {
+          "else_chunks": [ "null", "24x24_subway_end_double_cross_west" ],
+          "x": 0,
+          "y": 0,
+          "neighbors": {
+            "south_east": [
+              { "om_terrain": "subway", "om_terrain_match_type": "TYPE" },
+              { "om_terrain": "lab_subway", "om_terrain_match_type": "TYPE" }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "method": "json",
+    "nested_mapgen_id": "24x24_subway_end_single",
+    "object": {
+      "mapgensize": [ 24, 24 ],
+      "rotation": [ 0 ],
+      "place_nested": [
+      {
+          "else_chunks": [ "24x24_subway_end_east","24x24_subway_end_west"],
+          "x": 0,
+          "y": 0,
+          "neighbors_any": {
+            "south_west": [
+              { "om_terrain": "subway", "om_terrain_match_type": "TYPE" },
+              { "om_terrain": "lab_subway", "om_terrain_match_type": "TYPE" }
+            ],
+            "south_east": [
+              { "om_terrain": "subway", "om_terrain_match_type": "TYPE" },
+              { "om_terrain": "lab_subway", "om_terrain_match_type": "TYPE" }
+            ]
+          }
+        },
+        {
+          "else_chunks": [ "null", "24x24_subway_end_cross_east" ],
+          "x": 0,
+          "y": 0,
+          "neighbors": {
+            "south_west": [
+              { "om_terrain": "subway", "om_terrain_match_type": "TYPE" },
+              { "om_terrain": "lab_subway", "om_terrain_match_type": "TYPE" }
+            ]
+          }
+        },
+        {
+          "else_chunks": [ "null", "24x24_subway_end_cross_west" ],
+          "x": 0,
+          "y": 0,
+          "neighbors": {
+            "south_east": [
+              { "om_terrain": "subway", "om_terrain_match_type": "TYPE" },
+              { "om_terrain": "lab_subway", "om_terrain_match_type": "TYPE" }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "method": "json",
+    "nested_mapgen_id": "24x24_subway_end_west",
     "object": {
       "mapgensize": [ 24, 24 ],
       "rotation": [ 0, 3 ],
       "rows": [
         "                        ",
-        "  ....................  ",
-        " ...................... ",
-        " ..^^^^^^^....^^^^^^^.. ",
-        " ..^S^^^S^....^S^^^S^.. ",
-        " ..^X^^^X^....^X^^^X^.. ",
-        " ..^X^^^X^....^X^^^X^.. ",
-        " ..-x---x-....-x---x-.. ",
-        " ..^X^^^X^....^X^^^X^.. ",
-        " ..^X^^^X^....^X^^^X^.. ",
-        " ..-x---x-....-x---x-.. ",
-        " ..^X^^^X^....^X^^^X^.. ",
-        " ..^X^^^X^....^X^^^X^.. ",
-        " ..-x---x-....-x---x-.. ",
-        " ..^X^^^X^....^X^^^X^.. ",
-        " ..^X^^^X^....^X^^^X^.. ",
-        " ..-x---x-....-x---x-.. ",
-        " ..^X^^^X^....^X^^^X^.. ",
-        " ..^X^^^X^....^X^^^X^.. ",
-        " ..-x---x-....-x---x-.. ",
-        " ..^X^^^X^....^X^^^X^.. ",
-        " ..^X^^^X^....^X^^^X^.. ",
-        " ..-x---x-....-x---x-.. ",
-        " ..^X^^^X^....^X^^^X^.. "
+        "  .........             ",
+        " ...........            ",
+        " ..^^^^^^^..            ",
+        " ..^S^^^S^..            ",
+        " ..^X^^^X^..            ",
+        " ..^X^^^X^..            ",
+        " ..-x---x-..            ",
+        " ..^X^^^X^..            ",
+        " ..^X^^^X^..            ",
+        " ..-x---x-..            ",
+        " ..^X^^^X^..            ",
+        " ..^X^^^X^..            ",
+        " ..-x---x-..            ",
+        " ..^X^^^X^..            ",
+        " ..^X^^^X^..            ",
+        " ..-x---x-..            ",
+        " ..^X^^^X^..            ",
+        " ..^X^^^X^..            ",
+        " ..-x---x-..            ",
+        " ..^X^^^X^..            ",
+        " ..^X^^^X^..            ",
+        " ..-x---x-..            ",
+        " ..^X^^^X^..            "
+      ],
+      "palettes": [ "subway_tmp_palette" ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "method": "json",
+    "nested_mapgen_id": "24x24_subway_end_east",
+    "object": {
+      "mapgensize": [ 24, 24 ],
+      "rotation": [ 0, 3 ],
+      "rows": [
+        "                        ",
+        "             .........  ",
+        "            ........... ",
+        "            ..^^^^^^^.. ",
+        "            ..^S^^^S^.. ",
+        "            ..^X^^^X^.. ",
+        "            ..^X^^^X^.. ",
+        "            ..-x---x-.. ",
+        "            ..^X^^^X^.. ",
+        "            ..^X^^^X^.. ",
+        "            ..-x---x-.. ",
+        "            ..^X^^^X^.. ",
+        "            ..^X^^^X^.. ",
+        "            ..-x---x-.. ",
+        "            ..^X^^^X^.. ",
+        "            ..^X^^^X^.. ",
+        "            ..-x---x-.. ",
+        "            ..^X^^^X^.. ",
+        "            ..^X^^^X^.. ",
+        "            ..-x---x-.. ",
+        "            ..^X^^^X^.. ",
+        "            ..^X^^^X^.. ",
+        "            ..-x---x-.. ",
+        "            ..^X^^^X^.. "
       ],
       "palettes": [ "subway_tmp_palette" ],
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
@@ -96,35 +224,35 @@
   {
     "type": "mapgen",
     "method": "json",
-    "nested_mapgen_id": "24x24_subway_end",
+    "nested_mapgen_id": "24x24_subway_end_cross_west",
     "object": {
       "mapgensize": [ 24, 24 ],
       "rotation": [ 0, 3 ],
       "rows": [
         "                        ",
-        "  .........             ",
-        " ...........            ",
-        " ..^^^^^^^..            ",
-        " ..^S^^^S^..            ",
-        " ..^X^^^X^..            ",
-        " ..^X^^^X^..            ",
-        " ..-x---x-..            ",
-        " ..^X^^^X^..            ",
-        " ..^X^^^X^..            ",
-        " ..-x---x-..            ",
-        " ..^X^^^X^..            ",
-        " ..^D^^^D^..            ",
-        " ..^XD^^XD..            ",
-        " ..^X/D^X/D..           ",
-        " ..^X^/DX^/D..          ",
-        " ..^X^^/D^^/D..         ",
-        " ..^X^^^XD^^/D..        ",
-        " ..^X^^^X/D^^/D..       ",
-        " ..^X^^^X^/D^^/D..      ",
-        " ..^X^^^X^./D^^/D..     ",
-        " ..^X^^^X^../D^^/D..    ",
-        " ..-x---x-.../D^^/D..   ",
-        " ..^X^^^X^..../D^^/D..  "
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "    D   D               ",
+        "     D   D..            ",
+        "     /D  /D..           ",
+        "      /D ^/D..          ",
+        "       /D^^/D..         ",
+        "         D^^/D..        ",
+        "         /D^^/D..       ",
+        "          /D^^/D..      ",
+        "          ./D^^/D..     ",
+        "          ../D^^/D..    ",
+        "          .../D^^/D..   ",
+        "          ..../D^^/D..  "
       ],
       "palettes": [ "subway_tmp_palette" ],
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
