@@ -834,8 +834,8 @@ int item_contents::insert_cost( const item &it ) const
     }
 }
 
-ret_val<item *> item_contents::insert_item( const item &it,
-        pocket_type pk_type, bool ignore_contents, const bool unseal_pockets )
+ret_val<item *> item_contents::insert_item( const item &it, pocket_type pk_type,
+        bool ignore_contents, const bool unseal_pockets, const bool restack_charges )
 {
     if( pk_type == pocket_type::LAST ) {
         // LAST is invalid, so we assume it will be a regular container
@@ -850,7 +850,8 @@ ret_val<item *> item_contents::insert_item( const item &it,
         return ret_val<item *>::make_failure( nullptr, _( "Can't store anything in this." ) );
     }
 
-    ret_val<item *> inserted = pocket.value()->insert_item( it, false, true, ignore_contents );
+    ret_val<item *> inserted = pocket.value()->insert_item( it, false, restack_charges,
+                               ignore_contents );
     if( inserted.success() ) {
         if( unseal_pockets ) {
             pocket.value()->unseal();
@@ -869,6 +870,23 @@ void item_contents::force_insert_item( const item &it, pocket_type pk_type )
         }
     }
     debugmsg( "ERROR: Could not insert item %s as contents does not have pocket type", it.tname() );
+}
+
+void item_contents::insert_copies( const item &it, int count, pocket_type pk_type )
+{
+    for( item_pocket &pocket : contents ) {
+        if( pocket.is_type( pk_type ) ) {
+            int remaining = count;
+            if( pocket.can_contain( it, remaining ).success() ) {
+                std::vector<item *> added;
+                pocket.add( it, std::min( count, count - remaining ), added );
+                count = remaining;
+                if( count <= 0 ) {
+                    return;
+                }
+            }
+        }
+    }
 }
 
 std::pair<item_location, item_pocket *> item_contents::best_pocket( const item &it,

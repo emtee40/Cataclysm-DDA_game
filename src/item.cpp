@@ -741,8 +741,13 @@ item &item::ammo_set( const itype_id &ammo, int qty )
             if( is_tool() ) {
                 charges = std::min( qty, ammo_capacity( ammo_type ) );
             } else if( is_gun() ) {
-                const item temp_ammo( ammo_default(), calendar::turn, std::min( qty, ammo_capacity( ammo_type ) ) );
-                put_in( temp_ammo, pocket_type::MAGAZINE );
+                item temp_ammo( ammo_default(), calendar::turn );
+                int count = std::min( qty, ammo_capacity( ammo_type ) );
+                if( temp_ammo.count_by_charges() ) {
+                    temp_ammo.charges = count;
+                    count = 1;
+                }
+                insert_copies( temp_ammo, count, pocket_type::MAGAZINE );
             }
         }
         return *this;
@@ -761,13 +766,17 @@ item &item::ammo_set( const itype_id &ammo, int qty )
 
     if( is_magazine() ) {
         ammo_unset();
-        item set_ammo( ammo, calendar::turn, std::min( qty, ammo_capacity( ammo_type ) ) );
+        item set_ammo( ammo, calendar::turn );
+        int count = std::min( qty, ammo_capacity( ammo_type ) );
+        if( set_ammo.count_by_charges() ) {
+            set_ammo.charges = count;
+            count = 1;
+        }
         if( has_flag( flag_NO_UNLOAD ) ) {
             set_ammo.set_flag( flag_NO_DROP );
             set_ammo.set_flag( flag_IRREMOVABLE );
         }
-        put_in( set_ammo, pocket_type::MAGAZINE );
-
+        insert_copies( set_ammo, count, pocket_type::MAGAZINE );
     } else {
         if( !magazine_current() ) {
             itype_id mag = magazine_default();
@@ -1621,9 +1630,10 @@ int item::insert_cost( const item &it ) const
 }
 
 ret_val<void> item::put_in( const item &payload, pocket_type pk_type,
-                            const bool unseal_pockets, Character *carrier )
+                            const bool unseal_pockets, Character *carrier, const bool restack_charges )
 {
-    ret_val<item *> result = contents.insert_item( payload, pk_type, false, unseal_pockets );
+    ret_val<item *> result = contents.insert_item( payload, pk_type, false, unseal_pockets,
+                             restack_charges );
     if( !result.success() ) {
         debugmsg( "tried to put an item (%s) count (%d) in a container (%s) that cannot contain it: %s",
                   payload.typeId().str(), payload.count(), typeId().str(), result.str() );
@@ -1643,6 +1653,12 @@ void item::force_insert_item( const item &it, pocket_type pk_type )
 {
     contents.force_insert_item( it, pk_type );
     update_inherited_flags();
+}
+
+void item::insert_copies( const item &it, int count, pocket_type pk_type )
+{
+    contents.insert_copies( it, count, pk_type );
+    on_contents_changed();
 }
 
 void item::set_var( const std::string &name, const int value )
@@ -10701,7 +10717,7 @@ int item::ammo_remaining( const Character *carrier, const bool include_linked ) 
     if( is_magazine() ) {
         for( const item *e : contents.all_items_top( pocket_type::MAGAZINE ) ) {
             if( e->is_ammo() ) {
-                ret += e->charges;
+                ret += e->count();
             }
         }
     }
@@ -10710,7 +10726,7 @@ int item::ammo_remaining( const Character *carrier, const bool include_linked ) 
     if( !( mag || is_magazine() || ammo.empty() ) ) {
         for( const item *e : contents.all_items_top( pocket_type::CONTAINER ) ) {
             if( e->is_ammo() && ammo.find( e->ammo_type() ) != ammo.end() ) {
-                ret += e->charges;
+                ret += e->count();
             }
         }
     }
