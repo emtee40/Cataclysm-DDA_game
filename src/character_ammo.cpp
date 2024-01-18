@@ -352,6 +352,7 @@ item::reload_option Character::select_ammo( const item_location &base,
 item::reload_option Character::select_ammo( const item_location &base, bool prompt,
         bool empty ) const
 {
+
     if( !base ) {
         return item::reload_option();
     }
