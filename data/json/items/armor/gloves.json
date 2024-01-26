@@ -257,7 +257,6 @@
     "id": "xs_gauntlets_chitin",
     "type": "ARMOR",
     "copy-from": "gauntlets_chitin",
-    "looks_like": "gauntlets_chitin",
     "name": { "str": "pair of XS chitinous gauntlets", "str_pl": "pairs of XS chitinous gauntlets" },
     "proportional": { "weight": 0.75, "volume": 0.75, "price": 0.5 },
     "extend": { "flags": [ "UNDERSIZE" ] }
@@ -265,15 +264,12 @@
   {
     "id": "gauntlets_acidchitin",
     "copy-from": "gauntlets_chitin",
-    "looks_like": "gauntlets_chitin",
     "type": "ARMOR",
     "name": { "str": "pair of biosilicified chitin gauntlets", "str_pl": "pairs of biosilicified chitin gauntlets" },
     "description": "A pair of gauntlets crafted from the carefully cleaned and pruned biosilicified exoskeletons of acidic ants.  Acid-resistant but brittle.",
     "material": [ "acidchitin" ],
     "price_postapoc": 1750,
-    "proportional": { "weight": 1.125, "volume": 1.13, "price": 1.25, "encumbrance": 1.5, "warmth": 1.5 },
-    "relative": { "melee_damage": { "bash": 1 } },
-    "material_thickness": 5
+    "relative": { "melee_damage": { "bash": 1 } }
   },
   {
     "id": "xl_gauntlets_acidchitin",
@@ -287,7 +283,6 @@
     "id": "xs_gauntlets_acidchitin",
     "type": "ARMOR",
     "copy-from": "gauntlets_acidchitin",
-    "looks_like": "gauntlets_acidchitin",
     "name": { "str": "pair of XS biosilicified chitin gauntlets", "str_pl": "pairs of XS biosilicified chitin gauntlets" },
     "proportional": { "weight": 0.75, "volume": 0.75, "price": 0.5 },
     "extend": { "flags": [ "UNDERSIZE" ] }
