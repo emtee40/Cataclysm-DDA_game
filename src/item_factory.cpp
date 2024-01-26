@@ -4202,8 +4202,10 @@ void Item_factory::load_basic_info( const JsonObject &jo, itype &def, const std:
         def.extend_description = false;
     }
 
-    if( jo.read( "description_prepend", def.description_prepend ) ||
-        jo.read( "description_append", def.description_append ) ) {
+    if( jo.read( "description_prepend", def.description_prepend ) ) {
+        def.extend_description = true;
+    }
+    if( jo.read( "description_append", def.description_append ) ) {
         def.extend_description = true;
     }
 
