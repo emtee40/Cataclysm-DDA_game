@@ -223,6 +223,12 @@ struct overmap_ocean_settings {
     overmap_ocean_settings() = default;
 };
 
+struct overmap_highway_settings {
+    int highway_frequency_x = 3;
+    int highway_frequency_y = 3;
+    overmap_highway_settings() = default;
+};
+
 struct overmap_ravine_settings {
     int num_ravines = 0;
     int ravine_range = 45;
@@ -274,6 +280,7 @@ struct regional_settings {
     overmap_forest_settings overmap_forest;
     overmap_lake_settings overmap_lake;
     overmap_ocean_settings overmap_ocean;
+    overmap_highway_settings overmap_highway;
     overmap_ravine_settings overmap_ravine;
     region_terrain_and_furniture_settings region_terrain_and_furniture;
 

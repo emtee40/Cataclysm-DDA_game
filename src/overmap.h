@@ -449,6 +449,8 @@ class overmap
         void populate_connections_out_from_neighbors( const overmap *north, const overmap *east,
                 const overmap *south, const overmap *west );
 
+        void populate_highways();
+
         // City Building
         overmap_special_id pick_random_building_to_place( int town_dist ) const;
 
