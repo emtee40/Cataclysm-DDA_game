@@ -1989,7 +1989,7 @@ class map
         bool build_transparency_cache( int zlev );
         bool build_vision_transparency_cache( int zlev );
         // fills lm with sunlight. pzlev is current player's zlevel
-        void build_sunlight_cache( int pzlev );
+        void build_sunlight_cache( int pzlev, bool reuse_sunlight_cache = false );
     public:
         void build_outside_cache( int zlev );
         // Get a bitmap indicating which layers are potentially visible from the target layer.
@@ -2004,12 +2004,14 @@ class map
                                         const std::optional<tripoint> &override_p ) const;
 
     protected:
-        void generate_lightmap( int zlev );
+        void generate_lightmap( int zlev, bool reuse_sunlight_cache = false );
         void build_seen_cache( const tripoint &origin, int target_z, int extension_range = 60,
                                bool cumulative = false,
                                bool camera = false, int penalty = 0 );
         void apply_character_light( Character &p );
-
+    public:
+        void get_lightmap( const tripoint_bub_ms &p );
+    protected:
         int my_MAPSIZE;
         int my_HALF_MAPSIZE;
         bool zlevels;

@@ -26,6 +26,8 @@ struct level_cache {
         bool outside_cache_dirty = false;
         bool floor_cache_dirty = false;
         bool seen_cache_dirty = false;
+        bool has_lightmap = false;
+        bool has_sunlight_cache = false;
         // This is a single value indicating that the entire level is floored.
         bool no_floor_gaps = false;
 
