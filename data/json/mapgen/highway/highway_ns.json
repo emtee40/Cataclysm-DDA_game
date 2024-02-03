@@ -200,12 +200,7 @@
       "palettes": [ "highway_palette" ],
       "place_nested": [
         { "chunks": [ "24x24_highway_ramp_up_north" ], "x": 0, "y": 0, "neighbors": { "north": "highway_road" } },
-        {
-          "chunks": [ "24x24_highway_ramp_up_south" ],
-          "x": 0,
-          "y": 0,
-          "neighbors": { "south": "highway_road" }
-        }
+        { "chunks": [ "24x24_highway_ramp_up_south" ], "x": 0, "y": 0, "neighbors": { "south": "highway_road" } }
       ],
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
     }
