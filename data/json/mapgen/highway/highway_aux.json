@@ -109,40 +109,5 @@
     "locations": [ "land" ],
     "occurrences": [ 0, 0 ],
     "flags": [ "CLASSIC" ]
-  },
-  {
-    "om_terrain": "highway_bridge_supports",
-    "type": "mapgen",
-    "method": "json",
-    "object": {
-      "fallback_predecessor_mapgen": "river_center",
-      "rows": [
-        "         ###############",
-        "          ##############",
-        "           #############",
-        "                        ",
-        "                        ",
-        "                        ",
-        "                        ",
-        "                        ",
-        "                        ",
-        "                        ",
-        "                        ",
-        "                        ",
-        "                        ",
-        "                        ",
-        "                        ",
-        "                        ",
-        "                        ",
-        "                        ",
-        "                        ",
-        "                        ",
-        "                        ",
-        "           #############",
-        "          ##############",
-        "         ###############"
-      ],
-      "palettes": [ "bridge_ground_palette" ]
-    }
   }
 ]
