@@ -4,10 +4,8 @@
 #include <cstdlib>
 #include <functional>
 #include <memory>
-#include <new>
 #include <optional>
 #include <string>
-#include <type_traits>
 #include <utility>
 
 #include "avatar.h"
@@ -32,8 +30,8 @@
 #include "game_constants.h"
 #include "game_inventory.h"
 #include "input.h"
+#include "input_context.h"
 #include "item.h"
-#include "item_factory.h"
 #include "item_location.h"
 #include "line.h"
 #include "map.h"
@@ -90,8 +88,6 @@ static const mission_type_id mission_MISSION_OLD_GUARD_REPEATER( "MISSION_OLD_GU
 static const mission_type_id
 mission_MISSION_OLD_GUARD_REPEATER_BEGIN( "MISSION_OLD_GUARD_REPEATER_BEGIN" );
 static const mission_type_id mission_MISSION_REACH_REFUGEE_CENTER( "MISSION_REACH_REFUGEE_CENTER" );
-
-static const mon_flag_str_id mon_flag_CONSOLE_DESPAWN( "CONSOLE_DESPAWN" );
 
 static const mtype_id mon_manhack( "mon_manhack" );
 static const mtype_id mon_secubot( "mon_secubot" );

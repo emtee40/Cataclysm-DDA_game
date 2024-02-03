@@ -33,6 +33,7 @@
 #include "filesystem.h"
 #include "game.h"
 #include "game_constants.h"
+#include "input.h"
 #include "int_id.h"
 #include "item.h"
 #include "item_factory.h"
@@ -77,7 +78,6 @@
 static const efftype_id effect_ridden( "ridden" );
 
 static const itype_id itype_corpse( "corpse" );
-static const mon_flag_str_id mon_flag_ALWAYS_VISIBLE( "ALWAYS_VISIBLE" );
 static const trait_id trait_INATTENTIVE( "INATTENTIVE" );
 static const trap_str_id tr_unfinished_construction( "tr_unfinished_construction" );
 
@@ -1620,16 +1620,6 @@ void cata_tiles::draw( const point &dest, const tripoint &center, int width, int
                             int intensity =  tr <= LIGHT_TRANSPARENCY_SOLID ? 10 :  static_cast<int>
                                              ( ( tr - LIGHT_TRANSPARENCY_OPEN_AIR ) * 8 );
                             draw_debug_tile( intensity, string_format( "%.2f", tr ) );
-                        }
-
-                        if( g->display_overlay_state( ACTION_DISPLAY_REACHABILITY_ZONES ) ) {
-                            tripoint tile_pos( x, y, center.z );
-                            int value = here.reachability_cache_value( tile_pos,
-                                        g->debug_rz_display.r_cache_vertical, g->debug_rz_display.quadrant );
-                            // use color to denote reachability from you to the target tile according to the
-                            // cache
-                            bool reachable = here.has_potential_los( you.pos(), tile_pos );
-                            draw_debug_tile( reachable ? 0 : 6, std::to_string( value ) );
                         }
                     }
 

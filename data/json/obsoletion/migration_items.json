@@ -10,6 +10,16 @@
     "replace": "bolt_cf"
   },
   {
+    "id": "contacts",
+    "type": "MIGRATION",
+    "replace": "bifocal_contacts_weekly"
+  },
+  {
+    "id": "transition_contacts",
+    "type": "MIGRATION",
+    "replace": "bifocal_transition_contacts_weekly"
+  },
+  {
     "id": "arrow_exploding",
     "type": "MIGRATION",
     "replace": "arrow_cf"
@@ -38,6 +48,20 @@
     "id": "recipe_mil_augs",
     "type": "MIGRATION",
     "replace": "recipe_lab_elec"
+  },
+  {
+    "id": "mean_mug",
+    "type": "MIGRATION",
+    "replace": "ceramic_mug",
+    "variant": "mean_mug",
+    "reset_item_vars": true
+  },
+  {
+    "id": "nice_mug",
+    "type": "MIGRATION",
+    "replace": "ceramic_mug",
+    "variant": "mean_mug2",
+    "reset_item_vars": true
   },
   {
     "id": "ar15",
@@ -180,6 +204,12 @@
     "type": "MIGRATION",
     "replace": "modular_deagle",
     "contents": [ { "id": "retool_deagle_44", "count": 1 } ]
+  },
+  {
+    "id": "hk_ump45",
+    "type": "MIGRATION",
+    "replace": "modular_ump",
+    "contents": [ { "id": "retool_ump_45", "count": 1 } ]
   },
   {
     "id": "mobile_memory_card_used",
@@ -352,6 +382,11 @@
   },
   {
     "id": "bio_power_armor_interface_mkII",
+    "type": "MIGRATION",
+    "replace": "burnt_out_bionic"
+  },
+  {
+    "id": "bio_trickle",
     "type": "MIGRATION",
     "replace": "burnt_out_bionic"
   },

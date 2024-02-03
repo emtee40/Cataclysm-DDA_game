@@ -4,11 +4,8 @@
 #include <array>
 #include <cmath>
 #include <cstdlib>
-#include <functional>
-#include <list>
 #include <map>
 #include <memory>
-#include <new>
 #include <optional>
 #include <ostream>
 #include <set>
@@ -39,12 +36,11 @@
 #include "game_constants.h"
 #include "generic_factory.h"
 #include "global_vars.h"
-#include "init.h"
+#include "input.h"
 #include "item.h"
 #include "item_factory.h"
 #include "item_group.h"
 #include "itype.h"
-#include "json.h"
 #include "level_cache.h"
 #include "line.h"
 #include "magic_ter_furn_transform.h"
@@ -58,7 +54,6 @@
 #include "memory_fast.h"
 #include "mission.h"
 #include "mongroup.h"
-#include "name.h"
 #include "npc.h"
 #include "omdata.h"
 #include "options.h"
@@ -1830,8 +1825,7 @@ class jmapgen_npc : public jmapgen_piece
                 return;
             }
             if( !unique_id.empty() && g->unique_npc_exists( unique_id ) ) {
-                get_avatar().add_msg_debug_if_player( debugmode::DF_NPC, "NPC with unique id %s already exists.",
-                                                      unique_id );
+                add_msg_debug( debugmode::DF_NPC, "NPC with unique id %s already exists.", unique_id );
                 return;
             }
             tripoint const dst( x.get(), y.get(), dat.m.get_abs_sub().z() );
@@ -1939,7 +1933,6 @@ class jmapgen_sign : public jmapgen_piece
         std::string apply_all_tags( std::string signtext, const std::string &cityname ) const {
             signtext = SNIPPET.expand( signtext );
             replace_city_tag( signtext, cityname );
-            replace_name_tags( signtext );
             return signtext;
         }
         bool has_vehicle_collision( const mapgendata &dat, const point &p ) const override {
@@ -1990,7 +1983,6 @@ class jmapgen_graffiti : public jmapgen_piece
         std::string apply_all_tags( std::string graffiti, const std::string &cityname ) const {
             graffiti = SNIPPET.expand( graffiti );
             replace_city_tag( graffiti, cityname );
-            replace_name_tags( graffiti );
             return graffiti;
         }
 };
@@ -2434,19 +2426,14 @@ class jmapgen_monster : public jmapgen_piece
             }
 
             mongroup_id chosen_group = m_id.get( dat );
-            std::string chosen_name = name;
+            std::string chosen_name = _( name );
             if( !random_name_str.empty() ) {
                 if( random_name_str == "female" ) {
-                    chosen_name = Name::get( nameFlags::IsFemaleName | nameFlags::IsGivenName );
+                    chosen_name = SNIPPET.expand( "<female_given_name>" );
                 } else if( random_name_str == "male" ) {
-                    chosen_name = Name::get( nameFlags::IsMaleName | nameFlags::IsGivenName );
+                    chosen_name = SNIPPET.expand( "<male_given_name>" );
                 } else if( random_name_str == "random" ) {
-                    // I want to use IsUnisexName, but that always gives "Tom"
-                    if( one_in( 2 ) ) {
-                        chosen_name = Name::get( nameFlags::IsFemaleName | nameFlags::IsGivenName );
-                    } else {
-                        chosen_name = Name::get( nameFlags::IsMaleName | nameFlags::IsGivenName );
-                    }
+                    chosen_name = SNIPPET.expand( "<given_name>" );
                 } else if( random_name_str == "snippet" ) {
                     chosen_name = SNIPPET.expand( name );
                 }
@@ -4491,10 +4478,10 @@ bool mapgen_function_json_base::setup_common( const JsonObject &jo )
         }
         for( int c = m_offset.y; c < expected_dim.y; c++ ) {
             const std::string row = parray.get_string( c );
-            std::vector<map_key> row_keys;
-            for( const std::string &key : utf8_display_split( row ) ) {
-                row_keys.emplace_back( key );
-            }
+            static std::vector<std::string_view> row_keys;
+            row_keys.clear();
+            row_keys.reserve( total_size.x );
+            utf8_display_split_into( row, row_keys );
             if( row_keys.size() < static_cast<size_t>( expected_dim.x ) ) {
                 parray.throw_error(
                     string_format( "  format: row %d must have at least %d columns, not %d",
@@ -4507,7 +4494,7 @@ bool mapgen_function_json_base::setup_common( const JsonObject &jo )
             }
             for( int i = m_offset.x; i < expected_dim.x; i++ ) {
                 const point p = point( i, c ) - m_offset;
-                const map_key key = row_keys[i];
+                const map_key key{ std::string( row_keys[i] ) };
                 const auto iter_ter = keys_with_terrain.find( key );
                 const auto fpi = format_placings.find( key );
 
@@ -7698,34 +7685,35 @@ bool update_mapgen_function_json::update_map(
     return u;
 }
 
+class rotation_guard
+{
+    public:
+        explicit rotation_guard( const mapgendata &md )
+            : md( md ), rotation( oter_get_rotation( md.terrain_type() ) ) {
+            // If the existing map is rotated, we need to rotate it back to the north
+            // orientation before applying our updates.
+            if( rotation != 0 && !md.has_flag( jmapgen_flags::no_underlying_rotate ) ) {
+                md.m.rotate( rotation, true );
+            }
+        }
+
+        ~rotation_guard() {
+            // If we rotated the map before applying updates, we now need to rotate
+            // it back to where we found it.
+            if( rotation != 0 && !md.has_flag( jmapgen_flags::no_underlying_rotate ) ) {
+                md.m.rotate( 4 - rotation, true );
+            }
+        }
+    private:
+        const mapgendata &md;
+        const int rotation;
+};
+
 bool update_mapgen_function_json::update_map( const mapgendata &md, const point &offset,
         const bool verify ) const
 {
     mapgendata md_with_params( md, get_args( md, mapgen_parameter_scope::omt ), flags_ );
 
-    class rotation_guard
-    {
-        public:
-            explicit rotation_guard( const mapgendata &md )
-                : md( md ), rotation( oter_get_rotation( md.terrain_type() ) ) {
-                // If the existing map is rotated, we need to rotate it back to the north
-                // orientation before applying our updates.
-                if( rotation != 0 && !md.has_flag( jmapgen_flags::no_underlying_rotate ) ) {
-                    md.m.rotate( rotation, true );
-                }
-            }
-
-            ~rotation_guard() {
-                // If we rotated the map before applying updates, we now need to rotate
-                // it back to where we found it.
-                if( rotation != 0 && !md.has_flag( jmapgen_flags::no_underlying_rotate ) ) {
-                    md.m.rotate( 4 - rotation, true );
-                }
-            }
-        private:
-            const mapgendata &md;
-            const int rotation;
-    };
     rotation_guard rot( md_with_params );
 
     return apply_mapgen_in_phases( md_with_params, setmap_points, objects, offset, context_,
@@ -7791,6 +7779,64 @@ void set_queued_points()
         globvars.set_global_value( "npctalk_var_" + queued_point.first, queued_point.second.to_string() );
     }
     queued_points.clear();
+}
+
+bool apply_construction_marker( const update_mapgen_id &update_mapgen_id,
+                                const tripoint_abs_omt &omt_pos,
+                                const mapgen_arguments &args, bool mirror_horizontal,
+                                bool mirror_vertical, int rotation, bool apply )
+{
+
+    const auto update_function = update_mapgens.find( update_mapgen_id );
+
+    if( update_function == update_mapgens.end() || update_function->second.funcs().empty() ) {
+        return false;
+    }
+
+    fake_map tmp_map( t_grass );
+
+    mapgendata base_fake_md( tmp_map, mapgendata::dummy_settings );
+    mapgendata fake_md( base_fake_md, args );
+    fake_md.skip = { mapgen_phase::zones };
+
+    std::unique_ptr<tinymap> p_update_tmap = std::make_unique<tinymap>();
+    tinymap &update_tmap = *p_update_tmap;
+    const tripoint_abs_sm sm_pos = project_to<coords::sm>( omt_pos );
+
+    update_tmap.load( sm_pos, true );
+    update_tmap.rotate( 4 - rotation );
+    update_tmap.mirror( mirror_horizontal, mirror_vertical );
+
+    {
+        // Make sure rot goes out of scope and its destructor restores the map before the
+        // "outer scope" mirroring/rotation is undone. It's unlikely inherent map rotation will
+        // be present at the same time as construction rotation/mirroring is, but better safe than sorry.
+
+        mapgendata md_base( omt_pos, update_tmap, 0.0f, calendar::start_of_cataclysm, nullptr );
+        mapgendata md( md_base, args );
+
+        rotation_guard rot( md );
+
+        if( update_function->second.funcs()[0]->update_map( fake_md ) ) {
+            for( const tripoint &pos : tmp_map.points_on_zlevel( fake_map::fake_map_z ) ) {
+                ter_id ter_at_pos = tmp_map.ter( pos );
+                const tripoint level_pos = tripoint( pos.xy(), sm_pos.z() );
+
+                if( ter_at_pos != t_grass || tmp_map.has_furn( level_pos ) ) {
+                    if( apply ) {
+                        update_tmap.add_field( level_pos, fd_construction_site, 1, time_duration::from_turns( 0 ), false );
+                    } else {
+                        update_tmap.delete_field( level_pos, fd_construction_site );
+                    }
+                }
+            }
+        }
+    }
+
+    update_tmap.mirror( mirror_horizontal, mirror_vertical );
+    update_tmap.rotate( rotation );
+
+    return true;
 }
 
 std::pair<std::map<ter_id, int>, std::map<furn_id, int>> get_changed_ids_from_update(

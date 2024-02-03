@@ -32,7 +32,6 @@
 #include "character_id.h"
 #include "city.h"
 #include "coordinates.h"
-#include "craft_command.h"
 #include "creature.h"
 #include "damage.h"
 #include "debug.h"
@@ -48,7 +47,6 @@
 #include "player_activity.h"
 #include "point.h"
 #include "ranged.h"
-#include "recipe.h"
 #include "ret_val.h"
 #include "stomach.h"
 #include "string_formatter.h"
@@ -66,6 +64,7 @@ class SkillLevelMap;
 class basecamp;
 class bionic_collection;
 class character_martial_arts;
+class craft_command;
 class dispersion_sources;
 class effect;
 class effect_source;
@@ -106,6 +105,7 @@ template <typename E> struct enum_traits;
 
 enum npc_attitude : int;
 enum action_id : int;
+enum class recipe_filter_flags : int;
 enum class steed_type : int;
 enum class proficiency_bonus_type : int;
 
@@ -701,6 +701,7 @@ class Character : public Creature, public visitable
     public:
 
         void gravity_check();
+        void stagger();
 
         void mod_stat( const std::string &stat, float modifier ) override;
 
@@ -727,17 +728,11 @@ class Character : public Creature, public visitable
         using Creature::add_msg_if_player;
         void add_msg_if_player( const std::string &msg ) const override;
         void add_msg_if_player( const game_message_params &params, const std::string &msg ) const override;
-        using Creature::add_msg_debug_if_player;
-        void add_msg_debug_if_player( debugmode::debug_filter type,
-                                      const std::string &msg ) const override;
         using Creature::add_msg_player_or_npc;
         void add_msg_player_or_npc( const std::string &player_msg,
                                     const std::string &npc_str ) const override;
         void add_msg_player_or_npc( const game_message_params &params, const std::string &player_msg,
                                     const std::string &npc_msg ) const override;
-        using Creature::add_msg_debug_player_or_npc;
-        void add_msg_debug_player_or_npc( debugmode::debug_filter type, const std::string &player_msg,
-                                          const std::string &npc_msg ) const override;
         using Creature::add_msg_player_or_say;
         void add_msg_player_or_say( const std::string &player_msg,
                                     const std::string &npc_speech ) const override;
@@ -751,6 +746,11 @@ class Character : public Creature, public visitable
         void set_fac_id( const std::string &my_fac_id );
         virtual bool is_ally( const Character &p ) const = 0;
         virtual bool is_obeying( const Character &p ) const = 0;
+
+        //returns character's profession
+        const profession *get_profession() const;
+        //returns the hobbies
+        std::set<const profession *> get_hobbies() const;
 
         // Has item with mission_id
         bool has_mission_item( int mission_id ) const;
@@ -875,6 +875,8 @@ class Character : public Creature, public visitable
 
         // true if the character produces electrical radiation
         bool is_electrical() const override;
+        // true if the character is a faerie creature (has the FAE_CREATURE flag or the trait FAERIECREATURE)
+        bool is_fae() const override;
         // true if the character is from the nether
         bool is_nether() const override;
         // true if the character has a sapient mind
@@ -1657,7 +1659,7 @@ class Character : public Creature, public visitable
         // route for overmap-scale traveling
         std::vector<tripoint_abs_omt> omt_path;
         // Container of OMTs to highlight as having been revealed
-        std::vector<tripoint_abs_omt> map_revealed_omts;
+        std::unordered_set<tripoint_abs_omt> map_revealed_omts;
         bool is_using_bionic_weapon() const;
         bionic_uid get_weapon_bionic_uid() const;
 
@@ -1819,12 +1821,8 @@ class Character : public Creature, public visitable
          * @param prompt force display of the menu even if only one choice
          * @param empty allow selection of empty magazines
          */
-        item::reload_option select_ammo( const item_location &base, bool prompt = false,
-                                         bool empty = true ) const;
-
-        /** Select ammo from the provided options */
-        item::reload_option select_ammo( const item_location &base, std::vector<item::reload_option> opts,
-                                         const std::string &name_override = std::string() ) const;
+        virtual item::reload_option select_ammo( const item_location &base, bool prompt = false,
+                bool empty = true ) = 0;
 
         void process_items();
         void leak_items();
@@ -2535,6 +2533,8 @@ class Character : public Creature, public visitable
         float fall_damage_mod() const override;
         /** Deals falling/collision damage with terrain/creature at pos */
         int impact( int force, const tripoint &pos ) override;
+        /** Checks to see if the character is able to use their wings properly */
+        bool can_fly();
         /** Knocks the player to a specified tile */
         void knock_back_to( const tripoint &to ) override;
 
@@ -3002,13 +3002,25 @@ class Character : public Creature, public visitable
         void mod_rad( int mod );
 
         float get_heartrate_index() const;
+        void set_heartrate_effect_mod( int  mod );
+        void modify_heartrate_effect_mod( int mod );
+        int get_heartrate_effect_mod() const;
         void update_heartrate_index();
 
         float get_bloodvol_index() const;
         void update_bloodvol_index();
 
         float get_circulation_resistance() const;
-        void set_circulation_resistance( float ncirculation_resistance );
+        void set_bp_effect_mod( int mod );
+        void modify_bp_effect_mod( int mod );
+        int get_bp_effect_mod() const;
+        void update_circulation_resistance();
+
+        float get_respiration_rate() const;
+        void set_respiration_effect_mod( int mod );
+        int get_respiration_effect_mod() const;
+        void modify_respiration_effect_mod( int mod );
+        void update_respiration_rate();
 
         void update_circulation();
 
@@ -3172,7 +3184,7 @@ class Character : public Creature, public visitable
         int run_cost( int base_cost, bool diag = false ) const;
 
         const pathfinding_settings &get_pathfinding_settings() const override;
-        std::set<tripoint> get_path_avoid() const override;
+        std::unordered_set<tripoint> get_path_avoid() const override;
         /**
          * Get all hostile creatures currently visible to this player.
          */
@@ -3954,6 +3966,7 @@ class Character : public Creature, public visitable
         // i.e. a value of 1.1 means 110% of normal.
         float heart_rate_index = 1.0f;
         float blood_vol_index = 1.0f;
+        float respiration_rate = 1.0f;
 
         float circulation;
         // Should remain fixed at 1.0 for now.
@@ -3970,6 +3983,10 @@ class Character : public Creature, public visitable
 
         int stim;
         int pkill;
+
+        int bp_effect_mod = 0;
+        int heart_rate_effect_mod = 0;
+        int resp_rate_effect_mod = 0;
 
         int radiation;
 

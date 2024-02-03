@@ -2545,7 +2545,7 @@ void monster::load( const JsonObject &data, const tripoint_abs_sm &submap_loc )
         // will be wrong. Use the supplied argument to fix it.
         const tripoint_abs_ms old_loc = get_location();
         point_abs_sm wrong_submap;
-        tripoint_sm_ms local_pos;
+        tripoint_sm_ms_ib local_pos;
         std::tie( wrong_submap, local_pos ) = project_remain<coords::sm>( get_location() );
         set_location( project_combine( submap_loc.xy(), local_pos ) );
         // adjust other relative coordinates that would be subject to the same error
@@ -2682,6 +2682,7 @@ void monster::load( const JsonObject &data )
     data.read( "anger", anger );
     data.read( "morale", morale );
     data.read( "hallucination", hallucination );
+    data.read( "aggro_character", aggro_character );
     data.read( "fish_population", fish_population );
     //for older saves convert summon time limit to lifespan end
     std::optional<time_duration> summon_time_limit;
@@ -2765,6 +2766,7 @@ void monster::store( JsonOut &json ) const
     json.member( "anger", anger );
     json.member( "morale", morale );
     json.member( "hallucination", hallucination );
+    json.member( "aggro_character", aggro_character );
     if( tied_item ) {
         json.member( "tied_item", *tied_item );
     }
@@ -2878,8 +2880,8 @@ void item::craft_data::deserialize( const JsonObject &obj )
 void item::link_data::serialize( JsonOut &jsout ) const
 {
     jsout.start_object();
-    jsout.member( "link_i_state", s_state );
-    jsout.member( "link_t_state", t_state );
+    jsout.member( "link_i_state", source );
+    jsout.member( "link_t_state", target );
     jsout.member( "link_t_abs_pos", t_abs_pos );
     jsout.member( "link_t_mount", t_mount );
     jsout.member( "link_length", length );
@@ -2895,8 +2897,8 @@ void item::link_data::deserialize( const JsonObject &data )
 {
     data.allow_omitted_members();
 
-    data.read( "link_i_state", s_state );
-    data.read( "link_t_state", t_state );
+    data.read( "link_i_state", source );
+    data.read( "link_t_state", target );
     data.read( "link_t_abs_pos", t_abs_pos );
     data.read( "link_t_mount", t_mount );
     data.read( "link_length", length );
@@ -3028,11 +3030,11 @@ void item::io( Archive &archive )
     static const cata::value_ptr<relic> null_relic_ptr = nullptr;
     archive.io( "relic_data", relic_data, null_relic_ptr );
     static const cata::value_ptr<link_data> null_link_ptr = nullptr;
-    archive.io( "link_data", link, null_link_ptr );
-    if( link ) {
-        const optional_vpart_position vp = get_map().veh_at( link->t_abs_pos );
+    archive.io( "link_data", link_, null_link_ptr );
+    if( has_link_data() ) {
+        const optional_vpart_position vp = get_map().veh_at( link().t_abs_pos );
         if( vp ) {
-            link->t_veh_safe = vp.value().vehicle().get_safe_reference();
+            link().t_veh = vp.value().vehicle().get_safe_reference();
         }
     }
 
@@ -4691,35 +4693,39 @@ void stats_tracker::deserialize( const JsonObject &jo )
     event_multiset gan_evts = get_events( event_type::game_avatar_new );
     if( !gan_evts.count() ) {
         event_multiset gs_evts = get_events( event_type::game_start );
-        if( gs_evts.count() ) {
-            auto gs_evt = gs_evts.first().value();
-            cata::event::data_type gs_data = gs_evt.first;
+        avatar &u = get_avatar();
+        // check if character ID set, if loadsave, the ID will not be -1
+        // if it's an old save without event_type::game_avatar_new, the event need to be done
+        // this function is invoked when load memorial, on this situation start a new game, below shouldn't be invoked.
+        if( u.getID() != character_id( -1 ) ) {
+            if( gs_evts.count() ) {
+                auto gs_evt = gs_evts.first().value();
+                cata::event::data_type gs_data = gs_evt.first;
 
-            // retroactively insert starting avatar
-            cata::event::data_type gan_data( gs_data );
-            gan_data["is_new_game"] = cata_variant::make<cata_variant_type::bool_>( true );
-            gan_data["is_debug"] = cata_variant::make<cata_variant_type::bool_>( false );
-            gan_data.erase( "game_version" );
-            get_event_bus().send( cata::event( event_type::game_avatar_new, calendar::start_of_game,
-                                               std::move( gan_data ) ) );
+                // retroactively insert starting avatar
+                cata::event::data_type gan_data( gs_data );
+                gan_data["is_new_game"] = cata_variant::make<cata_variant_type::bool_>( true );
+                gan_data["is_debug"] = cata_variant::make<cata_variant_type::bool_>( false );
+                gan_data.erase( "game_version" );
+                get_event_bus().send( cata::event( event_type::game_avatar_new, calendar::start_of_game,
+                                                   std::move( gan_data ) ) );
 
-            // retroactively insert current avatar, if different from starting avatar
-            // we don't know when they took over, so just use current time point
-            avatar &u = get_avatar();
-            if( u.getID() != gs_data["avatar_id"].get<cata_variant_type::character_id>() ) {
+                // retroactively insert current avatar, if different from starting avatar
+                // we don't know when they took over, so just use current time point
+                if( u.getID() != gs_data["avatar_id"].get<cata_variant_type::character_id>() ) {
+                    profession_id prof_id = u.prof ? u.prof->ident() : profession::generic()->ident();
+                    get_event_bus().send( cata::event::make<event_type::game_avatar_new>( false, false,
+                                          u.getID(), u.name, u.male, prof_id, u.custom_profession ) );
+                }
+            } else {
+                // last ditch effort for really old saves that don't even have event_type::game_start
+                // treat current avatar as the starting avatar; abuse is_new_game=false to flag such cases
                 profession_id prof_id = u.prof ? u.prof->ident() : profession::generic()->ident();
+                std::swap( calendar::turn, calendar::start_of_game );
                 get_event_bus().send( cata::event::make<event_type::game_avatar_new>( false, false,
                                       u.getID(), u.name, u.male, prof_id, u.custom_profession ) );
+                std::swap( calendar::turn, calendar::start_of_game );
             }
-        } else {
-            // last ditch effort for really old saves that don't even have event_type::game_start
-            // treat current avatar as the starting avatar; abuse is_new_game=false to flag such cases
-            avatar &u = get_avatar();
-            profession_id prof_id = u.prof ? u.prof->ident() : profession::generic()->ident();
-            std::swap( calendar::turn, calendar::start_of_game );
-            get_event_bus().send( cata::event::make<event_type::game_avatar_new>( false, false,
-                                  u.getID(), u.name, u.male, prof_id, u.custom_profession ) );
-            std::swap( calendar::turn, calendar::start_of_game );
         }
     }
 }

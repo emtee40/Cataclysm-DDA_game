@@ -469,7 +469,8 @@
       "NO_BREATHE",
       "REVIVES",
       "PUSH_MON",
-      "FILTHY"
+      "FILTHY",
+      "GEN_DORMANT"
     ],
     "armor": { "bash": 2, "cut": 1, "bullet": 1, "electric": 2 }
   },
@@ -491,7 +492,6 @@
     "description": "This muscular zombie is dressed in the tattered remnants of a security uniform.",
     "copy-from": "mon_zombie_tough",
     "looks_like": "mon_zombie_tough",
-    "upgrades": { "half_life": 30, "into_group": "GROUP_ZOMBIE_UPGRADE" },
     "death_drops": "mon_zombie_resort_bouncer_death_drops"
   },
   {

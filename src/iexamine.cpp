@@ -4,14 +4,11 @@
 #include <climits>
 #include <cmath>
 #include <cstdio>
-#include <functional>
 #include <iterator>
 #include <map>
 #include <memory>
-#include <new>
 #include <set>
 #include <string>
-#include <type_traits>
 #include <utility>
 
 #include "activity_actor_definitions.h"
@@ -23,7 +20,6 @@
 #include "bodypart.h"
 #include "calendar.h"
 #include "cata_utility.h"
-#include "catacharset.h"
 #include "character.h"
 #include "colony.h"
 #include "color.h"
@@ -35,7 +31,6 @@
 #include "creature.h"
 #include "creature_tracker.h"
 #include "cursesdef.h"
-#include "damage.h"
 #include "debug.h"
 #include "effect.h"
 #include "enums.h"
@@ -49,7 +44,7 @@
 #include "game_inventory.h"
 #include "handle_liquid.h"
 #include "harvest.h"
-#include "input.h"
+#include "input_context.h"
 #include "inventory.h"
 #include "item.h"
 #include "item_location.h"
@@ -65,10 +60,8 @@
 #include "map_iterator.h"
 #include "map_selector.h"
 #include "mapdata.h"
-#include "material.h"
 #include "messages.h"
 #include "mission_companion.h"
-#include "monster.h"
 #include "morale_types.h"
 #include "mtype.h"
 #include "mutation.h"
@@ -76,7 +69,6 @@
 #include "options.h"
 #include "output.h"
 #include "overmapbuffer.h"
-#include "pickup.h"
 #include "pimpl.h"
 #include "player_activity.h"
 #include "point.h"
@@ -86,7 +78,6 @@
 #include "sounds.h"
 #include "string_formatter.h"
 #include "string_input_popup.h"
-#include "talker.h"
 #include "timed_event.h"
 #include "translations.h"
 #include "trap.h"
@@ -122,14 +113,17 @@ static const climbing_aid_id climbing_aid_furn_CLIMBABLE( "furn_CLIMBABLE" );
 static const efftype_id effect_antibiotic( "antibiotic" );
 static const efftype_id effect_bite( "bite" );
 static const efftype_id effect_bleed( "bleed" );
+static const efftype_id effect_bouldering( "bouldering" );
 static const efftype_id effect_disinfected( "disinfected" );
 static const efftype_id effect_earphones( "earphones" );
+static const efftype_id effect_gliding( "gliding" );
 static const efftype_id effect_incorporeal( "incorporeal" );
 static const efftype_id effect_infected( "infected" );
 static const efftype_id effect_mending( "mending" );
 static const efftype_id effect_pblue( "pblue" );
 static const efftype_id effect_pkill2( "pkill2" );
 static const efftype_id effect_sleep( "sleep" );
+static const efftype_id effect_slow_descent( "slow_descent" );
 static const efftype_id effect_strong_antibiotic( "strong_antibiotic" );
 static const efftype_id effect_strong_antibiotic_visible( "strong_antibiotic_visible" );
 static const efftype_id effect_teleglow( "teleglow" );
@@ -155,7 +149,6 @@ static const itype_id itype_charcoal( "charcoal" );
 static const itype_id itype_chem_carbide( "chem_carbide" );
 static const itype_id itype_corpse( "corpse" );
 static const itype_id itype_disassembly( "disassembly" );
-static const itype_id itype_electrohack( "electrohack" );
 static const itype_id itype_fake_milling_item( "fake_milling_item" );
 static const itype_id itype_fake_smoke_plume( "fake_smoke_plume" );
 static const itype_id itype_fertilizer( "fertilizer" );
@@ -180,8 +173,11 @@ static const itype_id itype_unfinished_cac2( "unfinished_cac2" );
 static const itype_id itype_unfinished_charcoal( "unfinished_charcoal" );
 
 static const json_character_flag json_flag_ATTUNEMENT( "ATTUNEMENT" );
+static const json_character_flag json_flag_GLIDE( "GLIDE" );
+static const json_character_flag json_flag_LEVITATION( "LEVITATION" );
 static const json_character_flag json_flag_PAIN_IMMUNE( "PAIN_IMMUNE" );
 static const json_character_flag json_flag_SUPER_HEARING( "SUPER_HEARING" );
+static const json_character_flag json_flag_WING_GLIDE( "WING_GLIDE" );
 
 static const material_id material_bone( "bone" );
 static const material_id material_cac2powder( "cac2powder" );
@@ -209,6 +205,7 @@ static const quality_id qual_ANESTHESIA( "ANESTHESIA" );
 static const quality_id qual_DIG( "DIG" );
 static const quality_id qual_DRILL( "DRILL" );
 static const quality_id qual_GRASS_CUT( "GRASS_CUT" );
+static const quality_id qual_HACK( "HACK" );
 static const quality_id qual_HAMMER( "HAMMER" );
 static const quality_id qual_LOCKPICK( "LOCKPICK" );
 static const quality_id qual_PRY( "PRY" );
@@ -1337,8 +1334,8 @@ bool iexamine::can_hack( Character &you )
         add_msg( _( "You cannot read!" ) );
         return false;
     }
-    const bool has_item = you.has_charges( itype_electrohack, 25 );
-    if( !has_item ) {
+    item &best_hacking = you.best_item_with_quality( qual_HACK );
+    if( best_hacking.is_null() || !item_location{you, &best_hacking}->ammo_sufficient( &you ) ) {
         add_msg( _( "You don't have a hacking tool with enough charges!" ) );
         return false;
     }
@@ -1350,8 +1347,9 @@ bool iexamine::try_start_hacking( Character &you, const tripoint &examp )
     if( !can_hack( you ) ) {
         return false;
     } else {
-        you.use_charges( itype_electrohack, 25 );
-        you.assign_activity( hacking_activity_actor() );
+        item_location hacking_tool = item_location{you, &you.best_item_with_quality( qual_HACK )};
+        hacking_tool->ammo_consume( hacking_tool->ammo_required(), hacking_tool.position(), &you );
+        you.assign_activity( hacking_activity_actor( hacking_tool ) );
         you.activity.placement = get_map().getglobal( examp );
         return true;
     }
@@ -4428,25 +4426,11 @@ static void reload_furniture( Character &you, const tripoint &examp, bool allow_
     // maybe at some point we need a pseudo item_location or something
     // but for now this should at least work as intended
     item_location pseudo_loc( map_cursor( examp ), &pseudo );
-    std::vector<item::reload_option> ammo_list;
-    for( item_location &ammo : you.find_ammo( pseudo, false, PICKUP_RANGE ) ) {
-        // Only allow the same type to reload if partially loaded.
-        if( ( amount_in_furn > 0 || !use_ammotype ) && ammo_itypeID != ammo.get_item()->typeId() ) {
-            continue;
-        }
-        if( pseudo.can_reload_with( *ammo, true ) ) {
-            ammo_list.emplace_back( &you, pseudo_loc, std::move( ammo ) );
-        }
-    }
 
-    if( ammo_list.empty() ) {
-        //~ Reloading or restocking a piece of furniture, for example a forge.
-        add_msg( m_info, _( "You need some %1$s to reload this %2$s." ), ammo->nname( 2 ),
-                 f.name() );
-        return;
-    }
+    // used to only allow one type of ammo, changed with move to inventory_selector
+    // todo: use furniture name instead of pseudo item name
+    item::reload_option opt = game_menus::inv::select_ammo( you, pseudo_loc );
 
-    item::reload_option opt = you.select_ammo( pseudo_loc, std::move( ammo_list ), f.name() );
     if( !opt ) {
         return;
     }
@@ -4863,8 +4847,6 @@ void iexamine::pay_gas( Character &you, const tripoint &examp )
 
     int pricePerUnit = getGasPricePerLiter( discount );
 
-    bool can_hack = ( !you.has_trait( trait_ILLITERATE ) && you.has_charges( itype_electrohack, 25 ) );
-
     uilist amenu;
     amenu.selected = 1;
     amenu.text = str_to_illiterate_str( _( "Welcome to AutoGas!" ) );
@@ -4886,7 +4868,7 @@ void iexamine::pay_gas( Character &you, const tripoint &examp )
                     +
                     format_money( pricePerUnit ) );
 
-    if( can_hack ) {
+    if( can_hack( you ) ) {
         amenu.addentry( hack, true, 'h', _( "Hack console." ) );
     }
 
@@ -5018,6 +5000,7 @@ void iexamine::ledge( Character &you, const tripoint &examp )
         ledge_jump_across,
         ledge_fall_down,
         ledge_examine_furniture_below,
+        ledge_glide,
     };
 
     map &here = get_map();
@@ -5025,6 +5008,26 @@ void iexamine::ledge( Character &you, const tripoint &examp )
                           you.posy() + 2 * sgn( examp.y - you.posy() ),
                           you.posz() );
     bool jump_target_valid = ( here.ter( jump_target ).obj().trap != tr_ledge );
+    point jd( examp.xy() + point( -you.posx(), -you.posy() ) );
+    int jump_direction = 0;
+
+    if( jd.y > 0 && jd.x == 0 ) {
+        jump_direction = 0; //south
+    } else if( jd.y > 0 && jd.x < 0 ) {
+        jump_direction = 1; //southwest
+    } else if( jd.y == 0 && jd.x < 0 ) {
+        jump_direction = 2; //west
+    } else if( jd.y < 0 && jd.x < 0 ) {
+        jump_direction = 3; //northwest
+    } else if( jd.y < 0 && jd.x == 0 ) {
+        jump_direction = 4; //north
+    } else if( jd.y < 0 && jd.x > 0 ) {
+        jump_direction = 5; //northeast
+    } else if( jd.y == 0 && jd.x > 0 ) {
+        jump_direction = 6; //east
+    } else if( jd.y > 0 && jd.x > 0 ) {
+        jump_direction = 7; //southeast
+    }
 
     tripoint just_below = examp;
     just_below.z--;
@@ -5042,8 +5045,11 @@ void iexamine::ledge( Character &you, const tripoint &examp )
     cmenu.addentry( ledge_jump_across, jump_target_valid, 'j',
                     ( jump_target_valid ? _( "Jump across." ) : _( "Can't jump across (need a small gap)." ) ) );
     cmenu.addentry( ledge_fall_down, true, 'f', _( "Fall down." ) );
-
+    if( you.has_trait_flag( json_flag_GLIDE ) || you.has_trait_flag( json_flag_WING_GLIDE ) ) {
+        cmenu.addentry( ledge_glide, true, 'g', _( "Glide away." ) );
+    }
     cmenu.query();
+
 
     creature_tracker &creatures = get_creature_tracker();
     if( g->climb_down_menu_pick( examp, cmenu.ret ) ) {
@@ -5127,6 +5133,46 @@ void iexamine::ledge( Character &you, const tripoint &examp )
             }
             break;
         }*/
+        case ledge_glide: {
+            // If player is grabbed, trapped, or somehow otherwise movement-impeded, first try to break free
+            if( !you.move_effects( false ) ) {
+                you.moves -= 100;
+                return;
+            }
+            // The carried weight check here is redundant, but we do it anyway for better player feedback
+            if( 100 * you.weight_carried() / you.weight_capacity() > 50 &&
+                you.has_trait_flag( json_flag_WING_GLIDE ) ) {
+                add_msg( m_warning, _( "You are carrying too much to glide." ) );
+            } else if( !you.can_fly() ) {
+                add_msg( m_warning, _( "You can't manage to get airborne in your current state." ) );
+            } else {
+                int glide_distance = 5;
+                const weather_manager &weather = get_weather();
+                add_msg( m_info, _( "You soar away from the ledge." ) );
+                int angledifference = std::abs( weather.winddirection - jump_direction * 45 );
+                // Handle cases where the difference wraps around due to compass directions
+                angledifference = std::min( angledifference, 360 - angledifference );
+                if( angledifference <= 45 && weather.windspeed >= 12 ) {
+                    add_msg( m_warning, _( "Your glide is aided by a tailwind." ) );
+                    glide_distance += 1;
+                }
+                // Check if the directions are greater than 135 degrees apart
+                else if( angledifference >= 135 && weather.windspeed >= 12 ) {
+                    add_msg( m_warning, _( "Your glide is hindered by a headwind." ) );
+                    glide_distance -= 1;
+                }
+                if( jump_direction == 1 || jump_direction == 3 || jump_direction == 5 || jump_direction == 7 ) {
+                    glide_distance = std::round( 0.7 * glide_distance );
+                }
+                you.as_avatar()->grab( object_type::NONE );
+                glide_activity_actor glide( &you, jump_direction, glide_distance );
+                you.remove_effect( effect_bouldering );
+                you.assign_activity( glide );
+                you.add_effect( effect_gliding, 1_turns, true );
+                you.setpos( examp );
+            }
+            break;
+        }
         case ledge_fall_down: {
             if( query_yn( _( "Climbing might be safer.  Really fall from the ledge?" ) ) ) {
                 you.moves -= 100;
@@ -5135,6 +5181,9 @@ void iexamine::ledge( Character &you, const tripoint &examp )
                     return;
                 }
                 // Step into open air, then fall...
+                if( you.has_effect_with_flag( json_flag_LEVITATION ) ) {
+                    you.add_effect( effect_slow_descent, 1_seconds, false );
+                }
                 you.setpos( examp );
                 you.gravity_check();
             } else {

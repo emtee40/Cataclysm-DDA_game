@@ -5,7 +5,6 @@
 #include <istream>
 #include <iterator>
 #include <memory>
-#include <new>
 #include <optional>
 #include <string>
 #include <utility>
@@ -14,13 +13,12 @@
 #include "cached_options.h"
 #include "cata_utility.h"
 #include "character.h"
-#include "colony.h"
 #include "creature.h"
 #include "creature_tracker.h"
 #include "debug.h"
 #include "flag.h"
 #include "game.h"
-#include "input.h"
+#include "input_context.h"
 #include "inventory.h"
 #include "item.h"
 #include "map.h"
@@ -341,8 +339,6 @@ std::string action_ident( action_id act )
             return "debug_visibility";
         case ACTION_DISPLAY_TRANSPARENCY:
             return "debug_transparency";
-        case ACTION_DISPLAY_REACHABILITY_ZONES:
-            return "display_reachability_zones";
         case ACTION_DISPLAY_LIGHTING:
             return "debug_lighting";
         case ACTION_DISPLAY_RADIATION:
@@ -473,7 +469,6 @@ bool can_action_change_worldstate( const action_id act )
         case ACTION_DISPLAY_RADIATION:
         case ACTION_DISPLAY_NPC_ATTACK_POTENTIAL:
         case ACTION_DISPLAY_TRANSPARENCY:
-        case ACTION_DISPLAY_REACHABILITY_ZONES:
         case ACTION_ZOOM_OUT:
         case ACTION_ZOOM_IN:
         case ACTION_TOGGLE_PIXEL_MINIMAP:
@@ -648,6 +643,9 @@ bool can_butcher_at( const tripoint &p )
 
 bool can_move_vertical_at( const tripoint &p, int movez )
 {
+    if( p.z + movez < -OVERMAP_DEPTH || p.z + movez >= OVERMAP_HEIGHT ) {
+        return false;
+    }
     Character &player_character = get_player_character();
     map &here = get_map();
     // TODO: unify this with game::move_vertical
@@ -928,7 +926,6 @@ action_id handle_action_menu()
             REGISTER_ACTION( ACTION_DISPLAY_VISIBILITY );
             REGISTER_ACTION( ACTION_DISPLAY_LIGHTING );
             REGISTER_ACTION( ACTION_DISPLAY_TRANSPARENCY );
-            REGISTER_ACTION( ACTION_DISPLAY_REACHABILITY_ZONES );
             REGISTER_ACTION( ACTION_DISPLAY_RADIATION );
             REGISTER_ACTION( ACTION_DISPLAY_NPC_ATTACK_POTENTIAL );
             REGISTER_ACTION( ACTION_TOGGLE_DEBUG_MODE );
