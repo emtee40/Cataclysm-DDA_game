@@ -8,7 +8,7 @@
     "see_cost": 2,
     "travel_cost_type": "road",
     "extras": "road",
-    "flags": [ "LINEAR", "REQUIRES_PREDECESSOR" ]
+    "flags": [ "LINEAR", "REQUIRES_PREDECESSOR", "ROAD" ]
   },
   {
     "type": "overmap_terrain",
@@ -20,7 +20,7 @@
     "see_cost": 2,
     "travel_cost_type": "road",
     "extras": "road_nesw_manhole",
-    "flags": [ "KNOWN_DOWN", "NO_ROTATE" ]
+    "flags": [ "KNOWN_DOWN", "NO_ROTATE", "ROAD" ]
   },
   {
     "type": "overmap_terrain",
@@ -32,7 +32,7 @@
     "see_cost": 2,
     "travel_cost_type": "road",
     "extras": "city_center",
-    "flags": [ "NO_ROTATE" ]
+    "flags": [ "NO_ROTATE", "ROAD" ]
   },
   {
     "type": "overmap_terrain",
