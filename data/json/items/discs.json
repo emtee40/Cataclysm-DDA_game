@@ -1,0 +1,802 @@
+[
+  {
+    "type": "GENERIC",
+    "id": "dvd_blank",
+    "name": { "str": "blank DVD disc" },
+    "description": "An optical disc of medium storage, once used for storing and playing digital video, audio, and other data - many years before the Cataclysm, it was a popular format for storing movies, software, and various multimedia content.  This one is blank and has no data on it.",
+    "category": "other",
+    "material": [ "plastic" ],
+    "weight": "16 g",
+    "volume": "7 ml",
+    "longest_side": "120 mm",
+    "price": 250,
+    "price_postapoc": 2,
+    "symbol": "O",
+    "color": "gray"
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_scratched",
+    "name": { "str": "scratched DVD disc" },
+    "description": "An optical disc of medium storage, once used for storing and playing digital video, audio, and other data - many years before the Cataclysm, it was a popular format for storing movies, software, and various multimedia content.  This one is scratched to the point where it is impossible for any device to read its contents.",
+    "copy-from": "dvd_blank",
+    "price": 5,
+    "price_postapoc": 0,
+    "flags": [ "TRADER_AVOID" ]
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_cracked",
+    "name": { "str": "cracked DVD disc" },
+    "description": "An optical disc of medium storage, once used for storing and playing digital video, audio, and other data - many years before the Cataclysm, it was a popular format for storing movies, software, and various multimedia content.  This one is cracked and damaged to the point where it is impossible for any device to read its contents.",
+    "copy-from": "dvd_blank",
+    "price": 1,
+    "price_postapoc": 0,
+    "flags": [ "TRADER_AVOID" ]
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_ogre",
+    "name": { "str": "DVD disc - Shrek" },
+    "description": "A DVD disc containing an animated comedy film that tells the story of Shrek, an ogre, whose peaceful swamp life is disrupted when fairy tale creatures are banished to his land.  To reclaim his home, Shrek makes a deal with the scheming Lord Farquaad to rescue Princess Fiona.  It is rated PG and is from 2001.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_ogre2",
+    "name": { "str": "DVD disc - Shrek 2" },
+    "description": "A DVD containing the second installment of the Shrek movie series, Shrek 2, in which the adventures of Shrek and Princess Fiona continue as they visit her royal parents, facing challenges due to their unconventional marriage and discovering family secrets.  It is rated PG and is from 2004.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_ogre3",
+    "name": { "str": "DVD disc - Shrek the Third" },
+    "description": "As the name says, this DVD contains the third installment of the Shrek movie series.  It follows Shrek as he navigates the challenges of ruling the kingdom.  When King Harold falls ill and perishes, Shrek sets out to find the rightful heir, encountering characters and many challenges along the way.  It is rated PG and is from 2007.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_ogre4",
+    "name": { "str": "DVD disc - Shrek Forever After" },
+    "description": "A DVD that contains the fourth installment of the Shrek movie series.  This movie explores an alternate reality created when Shrek makes a deal with Rumpelstiltskin, leading to a world where he never existed.  Shrek must undo the consequences of these actions and save his friends, family, and future.  It is rated PG and is from 2010.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_lion",
+    "name": { "str": "DVD disc - The Lion King" },
+    "description": "A DVD that contains the tale of Simba, a young lion prince, who faces the challenges of reclaiming his kingdom after the murder of his father, Mufasa.  Guided by the lessons of his journey, Simba learns the circle of life and his rightful place as king.  This film is a classic animated adventure and is rated G, suitable for all audiences (not that there are any nowadays), and is from 1994.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_foodperson",
+    "name": { "str": "DVD disc - Foodperson: The Marketable Movie" },
+    "description": "Foodplace presents this 94.3% watchable motion picture DVD.  It stars Foodperson as they attempt to retrieve the Object of Plot Relevance from the possession of the Antagonist.  Rated D for delicious and is from 2018.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_foodperson2",
+    "name": { "str": "DVD disc - Foodperson 2: A Marketable Sequel" },
+    "description": "Foodplace presents this 96.7% watchable motion picture DVD.  It stars Foodperson again as they attempt to re-retrieve the Object of Plot Relevance from the possession of the Antagonist that escaped their destiny in the last movie.  Rated D for delicious and is from 2021",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_foodperson3",
+    "name": { "str": "DVD disc - Foodperson 3: The Last Straw" },
+    "description": "Foodplace presents this 98.4% watchable motion picture DVD (almost 100%).  It stars Foodperson once again as they discover more about their own story, family and past, while finally understanding and waging peace with the Antagonist from the last two movies.  Rated D for delicious and is from 2024.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_bean",
+    "name": { "str": "DVD disc - Killer Bean Forever" },
+    "description": "This DVD disc contains an animated action film featuring anthropomorphic coffee beans.  The story follows a skilled assassin bean named Jack Bean who becomes a target after a mission.  The movie combines humor, stylized action, and unique character designs.  This movie doesn't have a specific age rating from any official American rating organizations and is from 2008.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_panda",
+    "name": { "str": "DVD disc - The Kung Fu Panda Trilogy" },
+    "description": "The entire Kung Fu Panda Trilogy on a single DVD disc.  It follows the journey of Po, a clumsy and lovable panda, who aspires to become a kung fu master.  Po discovers he is the Dragon Warrior chosen to protect the Valley of Peace from various villains, including the formidable Tai Lung and the villainous peacock Lord Shen.  The trilogy combines humor, heart, and martial arts action, portraying Po's growth into a skilled warrior.  It is rated PG and is from 2008, 2011 and 2016.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_fox",
+    "name": { "str": "DVD Disc - Fantastic Mr. Fox" },
+    "description": "A DVD disc containing a stop-motion animated film directed by Wes Anderson and based on Roald Dahl's 1970 book.  The plot follows Mr. Fox, voiced by George Clooney, as he returns to his wild, thieving ways to outsmart three mean farmers.  The film explores themes of family, identity, and the balance between domesticity and adventure in a visually distinctive and quirky style.  It is rated PG and is from 2009.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_jungle",
+    "name": { "str": "DVD disc - The Jungle Book" },
+    "description": "This DVD disc contains the last animated movie produced by Walt Disney, and based on Rudyard Kipling's 1894 book.  This movie follows the adventures of Mowgli, a young boy raised by wolves in the jungle.  Guided by his animal friends, including the wise panther Bagheera and the carefree bear Baloo, Mowgli navigates the challenges of the jungle, facing the villainous tiger Shere Khan.  It is rated PG and is from 1967.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_bad",
+    "name": { "str": "DVD disc - The Good, the Bad, and the Ugly" },
+    "description": "This DVD disc contains Western Action movie set during the American Civil War.  The plot follows three gunmen searching for buried Confederate gold.  Once known for its iconic characters, Ennio Morricone's score, and intense showdowns, it is rated R and is from 1966.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_wild",
+    "name": { "str": "DVD disc - The Wild Bunch" },
+    "description": "A DVD disc containing a Western movie that revolves around a group of aging outlaws led by Pike Bishop, who plan one last, violent heist in a changing Wild West.  This film was once known for its innovative and graphic depiction of violence, as well as its exploration of themes like loyalty and the end of an era.  It is rated R and is from 1969.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_fast",
+    "name": { "str": "DVD disc - Fast Cars, Furious Dudes 7" },
+    "description": "A DVD disc containing the seventh installment of a long-running series about family, fast cars, furious dudes, and lots of explosions.  It is somewhat melancholy to realize that after the sky broke, most of those cars will never be driven again.  It is rated PG-13 and is from 2015.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_alex",
+    "name": { "str": "DVD disc - Who Killed Captain Alex?" },
+    "description": "A DVD disc containing an Ugandan action-comedy film that follows the efforts of Captain Alex and his team to thwart the criminal Tiger Mafia.  When Captain Alex is killed in action, his brother takes on the mission of avenging his death.  The film was once known for its low-budget production, energetic action scenes, and humorous commentary. This movie doesn't have a specific age rating from any official American rating organizations and is from 2010.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_die",
+    "name": { "str": "DVD disc - Die Hard" },
+    "description": "This DVD disc contains a 1988 action film that follows NYPD officer John McClane, played by Bruce Willis, as he tries to save hostages from terrorists who have taken over a Los Angeles skyscraper during a Christmas party.  McClane battles the criminals, led by Hans Gruber, played by Alan Rickman, using his wits and resourcefulness.  It is rated R.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_samurai",
+    "name": { "str": "DVD disc - Seven Samurai" },
+    "description": "This DVD disc contains an epic 1954 Japanese film directed by Akira Kurosawa.  The plot centers around a small village under threat from bandits, prompting the villagers to hire seven skilled samurai to defend them.  The film explores themes of honor, sacrifice, and the nature of heroism as the samurai prepare the villagers for an impending battle.  It is a classic, thus has no age rating, but it is available in both English and Japanese languages, with subtitles.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_police",
+    "name": { "str": "DVD disc - Police Story" },
+    "description": "This DVD disc contains a 1985 Hong Kong action film that stars (and was also directed by) the Legend, Jackie Chan.  The plot follows Inspector Chan Ka-kui as he tries to bring down a drug lord and protect a key witness.  Once known for its groundbreaking stunts and intense action sequences, the film showcases Jackie Chan's signature style.  It is not rated but it is available in both English and Japanese languages, with subtitles.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_ark",
+    "name": { "str": "DVD disc - Raiders of the Lost Ark" },
+    "description": "This DVD contains a characteristic movie that follows the iconic archaeologist Indiana Jones as he races against Nazis to find the Ark of the Covenant.  Directed by Steven Spielberg and starring Harrison Ford, this film is an action-packed adventure that combines elements of history, mythology, and supernatural intrigue.  It is rated PG and is from 1981.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_bill",
+    "name": { "str": "DVD disc - Kill Bill Vol. 1 and 2" },
+    "description": "The two volumes of Kill Bill (from 2003 and 2004, respectively) in one single disc.  These are martial arts movies that revolves around The Bride, played by Uma Thurman, seeking revenge on her former allies after they betray her and leave her for dead on her wedding day.  The narrative is presented in a non-linear fashion, featuring intense action sequences and homage to various film genres.  Both movies are rated R.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_face",
+    "name": { "str": "DVD disc - Face / Off" },
+    "description": "This DVD contains an action thriller directed by John Woo.  The plot centers around FBI agent Sean Archer, played by John Travolta, and terrorist Castor Troy, played by Nicolas Cage.  The two characters undergo a face transplant procedure, leading to a high-stakes game of cat and mouse as they take on each other's identities.  It is rated R and is from 1997.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_bear",
+    "name": { "str": "DVD disc - Bare Grills: In the Woods" },
+    "description": "A DVD disc containing a film written and directed by its star, award winning survivalist Bare Grills, 'In the Woods' is his first foray into the world of cinema.  When pilot Mike Fae crashes his helicopter after a freak accident, he is transported naked and alone to a world without civilization.  He uses his amazing survival skills to assemble shelter, find food, and construct weapons to fight the dinosaurs, aliens, and zombie-fied dinosaurs that threaten his shelter, all while searching for a way back home.  It is Rated PG-13 and is from 2020.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_frozen",
+    "name": { "str": "DVD disc - The Frozen World" },
+    "description": "A DVD disc containing a 2018 science-fiction mockumentery that follows both the colonization efforts and the trials of surviving on the ice world of Huxley-IV.  From the construction of the CS Erebus in 2250, to the Hypernet Plague of 2536, audiences will find there is nothing like The Frozen World.  It is rated PG-13.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_mont1",
+    "name": { "str": "DVD disc - Monty Python and The Holy Grail" },
+    "description": "The movie in this DVD hilariously depicts King Arthur's quest for the Holy Grail with absurdity and satire.  It follows the Knights of the Round Table as they face surreal challenges, encountering eccentric characters and comedic obstacles.  It is rated PG and is from 1975.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_mont2",
+    "name": { "str": "DVD disc - Monty Python's Life of Brian" },
+    "description": "This DVD disc contains a 1979 satirical comedy that follows Brian Cohen, a man born on the same day as Jesus, and inadvertently gets caught up in events surrounding the life of the Messiah.  This film cleverly satirizes religion, politics, and society, offering a humorous take on historical and biblical themes.  It is rated R.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_airplane",
+    "name": { "str": "DVD disc - Airplane!" },
+    "description": "This DVD contains a 1980 satirical comedy that parodies the disaster film sub-genre.  The plot centers on an ex-fighter pilot with a fear of flying who must take the controls when the crew and passengers of a commercial airliner fall ill due to food poisoning.  The film is renowned for its absurd humor, visual gags, and wordplay, and it is rated PG.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_snakes",
+    "name": { "str": "DVD disc - Snakes on a Plane" },
+    "description": "This DVD contains a comedy-action-horror film where FBI agent Nelville Flynn must protect a witness on a flight from Hawaii to Los Angeles.  However, chaos ensues when an assassin releases a crate of deadly snakes on the plane.  The passengers and crew must survive the venomous threat at 30,000 feet.  This movie is rated R and is from 2006.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_gun",
+    "name": { "str": "DVD disc - The Naked Gun: From the Files of Police Squad!" },
+    "description": "This DVD disc contains a slapstick comedy film that follows the bumbling Lieutenant Frank Drebin as he tries to prevent an assassination plot against Queen Elizabeth II.  Drebin's clumsy and oblivious antics led to hilariously absurd situations.  It is rated PG-13 and is from 1988.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_spinal",
+    "name": { "str": "DVD disc - This is Spinal Tap" },
+    "description": "This DVD disc presents a 1984 mockumentary film that satirizes the music industry, following the fictional rock band Spinal Tap on their disastrous tour.  The film humorously explores the absurdities of rock and roll culture, showcasing the band's misadventures and exaggerated egos.  It is rated R.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_groundhog",
+    "name": { "str": "DVD disc - Groundhog Day" },
+    "description": "A DVD movie that revolves around Phil Connors, a cynical TV weatherman who finds himself stuck in a time loop, reliving the same day, Groundhog Day, over and over again.  As he experiences the repetition, he undergoes personal growth and self-discovery, eventually striving to become a better person.  It is rated PG and is from 1993.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_team",
+    "name": { "str": "DVD disc - Team America: World Police" },
+    "description": "This 2004 satirical puppetry DVD movie is from the same creators of South Park and parodies action movies and international politics.  The plot follows an elite counter-terrorism team, portrayed by marionettes, as they attempt to thwart a global terrorist threat.  It is rated R.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_duck",
+    "name": { "str": "DVD disc - Duck Soup" },
+    "description": "A DVD containing a 1933 classic comedy film featuring the Marx Brothers.  The plot revolves around the fictional country of Freedonia, led by Rufus T. Firefly, played by Groucho Marx.  The film satirizes politics, war, and diplomacy, with the Marx Brothers delivering their signature humor.  Since it was released in 1933, it predates the modern movie rating system, therefore, it doesn't have a specific age rating, but given the era, it contains soft and safe humor.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_nail",
+    "name": { "str": "DVD disc - Withnail & I" },
+    "description": "A DVD disc containing a British black comedy that follows two unemployed actors, Withnail and 'I' (whose name is Marwood), living in London in 1969 (same year the movie was made).  Frustrated with their careers and facing various misadventures, they decide to escape to the countryside for a holiday that takes an unpredictable turn.  It is rated R.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_dictator",
+    "name": { "str": "DVD disc - The Great Dictator" },
+    "description": "This DVD disc contains the first 'talkie' (movie with sound) starring the legendary silent film star Charlie Chaplin.  This movie is a black comedy that follows the viewpoints of two people (both played by Chaplin): A Jewish barber and war hero returning to his neighborhood after several years in the hospital, and Adenoid Hynkel, 'phooey' of Tomaina (Germany).  It follows the efforts of said barber, along with his neighbor Hanna, to mount resistance against Hynkel's regime.  It should be noted that Chaplin would not have made this movie if the true horrors of the Holocaust were known at the time.  It was released in 1940, and is rated G.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_night",
+    "name": { "str": "DVD disc - Night of the Living Dead" },
+    "description": "This DVD disc presents you with a classic of horror that revolves around a group of people trapped in a farmhouse during the start of a mysterious zombie outbreak.  As they try to survive the night, tensions rise among the diverse group.  While zombies and the general idea of the ‘living dead’ do not amuse you that much nowadays, it is still a great movie to watch.  It is rated R and this is the original 1968 artificially colorized version.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_nightr",
+    "name": { "str": "DVD disc - Night of the Living Dead (remake)" },
+    "description": "This DVD disc contains the remake of a classic, which also became a classic, directed by Tom Savini, closely follows the original 1968 film's plot.  It revolves around a group of people trapped in a farmhouse as they try to survive the start of a zombie outbreak.  The film explores the dynamics of fear, human relationships, and societal breakdown under the threat of the undead.  While the general idea of the undead does not amuse you that much, it is still a great movie to watch.  It is rated R and is from 1990.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_dawn",
+    "name": { "str": "DVD disc - Dawn of the Dead" },
+    "description": "A horror DVD movie directed by the Legend, George A. Romero.  It centers around a group of survivors taking refuge in a shopping mall during a zombie apocalypse.  The film explores themes of consumerism, societal collapse, and the struggle for survival.  As the survivors fortify their position, they face both external threats from the undead and internal tensions.  It is rated R and is from 1973.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_dawnr",
+    "name": { "str": "DVD disc - Dawn of the Dead (remake)" },
+    "description": "A DVD containing the remake of a classic, directed by Zack Snyder.  It follows a group of people seeking refuge in a shopping mall as a global pandemic turns people into aggressive zombies, just like happened in real life.  The survivors must navigate the challenges of the undead and their own interpersonal conflicts while attempting to stay alive.  It is rated R and is from 2004.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_ello",
+    "name": { "str": "DVD disc - Ello Gov'nor" },
+    "description": "This DVD contains a 1982 British Horror movie about the driver of a black British Taxi, who is brutally murdered by gang members.  The driver's soul possesses the taxi, and immediately, the taxi goes around town, running over people and seeking vengeance.  It is rated R.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_michael",
+    "name": { "str": "DVD disc - Halloween" },
+    "description": "A DVD presenting a movie directed by John Carpenter.  It follows the story of a masked killer who escapes from a mental institution and returns to his hometown to terrorize babysitters.  His psychiatrist attempts to stop him before he carries out a murderous rampage.  It is rated R and is from 1978.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_nosferatu",
+    "name": { "str": "DVD disc - Nosferatu" },
+    "description": "This DVD contains a timeless classic of the initial era of horror, a silent horror classic directed by F. W. Murnau.  It is an (unauthorized) adaptation of Bram Stoker's ‘Dracula’.  The plot follows Thomas Hutter, who travels to Transylvania to finalize a real estate deal with the mysterious Count Orlok.  However, Hutter soon realizes that Orlok is a vampire with sinister intentions.  Since this movie is from 1922, it has no age rating.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_ze",
+    "name": { "str": "DVD disc - At Midnight I'll Take Your Soul" },
+    "description": "This DVD disc contains a Brazilian horror film directed by José Mojica Marins.  The plot revolves around Zé do Caixão, a sinister gravedigger with a contempt for societal norms and a desire for immortality.  Zé terrorizes his community, seeking a woman who can bear his child to continue his bloodline.  Since it is a foreign film, it has no age rating, and is from 1964.  This movie is also available in both English and the original Brazilian Portuguese language.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_jason",
+    "name": { "str": "DVD disc - Friday the 13th" },
+    "description": "A DVD movie direct by Sean S. Cunningham, this classic slasher horror movie follows a group of camp counselors preparing to reopen Camp Crystal Lake, where they are terrorized by an unknown killer.  The movie's plot revolves around a series of gruesome murders as the counselors try to survive the night.  It is rated R and is from 1980.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_freddy",
+    "name": { "str": "DVD disc - A Nightmare on Elm Street" },
+    "description": "A classic of slasher horror, this DVD disc congains a movie directed by Wes Craven.  It follows a group of teenagers haunted by a vengeful spirit, Freddy Krueger, in their dreams.  Krueger's ability to harm them in the dream world translates to real-life consequences, leading to a terrifying battle for survival.  The film explores the thin line between dreams and reality, it is rated R and is from 1984.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_father",
+    "name": { "str": "DVD disc - The Godfather" },
+    "description": "This DVD contains a movie that follows the powerful Corleone crime family as senior patriarch Vito Corleone navigates the world of organized crime in post-World War II America.  The movie's plot explores themes of power, family, and betrayal.  It is rated R and is from 1972.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_father2",
+    "name": { "str": "DVD disc - The Godfather part II" },
+    "description": "This DVD contains a movie sequel that intricately weaves two parallel narratives.  One follows the young Vito Corleone's rise to power in early 20th-century New York, and the other delves into his son Michael's attempts to expand the family empire in the 1950s.  It is rated R and is from 1974.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_titanic",
+    "name": { "str": "DVD disc - Titanic" },
+    "description": "A DVD movie wose plot revolves around the ill-fated love story between Jack and Rose aboard the RMS Titanic during its maiden voyage, this film explores the tragedy of the sinking ship in 1912.  With a blend of romance and disaster, the movie navigates the challenges faced by the couple and the passengers. There are no zombies in this movie, it is rated PG-13 and is from 1997.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_forrest",
+    "name": { "str": "DVD disc - Forrest Gump" },
+    "description": "This DVD disc presents a movie that follows the extraordinary life of a man with a low IQ, played by Tom Hanks, who unwittingly becomes a part of various historical events.  The plot spans decades, showcasing Forrest's encounters with iconic figures and his impact on society, all while maintaining a simple and optimistic outlook on life.  It is rated PG-13 and is from 1994.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_shawshank",
+    "name": { "str": "DVD disc - The Shawshank Redemption" },
+    "description": "A DVD disc containing a movie that narrates the story of Andy Dufresne, a banker wrongly convicted of murder, as he navigates life in Shawshank State Penitentiary.  The plot revolves around his enduring friendship with fellow inmate Red, his resourcefulness, and his quest for justice and redemption within the confines of the prison.  It is rated R and is from 1994.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_beauty",
+    "name": { "str": "DVD disc - American Beauty" },
+    "description": "A DVD disc containing a movie that follows the life of Lester Burnham, a middle-aged man undergoing a midlife crisis, as he reevaluates his existence and pursues unconventional desires.  The film explores themes of beauty, societal expectations, and personal liberation, interwoven with the lives of those around him.  It is rated R and is from 1999.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_nest",
+    "name": { "str": "DVD disc - One Flew Over the Cuckoo's Nest" },
+    "description": "A DVD movie that follows the experiences of Randle P. McMurphy, a rebellious and charismatic man who feigns insanity to escape prison and ends up in a mental institution.  The story explores the power dynamics between McMurphy and the authoritarian Nurse Ratched, shedding light on the lives of the patients and the challenges they face within the oppressive institutional environment. It is rated R and is from 1975",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_mile",
+    "name": { "str": "DVD disc - The Green Mile" },
+    "description": "This DVD disc contain a movie where the plot revolves around Paul Edgecomb, a prison guard in the 1930s, and his experiences with a death row inmate named John Coffey, who possesses mysterious healing abilities.  The film explores themes of injustice, empathy, and the supernatural as it unfolds within the confines of the prison.  It is almost impossible not to drop a tear while watching this masterpiece, but it is rated R.  It is also from 1999.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_train",
+    "name": { "str": "DVD disc - Trainspotting" },
+    "description": "A DVD containing a movie that follows the lives of a group of heroin addicts in Edinburgh, Scotland, led by Mark Renton.  This film delves into their struggles with addiction, relationships, and the pursuit of a better life, all set against a backdrop of gritty realism and dark humor.  It is rated R and is from 1996",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_benjamin",
+    "name": { "str": "DVD disc - The Mysterious Case of Benjamin Button" },
+    "description": "This DVD disc movie's story narrates the life of Benjamin Button, born with a rare condition that causes him to age backward.  The film explores the challenges and unique experiences he faces as he grows younger while developing relationships and encountering the complexities of life.  It is rated PG-13 and is from 2008.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_bodies",
+    "name": { "str": "DVD disc - Warm Bodies" },
+    "description": "This DVD disc presents a unique romantic comedy set in a post-apocalyptic world where a zombie named R saves a living girl, Julie, from an attack.  As R and Julie's unexpected connection grows, it triggers a chain of events that challenges the divide between the living and the undead, offering hope for a different future.  Be careful, as this is just a movie, so don't expect that one of the zombies out there will fall in love with you.  It is rated PG-13 and is from 2013.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_notebook",
+    "name": { "str": "DVD disc - The Notebook" },
+    "description": "This DVD disc contains a romantic drama that spans decades, telling the love story of Noah and Allie.  The narrative unfolds through a notebook recounting their passionate but challenging journey.  This film explores themes of enduring love, choices, and fate, truly inspiring.  It is rated PG-13 and is from 2004.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_jones",
+    "name": { "str": "DVD disc - Love Jones" },
+    "description": "A DVD disc containing a movie Directed by Theodore Witcher.  This is a romantic drama that revolves around Darius and Nina, exploring their complex relationship in the vibrant Chicago arts scene.  The film delves into themes of love, poetry, and self-discovery as the characters navigate passion and commitment.  It is rated R and is from 1997.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_casablanca",
+    "name": { "str": "DVD disc - Casablanca." },
+    "description": "A DVD disc containing a classic romantic drama set during World War II in the titular Moroccan city.  Rick Blaine, a cynical nightclub owner, encounters his former lover Ilsa Lund, and they become entangled in a web of love, sacrifice, and political intrigue against the backdrop of wartime chaos.  It is not rated by any official American rating system, and is from 1942.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_mood",
+    "name": { "str": "DVD disc - In the Mood for Love" },
+    "description": "This DVD disc presents a Hong Kong romantic drama film directed by Wong Kar-wai.  The plot revolves around two neighbors who suspect their spouses of infidelity and form a close bond while grappling with their own feelings.  It is rated PG and is from 2000.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_loving",
+    "name": { "str": "DVD disc - Loving" },
+    "description": "This DVD disc presents an American historical romance and drama film directed by Jeff Nichols.  The plot follows the true story of Richard and Mildred Loving, an interracial couple whose marriage led to a landmark Supreme Court case.  The film explores their struggle against Virginia's anti-miscegenation laws and their fight for the right to live as a family.  It is rated PG-13 and is from 2016.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_monsoon",
+    "name": { "str": "DVD disc - Monsoon Wedding" },
+    "description": "This DVD presents an Indian film directed by Mira Nair.  The plot revolves around the chaotic preparations for an elaborate traditional Punjabi wedding in Delhi.  Amidst the vibrant celebrations, the film delves into complex family dynamics, hidden secrets, and the clash between modernity and tradition.  It is rated R, and is from 2001.  It is available in English and Hindi, with subtitles.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_one",
+    "name": { "str": "DVD disc - If You Are the One" },
+    "description": "This DVD disc contains a Chinese romantic comedy film directed by Feng Xiaogang.  The plot centers around a wealthy, middle-aged man named Qin Fen, who, tired of his bachelor life, decides to participate in a reality dating show.  He meets a woman named Xiaoxiao, and the film explores their unique journey of love, misunderstandings, and self-discovery.  It is not rated by any official American rating system, and is from 2008.  This movie is also available in both English and Mandarin, with subtitles.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_cold",
+    "name": { "str": "DVD disc - Cold War" },
+    "description": "A DVD disc containing a 2018 Polish romantic drama film directed by Pawel Pawlikowski.  Set against the backdrop of the Cold War in the 1950s and 1960s, the plot follows the passionate and tumultuous love affair between a musician and a singer.  The film explores their complex relationship as it unfolds across various countries and political landscapes.  It is rated R and is available only in English.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_shakespeare",
+    "name": { "str": "DVD disc - Shakespeare In Love" },
+    "description": "A DVD disc containing a 1998 romantic comedy-drama directed by John Madden.  The plot revolves around a young William Shakespeare who, while struggling with writer's block, finds inspiration and romance with a woman named Viola de Lesseps.  Their love affair influences the creation of one of Shakespeare's most famous plays, ‘Romeo and Juliet’.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_m",
+    "name": { "str": "DVD disc - M" },
+    "description": "This DVD contains a 1931 German thriller film directed by Fritz Lang.  The plot centers around a city in panic due to the presence of a child murderer.  The police and the criminal underworld intensify efforts to catch the murderer, leading to a tense and gripping narrative that explores the consequences of fear and the pursuit of justice.  It is not rated by any official American rating system and is available in both English and German languages.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_ugetsu",
+    "name": { "str": "DVD disc - Ugetsu" },
+    "description": "This DVD contains a 1953 Japanese film directed by Kenji Mizoguchi.  The plot is set in 16th-century Japan and revolves around two peasant couples who become entangled in the chaos of civil war.  As their ambitions lead them to make choices between love, family, and personal desires, the film explores the consequences of their actions and the ephemeral nature of dreams.  It is not rated by any official American rating system and is available in both English and Japanese languages.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_city",
+    "name": { "str": "DVD disc - City of God" },
+    "description": "A DVD disc containing a Brazilian crime film directed by Fernando Meirelles.  The plot is based on real events and unfolds in the impoverished favelas of Rio de Janeiro.  It follows the lives of two young boys, Foguete (Rocket) and Zé Pequeno (Lil' Ze), as they navigate the dangerous and violent world of organized crime.  This film explores themes of poverty, corruption, and the impact of societal factors on individual lives in Brazil.  It is rated R, is from 2002, and is available in both English and the original Brazilian Portuguese language.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_totoro",
+    "name": { "str": "DVD disc - My Neighbor Totoro" },
+    "description": "A DVD disc containing a 1988 Japanese anime and fantasy film directed by Hayao Miyazaki.  The plot follows two young sisters, Satsuke and Mei, who move to the countryside with their father and discover a magical forest spirit named Totoro.  The film beautifully captures their adventures and interactions with the mystical creatures of the forest.  It is rated G and is available both in English and the original Japanese language.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_stenio",
+    "name": { "str": "DVD disc - The Nightshifter" },
+    "description": "This DVD contains a 2018 Brazilian horror film directed by Dennison Ramalho.  The plot revolves around Stenio, a morgue worker who can communicate with the dead.  His ability takes a dark turn when he overhears secrets from the deceased, leading to unforeseen and unsettling consequences for his personal life.  It is rated R and is available both in English and Brazilian Portuguese.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_belle",
+    "name": { "str": "DVD disc - Belle de Jour" },
+    "description": "This DVD contains a French drama film directed by Luis Buñuel.  The plot follows Séverine, a young housewife with masochistic fantasies, who becomes a part-time prostitute during the daytime under the pseudonym Belle de Jour.  The film explores themes of desire, repression, and societal expectations.  It is not rated by any official American rating system, is from 1967 and is available in both English and French.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_sisters",
+    "name": { "str": "DVD disc - A Tale of Two Sisters" },
+    "description": "A DVD containing a South Korean psychological horror film directed by Kim Jee-woon.  The plot revolves around two sisters, Su-mi and Su-yeon, who return home to their estranged family and confront disturbing family secrets.  As supernatural events unfold, the film delves into psychological horror, family dynamics, and a haunting mystery.  It is not rated by any official American rating system, is from 2003 and is available in both English and Korean.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_biu",
+    "name": { "str": "DVD disc - Biutiful" },
+    "description": "A DVD containing a 2010 Spanish-Mexican drama film directed by Alejandro Gonzalez Iñarritu.  The plot centers around Uxbal, a troubled man living in Barcelona who grapples with his own mortality while trying to secure a better future for his children.  The film explores themes of love, redemption, and the impact of one's actions on the people around them.  It is rated R and is available in both English and Spanish languages.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_thief",
+    "name": { "str": "DVD disc - The Bicycle Thief" },
+    "description": "This DVD disc contains an Italian neorealist film directed by Vittorio De Sica.  The plot revolves around Antonio Ricci, a desperate father in post-World War II Rome, who finally lands a job putting up posters but loses his bicycle, crucial for his work, on his first day.  The film follows his poignant quest to recover the stolen bicycle, portraying the harsh realities of poverty and the impact of societal struggles.  It is not rated by any official American rating system and is from 1948.  It is also available in both English and Italian.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_ashes",
+    "name": { "str": "DVD disc - Ashes and Diamonds" },
+    "description": "This DVD disc contains a 1958 Polish film directed by Andrzej Wajda.  Set in the aftermath of World War II, it follows the story of a resistance fighter, Maciek, who is assigned to assassinate a Communist district leader.  As he awaits the perfect moment, he faces moral dilemmas and unexpected connections.  This film delves into the complexities of post-war political and personal struggles.  It is not rated by any official American rating system and is available in both English and the original Polish language.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_tsar",
+    "name": { "str": "DVD disc - From Tsar to Lenin" },
+    "description": "A DVD disc containing a documentary depicting the Russian Revolution's pivotal moments from the collapse of the Tsarist regime in 1917 to the rise of the Bolsheviks.  Featuring rare archival footage and insightful commentary, it delves into the political dynamics, key figures like Lenin and Trotsky, and the establishment of the Soviet government.  It is from 1937.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_nasa",
+    "name": { "str": "DVD disc - For All Mankind" },
+    "description": "A DVD disc containing a 1989 documentary that presents the story of NASA's Apollo program, particularly focusing on the Apollo moon missions.  Directed by Al Reinert, this film uses archival footage and audio recordings to provide an immersive and visually stunning portrayal of the lunar exploration.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_chemistry",
+    "name": { "str": "DVD disc - Chemistry: A Volatile History" },
+    "description": "The three episodes of Chemistry: A Volatile History, in a single disc, a documentary series narrated by Professor Jim Al-Khalili.  It explores the history and evolution of chemistry, delving into key discoveries, scientific breakthroughs, and the contributions of various chemists throughout history.  The series sheds light on how chemistry has shaped our understanding of the natural world and played a crucial role in technological advancements.  It is from 2010 and contains many high-school level chemistry formulas, facts and explanations.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_fight",
+    "name": { "str": "DVD disc - Dawg Fight" },
+    "description": "A DVD disc containing a 2015 documentary directed by Billy Corben that explores the underground world of backyard bare-knuckle fighting in West Perrine, Florida.  The film focuses on the life of Dhafir Harris, also known as Dada 5000, who organizes these unsanctioned street fights as a means of survival and escape from poverty.  It has many practical, technical and visual content, explanations and commentaries in general street fighting.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_wood",
+    "name": { "str": "DVD disc - The Woodright's Shop, Season 1" },
+    "description": "All 13 episodes of the first season of The Woodwright's Shop, in one disc.  The plot revolves around Roy Underhill, the show's host, demonstrating various woodworking projects and techniques, with a strong emphasis on hand tools and traditional methods.  Roy's charismatic and informative style has made The Woodwright's Shop a long-standing and popular series among pre-Cataclysm woodworking enthusiasts, and probably some post-Cataclysm ones too, if they could get a DVD player and power.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_guru",
+    "name": { "str": "DVD disc - I Am Not Your Guru" },
+    "description": "This DVD disc contains a 2016 documentary film directed by Joe Berlinger.  This documentary provides an inside look at the annual seminars of Tony Robbins, a renowned life coach and motivational speaker.  It specifically focuses on Robbins' Date with Destiny event, offering viewers a glimpse into the transformative experiences of the participants and the impact of Robbins' teachings.  It explores themes of personal development, empowerment, and the dynamics between Robbins and the individuals seeking guidance.  It somewhat encourages viewers to reflect on their own lives, identify areas for improvement, and take steps towards personal growth.  Not that the undead out there care, though.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_body",
+    "name": { "str": "DVD disc - The Human Body" },
+    "description": "A DVD disc containing all episodes of a 1998 British television documentary narrated by John Hurt.  It consists of six episodes, each focusing on a different system or aspect of the human body.  The episodes typically cover topics like the circulatory system, the digestive system, the nervous system, the skeletal system, and more.  This documentary uses advanced medical imaging technologies, computer graphics, and real-life examples to provide a detailed and visually captivating exploration of human anatomy and physiology.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_burgundy",
+    "name": { "str": "DVD disc - A Year in Burgundy" },
+    "description": "A DVD disc containing a 2013 documentary film that provides an intimate and in-depth look into the winemaking process in the Burgundy region of France.  Directed by David Kennard, the documentary follows the lives of seven wine producers over the course of a year, capturing the various stages of grape cultivation, harvest, and winemaking.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_bread",
+    "name": { "str": "DVD disc - Bread: An Everyday Miracle" },
+    "description": "A DVD disc containing a 2020 documentary that explores the fascinating process of bread-making, from the cultivation of wheat to the final product that once used to be on our tables.  This film delves into the history, science, and cultural significance of bread, showcasing the intricate journey from field to bakery.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  },
+  {
+    "type": "GENERIC",
+    "id": "dvd_bridge",
+    "name": { "str": "DVD disc - Brooklyn Bridge" },
+    "description": "A DVD disc containing a 1981 documentary film that chronicles the construction and history of the iconic Brooklyn Bridge, highlighting the engineering challenges and human stories behind its creation.  You have no idea if the Brooklyn Bridge is still standing nowadays, but this documentary somewhat makes you wish it to be intact and strong.",
+    "copy-from": "dvd_blank",
+    "price": 500,
+    "price_postapoc": 75
+  }
+]
