@@ -775,6 +775,10 @@ void apply_region_overlay( const JsonObject &jo, regional_settings &region )
 
     load_overmap_lake_settings( jo, region.overmap_lake, false, true );
 
+    load_overmap_ocean_settings( jo, region.overmap_ocean, false, true );
+
+    load_overmap_highway_settings( jo, region.overmap_highway, false, true );
+
     load_overmap_ravine_settings( jo, region.overmap_ravine, false, true );
 
     load_region_terrain_and_furniture_settings( jo, region.region_terrain_and_furniture, false, true );
