@@ -179,6 +179,7 @@ enum class oter_flags : int {
     has_sidewalk,
     road,
     highway,
+    highway_reserved,
     highway_special,
     bridge,
     ignore_rotation_for_adjacency,
@@ -454,6 +455,10 @@ struct oter_t {
 
         bool is_highway() const {
             return type->has_flag( oter_flags::highway );
+        }
+
+        bool is_highway_reserved() const {
+            return type->has_flag( oter_flags::highway_reserved );
         }
 
         bool is_highway_special() const {
