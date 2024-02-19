@@ -18,6 +18,7 @@
 #include "cata_catch.h"
 #include "character.h"
 #include "craft_command.h"
+#include "crafting_gui.h" // Temporary
 #include "game.h"
 #include "inventory.h"
 #include "item.h"
@@ -2390,5 +2391,56 @@ TEST_CASE( "pseudo_tools_in_crafting_inventory", "[crafting][tools]" )
             }
         }
         clear_map();
+    }
+}
+
+static void prep_components_for_craft( const recipe *r )
+{
+    Character &player_character = get_player_character();
+    grant_skills_to_character( player_character, *r, 0 );
+
+    // If appliances/furniture have been placed, clear the map:
+    if( get_map().veh_at( player_character.pos() + tripoint_north ) ||
+        get_map().veh_at( player_character.pos() + tripoint_north + tripoint_north ) ) {
+        clear_map();
+    }
+    clear_items( 0 );
+
+    unsigned int new_seed = static_cast<unsigned int>( rng( 1, std::numeric_limits<int>::max() ) );
+    rng_set_engine_seed( new_seed );
+
+    std::string failures = capture_debugmsg_during( [&r]() {
+        debug_assemble_crafting_materials( r, 1, true );
+    } );
+    INFO( string_format( "Recipe id: %s", r->ident().str() ) );
+    INFO( string_format( "Resulting in id: %s", r->result().str() ) );
+    INFO( string_format( "Resulting item name: %s", r->result_name() ) );
+    INFO( string_format( "Individual spawning seed: %i", new_seed ) );
+    if( !failures.empty() ) {
+        DebugLog( D_INFO, DC_ALL ) << failures;
+    }
+
+    //player_character.invalidate_crafting_inventory();
+    const inventory &crafting_inv = player_character.crafting_inventory();
+
+    bool can_craft_with_crafting_inv = r->deduped_requirements().can_make_with_inventory(
+                                           crafting_inv, r->get_component_filter() );
+    CHECK( can_craft_with_crafting_inv == true );
+    bool can_craft_with_temp_inv = r->deduped_requirements().can_make_with_inventory(
+                                       temp_crafting_inventory( crafting_inv ), r->get_component_filter() );
+    CHECK( can_craft_with_temp_inv == true );
+}
+
+TEST_CASE( "Check provision of recipe components and tools", "[crafting][craftingdebug][!mayfail]" )
+{
+    clear_avatar();
+    const tripoint test_origin( 60, 60, 0 );
+    get_weather().temperature = 293_K; // ~20C, to avoid crafting failure due to frozen items
+    get_weather().clear_temp_cache();
+    get_player_character().setpos( test_origin );
+    for( const auto &e : recipe_dict ) {
+        if( !e.second.obsolete && !e.second.never_learn && !e.second.result().is_null() ) {
+            prep_components_for_craft( &e.second );
+        }
     }
 }

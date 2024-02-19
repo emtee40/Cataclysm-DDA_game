@@ -21,6 +21,7 @@
 #include "crafting.h"
 #include "cursesdef.h"
 #include "debug.h"
+#include "debug_menu.h"
 #include "display.h"
 #include "flag.h"
 #include "game_inventory.h"
@@ -31,6 +32,8 @@
 #include "item_factory.h"
 #include "itype.h"
 #include "localized_comparator.h"
+#include "messages.h"
+#include "npc.h"
 #include "options.h"
 #include "output.h"
 #include "point.h"
@@ -51,6 +54,12 @@ static const limb_score_id limb_score_manip( "manip" );
 
 static const std::string flag_BLIND_EASY( "BLIND_EASY" );
 static const std::string flag_BLIND_HARD( "BLIND_HARD" );
+
+static const trait_id trait_DEBUG_HS_LIGHT( "DEBUG_HS_LIGHT" );
+
+class npc;
+
+class recipe_result_info_cache;
 
 enum TAB_MODE {
     NORMAL,
@@ -602,6 +611,9 @@ static input_context make_crafting_context( bool highlight_unread_recipes )
         ctxt.register_action( "TOGGLE_RECIPE_UNREAD" );
         ctxt.register_action( "MARK_ALL_RECIPES_READ" );
         ctxt.register_action( "TOGGLE_UNREAD_RECIPES_FIRST" );
+    }
+    if( get_player_character().has_trait( trait_DEBUG_HS_LIGHT ) ) {
+        ctxt.register_action( "DEBUG", to_translation( "Debug creation of items", "Use hammerspace" ) );
     }
     return ctxt;
 }
@@ -2014,6 +2026,24 @@ std::pair<Character *, const recipe *> select_crafter_and_crafting_recipe( int &
         } else if( action == "COMPARE" && selection_ok( current, line, false ) ) {
             const item recipe_result = get_recipe_result_item( *current[line], *crafter );
             compare_recipe_with_item( recipe_result, *crafter );
+        } else if( action == "DEBUG" ) {
+            if( !current.empty() && !current[line]->is_nested() ) {
+                int batch_size = batch ? line + 1 : 1;
+                std::string result_message = string_format(
+                                                 _( "Spawning materials for recipe %1s, resulting in %2s" ), current[line]->ident().str(),
+                                                 current[line]->result_name() );
+                if( batch_size > 1 ) {
+                    // Mirror repeated message log behaviour without printing all those messages
+                    //NOLINTNEXTLINE
+                    result_message.append( string_format( " x %i", batch_size ) );
+                }
+                add_msg( m_good, result_message );
+                debug_menu::set_random_seed( _( "Enter random seed for crafting materials" ) );
+                debug_assemble_crafting_materials( current[line], batch_size, false );
+                availability_cache->clear();
+                r_info_cache.recp = nullptr;
+            }
+            recalc = true;
         } else if( action == "HELP_KEYBINDINGS" ) {
             // Regenerate keybinding tips
             ui.mark_resize();
@@ -2084,6 +2114,17 @@ int choose_crafter( const std::vector<Character *> &crafting_group, int crafter_
 
     choose_char_menu.set_selected( crafter_i + 1 );  // +1 for header entry
     return choose_char_menu.query();
+}
+
+void debug_assemble_crafting_materials( const recipe *current, const int batch_size,
+                                        bool silent )
+{
+    if( batch_size < 1 ) {
+        return;
+    }
+    std::vector<std::pair<itype_id, int>> items_to_spawn = debug_menu::get_items_for_requirements(
+                                           current->simple_requirements(), batch_size, current->result_name(), silent );
+    debug_menu::spawn_item_collection( items_to_spawn, silent );
 }
 
 std::string peek_related_recipe( const recipe *current, const recipe_subset &available,

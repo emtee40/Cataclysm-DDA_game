@@ -5,7 +5,7 @@
     "name": { "str": "fake item" },
     "description": "Dummy item.",
     "//": "Include ZERO_WEIGHT flag to avoid errors when instantiating pseudo items.",
-    "flags": [ "ZERO_WEIGHT", "TRADER_AVOID", "DEBUG_ONLY" ],
+    "flags": [ "ZERO_WEIGHT", "TRADER_AVOID", "DEBUG_ONLY", "PSEUDO" ],
     "weight": "1 g",
     "volume": "1 ml",
     "symbol": "@",
@@ -206,8 +206,7 @@
     "type": "TOOL",
     "copy-from": "fake_item",
     "ammo": [ "battery" ],
-    "extend": { "flags": [ "ALLOWS_REMOTE_USE", "PSEUDO" ] },
-    "pocket_data": [ { "pocket_type": "MAGAZINE_WELL", "default_magazine": "pseudo_battery" } ]
+    "extend": { "flags": [ "ALLOWS_REMOTE_USE", "PSEUDO" ] }
   },
   {
     "id": "drill_press_tool",
@@ -215,7 +214,8 @@
     "name": { "str": "drill press", "str_pl": "drill presses" },
     "copy-from": "fake_appliance_tool",
     "charges_per_use": 25,
-    "charged_qualities": [ [ "DRILL", 3 ] ]
+    "charged_qualities": [ [ "DRILL", 3 ] ],
+    "extend": { "flags": [ "NEEDS_INSTALL" ] }
   },
   {
     "id": "tablesaw_tool",
@@ -394,8 +394,7 @@
     "type": "TOOL",
     "name": { "str": "oxygen concentrator" },
     "copy-from": "fake_crafting_tool",
-    "ammo": [ "battery" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE_WELL", "default_magazine": "pseudo_battery" } ]
+    "ammo": [ "battery" ]
   },
   {
     "id": "pseudo_app_hd_compressor_unit",
@@ -403,7 +402,6 @@
     "name": { "str": "high pressure compressor unit" },
     "copy-from": "fake_crafting_tool",
     "ammo": [ "battery" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE_WELL", "default_magazine": "pseudo_battery" } ],
     "charges_per_use": 100,
     "charged_qualities": [ [ "PRESSURIZATION", 10 ] ]
   }

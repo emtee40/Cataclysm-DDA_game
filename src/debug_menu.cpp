@@ -53,6 +53,7 @@
 #include "event_bus.h"
 #include "faction.h"
 #include "filesystem.h" // IWYU pragma: keep
+#include "flag.h"
 #include "game.h"
 #include "game_constants.h"
 #include "game_inventory.h"
@@ -61,6 +62,7 @@
 #include "input_context.h"
 #include "inventory.h"
 #include "item.h"
+#include "item_factory.h"
 #include "item_group.h"
 #include "item_location.h"
 #include "itype.h"
@@ -106,6 +108,7 @@
 #include "ui_manager.h"
 #include "units.h"
 #include "units_utility.h"
+#include "veh_appliance.h"
 #include "veh_type.h"
 #include "vehicle.h"
 #include "vitamin.h"
@@ -126,6 +129,8 @@ static const efftype_id effect_bleed( "bleed" );
 static const faction_id faction_no_faction( "no_faction" );
 static const faction_id faction_your_followers( "your_followers" );
 
+static const itype_id itype_55gal_drum( "55gal_drum" );
+
 static const matype_id style_none( "style_none" );
 
 static const mtype_id mon_generator( "mon_generator" );
@@ -141,6 +146,8 @@ static const trait_id trait_DEBUG_NODMG( "DEBUG_NODMG" );
 static const trait_id trait_DEBUG_NOTEMP( "DEBUG_NOTEMP" );
 static const trait_id trait_DEBUG_SPEED( "DEBUG_SPEED" );
 static const trait_id trait_NONE( "NONE" );
+
+static const std::string flag_APPLIANCE( "APPLIANCE" );
 
 #if defined(TILES)
 #include "sdl_wrappers.h"
@@ -3745,6 +3752,402 @@ void debug()
             return;
     }
     here.invalidate_map_cache( here.get_abs_sub().z() );
+}
+
+void set_random_seed( const std::string &title )
+{
+    string_input_popup seed_entry;
+    seed_entry.title( title )
+    .text( string_format( "%i", rng( 1, std::numeric_limits<int>::max() ) ) )
+    .only_digits( true );
+    unsigned int new_seed = static_cast<unsigned int>( seed_entry.query_int() );
+    rng_set_engine_seed( new_seed );
+}
+
+struct items_with_quality {
+    quality_id curr_quality;
+    std::vector<std::tuple<itype_id, int, int>> item_ids; // Item, quality level, charges for quality
+    items_with_quality( quality_id curr_qual ) {
+        curr_quality = curr_qual;
+    }
+};
+
+struct item_quality_cache {
+    bool prepared = false;
+    std::vector<items_with_quality> quality_list;
+    void add_entry( const itype_id id, const quality_id curr_qual, const int value,
+                    const int charges ) {
+        bool added = false;
+        for( items_with_quality &i : quality_list ) {
+            if( curr_qual == i.curr_quality ) {
+                i.item_ids.emplace_back( id, value, charges );
+                added = true;
+            }
+        }
+        if( !added ) {
+            quality_list.emplace_back( curr_qual );
+            quality_list.back().item_ids.emplace_back( id, value, charges );
+        }
+    }
+    const std::vector<std::tuple<itype_id, int, int>> &get_itype_list( quality_id curr_qual ) {
+        for( const items_with_quality &i : quality_list ) {
+            if( curr_qual == i.curr_quality ) {
+                return i.item_ids;
+            }
+        }
+        debugmsg( _( "Unable to find items with quality %s.  This will produce unexpected results." ),
+                  std::string( curr_qual ) );
+        return quality_list.back().item_ids;
+    }
+};
+
+item_quality_cache quality_cache;
+
+std::vector<std::pair<itype_id, int>> get_items_for_requirements( const requirement_data &req,
+                                   const int batch_size, const std::string &requirement_name, const bool silent )
+{
+    std::vector<std::pair<itype_id, int>> items_to_spawn;
+    std::vector<std::pair<itype_id, int>> options;
+
+    // Randomly select components to spawn
+    for( const std::vector<item_comp> &comp_list : req.get_components() ) {
+        options.clear();
+        for( const item_comp &option : comp_list ) {
+            options.emplace_back( option.type, option.count );
+        }
+        if( options.empty() ) {
+            debugmsg( _( "No available component options for %s." ), requirement_name );
+        } else {
+            int selected = rng( 0, static_cast<int>( options.size() - 1 ) );
+            // debug_item_spawn_collection needs items with ammunition to be handled individually, so
+            // if we need two items that can be loaded with ammo, list them separately
+            item dummy_item( options[selected].first, calendar::turn );
+            if( dummy_item.magazine_default().is_null() && dummy_item.ammo_default().is_null() ) {
+                items_to_spawn.emplace_back( options[selected].first, options[selected].second * batch_size );
+            } else {
+                for( int i = 0; i < options[selected].second * batch_size; ++i ) {
+                    items_to_spawn.emplace_back( options[selected].first, 1 );
+                }
+            }
+        }
+    }
+
+    // Randomly select tools to spawn
+    std::vector<std::pair<itype_id, int>> pseudo_options;
+    for( const std::vector<tool_comp> &tool_list : req.get_tools() ) {
+        options.clear();
+        pseudo_options.clear();
+        for( const tool_comp &option : tool_list ) {
+            itype_id option_to_add = option.type;
+            // Check to see if any tools are already in use as components
+            // (e.g. chips have oil as tool and component)
+            // If so, add a buffer to ensure craftability
+            // TODO: Rework relevant recipes/craftability check to remove this
+            // Known: chips2, nachos, fresh_fries, training_dummy_light
+            for( int i = 0; i < static_cast<int>( items_to_spawn.size() ); ++i ) {
+                if( option.type == items_to_spawn[i].first ) {
+                    items_to_spawn[i].second += std::max( option.count * batch_size, 1 );
+                }
+            }
+
+            // Attempt to give the user 'real' items,.  However, some recipes can only be completed
+            // with pseudo items.  If a pseudo-item is required, the user will be notified below
+            item dummy_item( option_to_add, calendar::turn );
+
+            // Some tool items are representations of integrated bionics.  We're not prepared to spawn those yet
+            // TODO: Figure out how to spawn those properly
+            if( dummy_item.has_flag( flag_USES_BIONIC_POWER ) ) {
+                continue;
+            }
+
+            pseudo_options.emplace_back( option_to_add, option.count );
+            if( !dummy_item.has_flag( flag_PSEUDO ) ) {
+                options.emplace_back( option_to_add, option.count );
+            }
+        }
+        if( options.empty() && pseudo_options.empty() ) {
+            debugmsg( _( "Unable to spawn tools for %s." ), requirement_name );
+        } else if( options.empty() ) {
+            if( !silent ) {
+                add_msg( m_info, string_format( _( "Recipe %s requires pseudo tools" ), requirement_name ) );
+            }
+            int selected = rng( 0, static_cast<int>( pseudo_options.size() - 1 ) );
+            // Ensure the tool quantity is at least 1 ( -1 is used in recipe definitions to specify non-charged tools)
+            items_to_spawn.emplace_back( pseudo_options[selected].first,
+                                         std::max( pseudo_options[selected].second * batch_size, 1 ) );
+        } else {
+            int selected = rng( 0, static_cast<int>( options.size() - 1 ) );
+            // Ensure the tool quantity is at least 1 ( -1 is used in recipe definitions to specify non-charged tools)
+            items_to_spawn.emplace_back( options[selected].first,
+                                         std::max( options[selected].second * batch_size, 1 ) );
+        }
+    }
+
+    // Randomly select items to spawn for qualities
+    for( const std::vector<quality_requirement> &quality_group : req.get_qualities() ) {
+        for( const quality_requirement &quality_req : quality_group ) {
+            options.clear();
+            pseudo_options.clear();
+
+            // Prepare a quality cache so that during unit tests we don't end up spawning and
+            // immediately deleting all items multiple times
+            if( !quality_cache.prepared ) {
+                for( const itype *i : item_controller->all() ) {
+                    for( auto const& [key, val] : i->qualities ) {
+                        quality_cache.add_entry( i->get_id(), key, val, 0 );
+                    }
+                    for( auto const& [key, val] : i->charged_qualities ) {
+                        quality_cache.add_entry( i->get_id(), key, val, i->charges_to_use() );
+                    }
+                }
+                quality_cache.prepared = true;
+            }
+
+            for( std::tuple<itype_id, int, int> i : quality_cache.get_itype_list( quality_req.type ) ) {
+                if( std::get<1>( i ) >= quality_req.level ) {
+                    item temp_item( std::get<0>( i ), calendar::turn );
+                    const int charges = std::max( std::get<2>( i ), 1 );
+                    if( !temp_item.has_flag( flag_PSEUDO ) ) {
+                        options.emplace_back( std::get<0>( i ), charges );
+                    } else {
+                        pseudo_options.emplace_back( std::get<0>( i ), charges );
+                    }
+                }
+            }
+
+            if( options.empty() && pseudo_options.empty() ) {
+                debugmsg( string_format( _( "Unable to spawn %s" ), quality_req.to_string() ) );
+            } else {
+                if( !options.empty() ) {
+                    int selected = rng( 0, static_cast<int>( options.size() - 1 ) );
+                    items_to_spawn.emplace_back( options[selected].first, options[selected].second );
+                } else {
+                    if( !silent ) {
+                        add_msg( m_info, string_format( _( "Recipe %s requires pseudo tools for quality %s" ),
+                                                        requirement_name,  quality_req.to_string() ) );
+                    }
+                    int selected = rng( 0, static_cast<int>( pseudo_options.size() - 1 ) );
+                    items_to_spawn.emplace_back( pseudo_options[selected].first, pseudo_options[selected].second );
+                }
+            }
+        }
+    }
+
+    return items_to_spawn;
+}
+
+static void create_containers_for_charges( std::vector<std::pair<item, std::string>> &item_list,
+        const itype_id contents_type, const int charges,
+        const itype_id container_type/*, bool silent */ )
+{
+    int amount_required = charges;
+    while( amount_required > 0 ) {
+        item container( container_type );
+        item contents( contents_type );
+        contents.charges = std::min( { contents.charges_per_volume( container.get_total_capacity( true ) ),
+                                       contents.charges_per_weight( container.get_total_weight_capacity( true ) ), amount_required } );
+        // TODO: Find out why charges_per_weight returns 0 for some situations.  Until then, assume 1 charge fits
+        contents.charges = std::max( contents.charges, 1 );
+        container.put_in( contents, pocket_type::CONTAINER );
+        amount_required -= contents.charges;
+        item_list.emplace_back( container, string_format( "Spawning charged item in container: %s",
+                                container.display_name() ) );
+    }
+}
+
+void spawn_item_collection( const std::vector<std::pair<itype_id, int>>
+                            &itypes_to_spawn, bool silent )
+{
+    if( itypes_to_spawn.empty() ) {
+        return;
+    }
+    Character &player_character = get_player_character();
+    std::vector<std::pair<item, std::string>> items_to_spawn;
+    std::vector<std::pair<item, std::string>> appliances_to_spawn;
+    std::vector<std::pair<furn_id, std::string>> furniture_to_spawn;
+    int UPS_charges = 0;
+    item app_battery_item( "large_storage_battery" );
+    app_battery_item.ammo_set( app_battery_item.ammo_default(), 0 );
+
+    // Convert the list of itype_ids into a collection of items to add to the world
+    for( const auto &entry : itypes_to_spawn ) {
+        item granted( entry.first );
+        if( granted.count_by_charges() ) {
+            granted.charges = entry.second;
+            if( granted.in_its_container().typeId() != granted.typeId() ) {
+                // Spawns in a default container
+                create_containers_for_charges( items_to_spawn, entry.first, entry.second,
+                                               granted.type->default_container.value() );
+            } else if( !granted.made_of( phase_id::SOLID ) ) {
+                // Default to giant barrels.  TODO: find a more elegant solution
+                create_containers_for_charges( items_to_spawn, entry.first, entry.second, itype_55gal_drum );
+            } else {
+                // Check if the item will fit in a single tile
+                if( granted.charges_per_volume( 1000000_ml ) < granted.charges ) {
+                    int charges_to_spawn = entry.second;
+                    while( charges_to_spawn > 0 ) {
+                        granted.charges = std::min( granted.charges_per_volume( 1000000_ml ), charges_to_spawn );
+                        items_to_spawn.emplace_back( granted, string_format( "Spawning charged item: %s",
+                                                     granted.display_name() ) );
+                        charges_to_spawn -= granted.charges;
+                    }
+                } else {
+                    items_to_spawn.emplace_back( granted, string_format( "Spawning charged item: %s",
+                                                 granted.display_name() ) );
+                }
+            }
+        } else if( !granted.ammo_default().is_null() ) {
+            // Check if there's room for ammo (e.g. a UPS-using item might not have a battery)
+            if( granted.remaining_ammo_capacity() == 0 ) {
+                items_to_spawn.emplace_back( granted,
+                                             string_format( "Spawning: %s with no default ammo, since it doesn't fit",
+                                                     granted.display_name() ) );
+            } else {
+                int charges_to_spawn = entry.second;
+                while( charges_to_spawn > 0 ) {
+                    granted.ammo_set( granted.ammo_default(), charges_to_spawn );
+                    items_to_spawn.emplace_back( granted, string_format( "Spawning: %s with %i default ammo",
+                                                 granted.display_name(), granted.ammo_remaining() ) );
+                    charges_to_spawn -= granted.ammo_remaining();
+                }
+            }
+        } else if( !granted.magazine_default().is_null() ) {
+            int charges_to_spawn = entry.second;
+            item mag( granted.magazine_default() );
+            while( charges_to_spawn > 0 ) {
+                item new_container = granted;
+                mag.ammo_set( mag.ammo_default(), charges_to_spawn );
+                new_container.put_in( mag, pocket_type::MAGAZINE_WELL );
+                items_to_spawn.emplace_back( new_container,
+                                             string_format( "Spawning: %s with a magazine with %i default ammo", item::nname( entry.first,
+                                                     entry.second ), mag.ammo_remaining() ) );
+                charges_to_spawn -= mag.ammo_remaining();
+            }
+        } else if( granted.can_link_up() ) {
+            // This is an item that's supposed to be plugged in to a vehicle/appliance
+            app_battery_item.ammo_set( app_battery_item.ammo_default(),
+                                       app_battery_item.ammo_remaining() + entry.second );
+            items_to_spawn.emplace_back( granted, string_format( "Spawning plug-in item %s",
+                                         granted.display_name() ) );
+        } else if( granted.has_flag( flag_PSEUDO ) ) {
+            // Check if an appliance exists that provides this pseudo item
+            std::vector<itype_id> appliance_options;
+            std::set<std::pair<itype_id, int>> pseudo_tools;
+            for( const vpart_info &vpi : vehicles::parts::get_all() ) {
+                pseudo_tools = vpi.get_pseudo_tools();
+                std::set<std::pair<itype_id, int>>::iterator it;
+                for( it = pseudo_tools.begin(); it != pseudo_tools.end(); ++it ) {
+                    if( it->first == granted.typeId() ) {
+                        if( vpi.has_flag( flag_APPLIANCE ) ) {
+                            appliance_options.emplace_back( vpi.base_item );
+                        }
+                    }
+                }
+            }
+            if( !appliance_options.empty() ) {
+                // Randomly select an appliance to place
+                int selected = rng( 0, static_cast<int>( appliance_options.size() - 1 ) );
+                app_battery_item.ammo_set( app_battery_item.ammo_default(),
+                                           app_battery_item.ammo_remaining() + entry.second );
+                item appliance_item( appliance_options[selected] );
+                appliances_to_spawn.emplace_back( appliance_item, string_format( "Spawning appliance %s",
+                                                  appliance_item.display_name() ) );
+            } else {
+                // Check if the pseudo item is provided by furniture
+                std::vector<furn_id> furniture_options;
+                using T_id = decltype( furn_t().id.id() );
+                for( int i = 0; i < static_cast<int>( furn_t::count() ); ++i ) {
+                    const furn_t &temp = T_id( i ).obj();
+                    if( temp.crafting_pseudo_item == granted.typeId() ) {
+                        furniture_options.push_back( temp.id.id() );
+                    }
+                }
+
+                if( !furniture_options.empty() ) {
+                    // Randomly select a piece of furniture to place
+                    int selected = rng( 0, static_cast<int>( furniture_options.size() - 1 ) );
+                    furniture_to_spawn.emplace_back( furniture_options[selected],
+                                                     string_format( "Spawning furniture %s and %i UPS charges",
+                                                             T_id( furniture_options[selected] ).obj().name(), entry.second ) );
+                    UPS_charges += entry.second;
+                } else {
+                    // Just give the player the pseudo item
+                    items_to_spawn.emplace_back( granted, string_format( "Spawning pseudo item %s",
+                                                 granted.display_name() ) );
+                }
+            }
+        } else if( granted.has_flag( flag_NEEDS_INSTALL ) ) {
+            // This is an appliance that needs to be placed
+            app_battery_item.ammo_set( app_battery_item.ammo_default(),
+                                       app_battery_item.ammo_remaining() + entry.second );
+            appliances_to_spawn.emplace_back( granted,
+                                              string_format( "Spawning appliance %1s and giving battery %2i charges", granted.display_name(),
+                                                      entry.second ) );
+        } else {
+            if( entry.second <= 1 ) {
+                items_to_spawn.emplace_back( granted, string_format( "Spawning single item: %s",
+                                             granted.display_name() ) );
+            } else {
+                int num_to_spawn = entry.second;
+                if( granted.volume() * entry.second > 10000000_ml ) {
+                    debugmsg( "Unable to spawn enough %s", granted.display_name() );
+                    num_to_spawn = 10000000_ml / granted.volume();
+                }
+                for( int i = 0; i < num_to_spawn; ++i ) {
+                    items_to_spawn.emplace_back( granted, string_format( "Spawning single item: %s",
+                                                 granted.display_name() ) );
+                }
+            }
+        }
+    }
+
+    // Spawn any required appliances
+    // TODO: Check for surrounding furniture
+    const tripoint battery_pos = player_character.pos() + tripoint_north;
+    if( app_battery_item.ammo_remaining() > 0 ) {
+        if( !silent ) {
+            add_msg( m_info, string_format( "Spawning appliance %s", app_battery_item.display_name() ) );
+        }
+        place_appliance( battery_pos, vpart_appliance_from_item( app_battery_item.typeId() ),
+                         app_battery_item );
+    }
+    tripoint current_pos = battery_pos + tripoint_north;
+    for( const std::pair<item, std::string> &entry : appliances_to_spawn ) {
+        if( !silent ) {
+            add_msg( m_info, entry.second );
+        }
+        place_appliance( current_pos, vpart_appliance_from_item( entry.first.typeId() ), entry.first );
+        current_pos += tripoint_north;
+    }
+    while( UPS_charges > 0 ) {
+        item UPS_item( "UPS_ON" );
+        item UPS_batteries( "heavy_battery_cell" );
+        UPS_batteries.ammo_set( UPS_batteries.ammo_default(), UPS_charges );
+        UPS_item.put_in( UPS_batteries, pocket_type::MAGAZINE_WELL );
+        items_to_spawn.emplace_back( UPS_item, string_format( "Spawning: %s", UPS_item.display_name() ) );
+        UPS_charges -= UPS_batteries.ammo_remaining();
+    }
+
+    for( const std::pair<furn_id, std::string> &entry : furniture_to_spawn ) {
+        if( !silent ) {
+            add_msg( m_info, entry.second );
+        }
+        get_map().furn_set( current_pos, entry.first );
+        current_pos += tripoint_north;
+    }
+
+    // Actually spawn the required items
+    for( std::pair<item, std::string> &entry : items_to_spawn ) {
+        if( !silent ) {
+            add_msg( m_info, entry.second );
+        }
+        if( entry.first.can_link_up() ) {
+            entry.first.link_to( get_map().veh_at( battery_pos ), link_state::automatic );
+        }
+        get_map().add_item_or_charges( player_character.pos(), entry.first, true );
+    }
+
+    player_character.invalidate_crafting_inventory();
 }
 
 } // namespace debug_menu
