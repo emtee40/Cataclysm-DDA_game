@@ -145,7 +145,7 @@
     "description": "Once per season you may curse an enemy to die in the most cliched way possible.",
     "category": [ "HOMULLUS" ],
     "threshreq": [ "THRESH_HOMULLUS" ],
-    "//": "Build an EOC finds where you are inside, outside, in city, in wilderness, above ground or below ground and based on where you are something horrificly damaging occurs to yoru enemy.  In a city maybe a piano falls on them, in the wilderness maybe a meteor crashes onto their head.",
+    "//": "Build an EOC finds where you are inside, outside, in city, in wilderness, above ground or below ground and based on where you are something horrificly damaging occurs to your enemy.  In a city maybe a piano falls on them, in the wilderness maybe a meteor crashes onto their head.",
     "spells_learned": [ [ "cliched_curse", 1 ] ]
   },
   {
@@ -161,32 +161,7 @@
     "spells_learned": [ [ "find_the_prize", 1 ] ]
   },
   {
-    "type": "mutation",
-    "id": "NO_TRACE_YET_I_WISH",
-    "name": { "str": "No Trace Yet I Wish" },
-    "points": 0,
-    "visibility": 0,
-    "ugliness": 0,
-    "description": "The Homullus gains the ability to stop emitting scent at will.  They can use this to control when scent tracking creatures will be able to find them.",
-    "category": [ "HOMULLUS" ],
-    "transform": {
-      "target": "NO_TRACE_YET_I_WISH_active",
-      "msg_transform": "Your body stops producing scent.",
-      "active": true,
-      "moves": 10
-    },
-    "active": true
-  },
-  {
-    "type": "mutation",
-    "id": "NO_TRACE_YET_I_WISH_active",
-    "name": { "str": "No Trace Yet I Wish (on)" },
-    "description": "You don't currently produce scent.",
-    "copy-from": "NO_TRACE_YET_I_WISH",
-    "valid": false,
-    "transform": { "target": "NO_TRACE_YET_I_WISH", "msg_transform": "Your body begins producing scent.", "active": false, "moves": 10 },
-    "flags": [ "NO_SCENT" ]
-  },
+ 
   {
     "type": "mutation",
     "id": "HOMULLUS_EYES",
@@ -216,7 +191,7 @@
     "points": 7,
     "visibility": 0,
     "ugliness": 0,
-    "description": "Upon gaining this ability the Undine's eyes begin reflecting their mood with colors of the deep waters, pitch black when angry or sad and green-blue when pleased.  Glare no longer impacts them.",
+    "description": "Upon gaining this ability the Dollkin's eyes begin reflecting their mood with colors of the deep waters, pitch black when angry or sad and green-blue when pleased.  Glare no longer impacts them.",
     "category": [ "HOMULLUS" ],
     "threshreq": [ "THRESH_HOMULLUS" ],
     "//": "A once a month ability that allows the Homullus to be reborn instantly upon death in a nearby HUMAN monster.  If one is not nearby the power will fail."
@@ -268,27 +243,6 @@
     "integrated_armor": [ "integrated_homullus_electrohack" ]
   },
   {
-    "type": "mutation",
-    "id": "BACKSTAGE",
-    "name": { "str": "Backstage" },
-    "points": 0,
-    "visibility": -1,
-    "ugliness": 0,
-    "description": "You seem to recede from the foreground of people's perceptions.",
-    "category": [ "HOMULLUS" ],
-    "transform": { "target": "BACKSTAGE_active", "msg_transform": "You seem to fade into the background.", "active": true, "moves": 10 },
-    "active": true
-  },
-  {
-    "type": "mutation",
-    "id": "BACKSTAGE_active",
-    "name": { "str": "Backstage (on)" },
-    "description": "You have faded into the background.",
-    "copy-from": "NO_TRACE_YET_I_WISH",
-    "valid": false,
-    "transform": { "target": "BACKSTAGE", "msg_transform": "You become more noticeable.", "active": false, "moves": 10 },
-    "anger_relations": [ [ "HUMAN", -50 ] ],
-  },
   {
     "type": "mutation",
     "id": "JAM_SESSION",
