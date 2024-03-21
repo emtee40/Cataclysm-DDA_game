@@ -233,6 +233,32 @@ struct overmap_ravine_settings {
     overmap_ravine_settings() = default;
 };
 
+struct overmap_highway_settings {
+    int grid_column_seperation = 5;
+    int grid_row_seperation = 5;
+    int width_of_segments = 2;
+    oter_type_str_id reserved_terrain_id;
+    oter_type_str_id reserved_terrain_water_id;
+    oter_type_str_id symbolic_ramp_up_id;
+    oter_type_str_id symbolic_ramp_down_id;
+    oter_type_str_id symbolic_overpass_road_id;
+    overmap_special_id segment_flat;
+    overmap_special_id segment_road_bridge;
+    overmap_special_id segment_bridge;
+    overmap_special_id segment_bridge_supports;
+    overmap_special_id segment_overpass;
+    overmap_special_id fallback_bend;
+    overmap_special_id fallback_three_way_intersection;
+    overmap_special_id fallback_four_way_intersection;
+    overmap_special_id fallback_intersection_supports;
+    building_bin four_way_intersections;
+    building_bin three_way_intersections;
+    building_bin bends;
+    building_bin road_connections;
+    void finalize();
+    overmap_highway_settings() = default;
+};
+
 struct map_extras {
     unsigned int chance;
     weighted_int_list<map_extra_id> values;
@@ -274,6 +300,7 @@ struct regional_settings {
     overmap_forest_settings overmap_forest;
     overmap_lake_settings overmap_lake;
     overmap_ocean_settings overmap_ocean;
+    overmap_highway_settings overmap_highway;
     overmap_ravine_settings overmap_ravine;
     region_terrain_and_furniture_settings region_terrain_and_furniture;
 
