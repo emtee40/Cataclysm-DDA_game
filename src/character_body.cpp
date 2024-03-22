@@ -1518,18 +1518,17 @@ void Character::update_circulation_resistance()
 void Character::update_circulation()
 {
     update_circulation_resistance();
-    circulation = get_bloodvol_index() * get_heartrate_index() * get_circulation_resistance();
-    //Incredibly annoying debug function - don't forget to comment out before merge!
-    //if( circulation < 0.8 ) {
-    //    debugmsg( "Low blood pressure: " + std::to_string(circulation_resistance) + " " + std::to_string(
-    //                  get_bloodvol_index() ) + " " + std::to_string( get_heartrate_index() ) );
-    //} else if( circulation > 2.0 ) {
-    //    debugmsg( "High blood pressure" + std::to_string(circulation_resistance) + " " + std::to_string(
-    //                  get_bloodvol_index() ) + " " + std::to_string( get_heartrate_index() ) );
-    //}
+    const float hr_indx = get_heartrate_index();
+    const float bloodvol_indx = get_bloodvol_index();
+    // we need to modify the effect of hr_indx to be more rational.
+    // for now take sqrt of hr_indx.
 
-    //debugmsg( "Blood INFO: " + std::to_string( circulation_resistance ) + " " + std::to_string(
-    //              get_bloodvol_index() ) + " " + std::to_string( get_heartrate_index() ) );
+    circulation = bloodvol_indx * sqrtf( hr_indx ) * get_circulation_resistance();
+}
+
+float Character::get_circulation() const
+{
+    return circulation;
 }
 
 float Character::get_respiration_rate() const
