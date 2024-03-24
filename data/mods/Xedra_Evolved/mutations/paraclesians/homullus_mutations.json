@@ -68,17 +68,6 @@
   },
   {
     "type": "mutation",
-    "id": "SUMMON_FERAL",
-    "name": { "str": "Lost and the Damned" },
-    "points": 0,
-    "visibility": 0,
-    "ugliness": 0,
-    "description": "Allows the Homullus to summon ferals and eventually charm them.  Practice this enough and you may be able to befriend them long term.",
-    "category": [ "HOMULLUS" ],
-    "spells_learned": [ [ "summon_feral", 1 ] ]
-  },
-  {
-    "type": "mutation",
     "id": "CHARM_FERAL",
     "name": { "str": "Whispers of Sanity" },
     "points": 0,
@@ -161,30 +150,6 @@
     "spells_learned": [ [ "find_the_prize", 1 ] ]
   },
   {
- 
-  {
-    "type": "mutation",
-    "id": "HOMULLUS_EYES",
-    "name": { "str": "Homullus Eyes" },
-    "points": 1,
-    "visibility": 2,
-    "ugliness": 0,
-    "description": "Upon gaining this ability the Homullus's eyes begin change to look like doll's eyes  always staring at the world.  Glare no longer impacts them.",
-    "category": [ "HOMULLUS" ],
-    "integrated_armor": [ "integrated_homullus_eyes" ]
-  },
-  {
-    "type": "mutation",
-    "id": "TRUST_ME",
-    "name": { "str": "Trust Me" },
-    "points": 1,
-    "visibility": 0,
-    "ugliness": 0,
-    "description": "You are much more succesful at lying to people now.",
-    "category": [ "HOMULLUS" ],
-    "social_modifiers": { "lie": 40 },
-  },
-  {
     "type": "mutation",
     "id": "DEATH_IS_BUT_A_DOOR",
     "name": { "str": "Death Is But A Door" },
@@ -206,29 +171,6 @@
     "description": "The Homullus is able to make traders make an error and give them extra credit towards goods.",
     "category": [ "HOMULLUS" ],
     "//": "Eoc probably?"
-  },
-  {
-    "type": "mutation",
-    "id": "TOOLMAKERS_GIFT",
-    "name": { "str": "Toolmaker's Gift" },
-    "points": 4,
-    "visibility": 0,
-    "ugliness": 0,
-    "description": "The Toolmaker's gifts belong to you, even when you carry no tools upon your person.",
-    "leads_to": "NET_SPIDERS_TOUCH",
-    "category": [ "HOMULLUS" ],
-    "integrated_armor": [ "integrated_homullus_tools" ]
-  },
-  {
-    "type": "mutation",
-    "id": "NET_SPIDERS_TOUCH",
-    "name": { "str": "Net Spider's Touch" },
-    "points": 4,
-    "visibility": 0,
-    "ugliness": 0,
-    "description": "Less useful than it was just a few months ago, you have the ability to login to any computer you find.",
-    "category": [ "HOMULLUS" ],
-    "integrated_armor": [ "integrated_homullus_electrohack" ]
   },
   {
     "type": "mutation",
@@ -315,3 +257,4 @@
     "spells_learned": [ [ "break_parastic_bonds", 1 ] ]
   }
 ]
+
