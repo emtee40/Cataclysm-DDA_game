@@ -609,6 +609,7 @@ coffeetree
 coho
 coifs
 coilgun
+coilpistol
 coipo
 colorant
 combatives
@@ -1562,6 +1563,7 @@ irising
 ironshod
 irradiance
 irremovable
+irrecoverable
 irritants
 isable
 isassembled
@@ -2581,6 +2583,7 @@ refillable
 reflexively
 reforging
 refuelable
+refurb
 regia
 regrows
 regurgitates
