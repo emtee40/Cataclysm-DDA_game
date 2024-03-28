@@ -126,6 +126,8 @@ static const proficiency_id proficiency_prof_driver( "prof_driver" );
 
 static const skill_id skill_swimming( "swimming" );
 
+static const vpart_id vpart_power_cord( "power_cord" );
+
 static const vproto_id vehicle_prototype_none( "none" );
 
 static const zone_type_id zone_type_VEHICLE_PATROL( "VEHICLE_PATROL" );
