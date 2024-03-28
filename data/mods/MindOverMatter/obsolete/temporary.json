@@ -57,5 +57,35 @@
     "points": 1,
     "description": "Your powers are blending nearby light to make you harder to spot.",
     "valid": false
+  },
+  {
+    "type": "TRAIT_MIGRATION",
+    "id": "PHOTOKIN_HIDE_UGLY_01",
+    "remove": true
+  },
+  {
+    "type": "TRAIT_MIGRATION",
+    "id": "PHOTOKIN_HIDE_UGLY_02",
+    "remove": true
+  },
+  {
+    "type": "TRAIT_MIGRATION",
+    "id": "PHOTOKIN_HIDE_UGLY_03",
+    "remove": true
+  },
+  {
+    "type": "TRAIT_MIGRATION",
+    "id": "PHOTOKIN_HIDE_UGLY_04",
+    "remove": true
+  },
+  {
+    "type": "TRAIT_MIGRATION",
+    "id": "PHOTOKIN_HIDE_UGLY_05",
+    "remove": true
+  },
+  {
+    "type": "TRAIT_MIGRATION",
+    "id": "PHOTOKIN_HIDE_UGLY_06",
+    "remove": true
   }
 ]
