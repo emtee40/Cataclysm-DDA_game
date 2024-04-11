@@ -2750,9 +2750,7 @@ void overmap_special::load( const JsonObject &jo, const std::string &src )
             shared_ptr_fast<fixed_overmap_special_data> fixed_data =
                 make_shared_fast<fixed_overmap_special_data>();
             optional( jo, was_loaded, "overmaps", fixed_data->terrains );
-            if( is_special ) {
-                optional( jo, was_loaded, "connections", fixed_data->connections );
-            }
+            optional( jo, was_loaded, "connections", fixed_data->connections );
             data_ = std::move( fixed_data );
             break;
         }

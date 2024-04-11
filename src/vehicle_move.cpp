@@ -1677,7 +1677,7 @@ void vehicle::precalculate_vehicle_turning( units::angle new_turn_dir, int &whee
         for( int try_num = 0; try_num < 3; try_num++ ) {
             // advance precalculated wheel position 1 time in direction of moving
             wheel_tripoint += dp;
-            ter_id terrain_at_wheel = here.ter( wheel_tripoint );
+            const ter_t &terrain_at_wheel = here.ter( wheel_tripoint ).obj();
             bool rail_at_wheel = terrain_at_wheel.has_flag( ter_furn_flag::TFLAG_RAIL );
 
             if( !rail_at_wheel ) {
