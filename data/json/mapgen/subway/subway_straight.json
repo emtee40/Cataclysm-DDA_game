@@ -53,7 +53,95 @@
         " ..^X^^^X^....^X^^^X^.. "
       ],
       "palettes": [ "subway_tmp_palette" ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ],
+      "place_nested": [ { "chunks": [ [ "24x24_subway_cross_se", 1 ], [ "24x24_subway_cross_sw", 1 ], [ "null", 2 ] ], "x": 0, "y": 0 } ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "method": "json",
+    "nested_mapgen_id": "24x24_subway_cross_se",
+    "object": {
+      "mapgensize": [ 24, 24 ],
+      "rotation": [ 0, 3 ],
+      "rows": [
+        "1                      1",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "    2   2               ",
+        "     2   2              ",
+        "     32  32             ",
+        "      32 432            ",
+        "       324432           ",
+        "         24432          ",
+        "         324432         ",
+        "          324432        ",
+        "           3244 2       ",
+        "            324 32      ",
+        "             32  32     ",
+        "1             32  32   1"
+      ],
+      "palettes": [ "subway_tmp_palette2" ],
       "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "method": "json",
+    "nested_mapgen_id": "24x24_subway_cross_sw",
+    "object": {
+      "mapgensize": [ 24, 24 ],
+      "rotation": [ 0, 3 ],
+      "rows": [
+        "1                      1",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "               2   2    ",
+        "              2   2     ",
+        "             23  23     ",
+        "            234 23      ",
+        "           234423       ",
+        "          23442         ",
+        "         234423         ",
+        "        234423          ",
+        "       2 4423           ",
+        "      23 423            ",
+        "     23  23             ",
+        "1   23  23             1"
+      ],
+      "palettes": [ "subway_tmp_palette2" ],
+      "flags": [ "ERASE_ALL_BEFORE_PLACING_TERRAIN" ]
+    }
+  },
+  {
+    "type": "mapgen",
+    "method": "json",
+    "nested_mapgen_id": "24x24_subway_straight_vehicles",
+    "object": {
+      "mapgensize": [ 24, 24 ],
+      "rotation": [ 0, 3 ],
+      "place_vehicles": [
+        { "vehicle": "train_car_passenger", "x": 6, "y": [ 8, 15 ], "chance": 20, "rotation": 90 },
+        { "vehicle": "train_car_passenger", "x": 17, "y": [ 8, 15 ], "chance": 20, "rotation": 90 }
+      ]
     }
   },
   {

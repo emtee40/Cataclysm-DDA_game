@@ -28,7 +28,12 @@
       "rotation": [ 0 ],
       "place_nested": [
         {
-          "chunks": [ "24x24_subway_end_double_east", "24x24_subway_end_double_west" ],
+          "chunks": [
+            [ "24x24_subway_end_double_east", 2 ],
+            [ "24x24_subway_end_double_west", 2 ],
+            [ "24x24_subway_end_single_west", 1 ],
+            [ "24x24_subway_end_single_east", 1 ]
+          ],
           "x": 0,
           "y": 0,
           "neighbors": {
@@ -39,7 +44,7 @@
           }
         },
         {
-          "chunks": "24x24_subway_end_single_west",
+          "chunks": [ "24x24_subway_end_single_west" ],
           "x": 0,
           "y": 0,
           "neighbors": {
@@ -50,7 +55,7 @@
           }
         },
         {
-          "chunks": "24x24_subway_end_single_east",
+          "chunks": [ "24x24_subway_end_single_east" ],
           "x": 0,
           "y": 0,
           "neighbors": {
