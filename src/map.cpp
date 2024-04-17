@@ -4490,6 +4490,7 @@ void map::shoot( const tripoint &p, projectile &proj, const bool hit_items )
 
     const auto &ammo_effects = proj.proj_effects;
     const bool incendiary = ammo_effects.count( "INCENDIARY" );
+    const bool ignite = ammo_effects.count( "IGNITE" );
     const bool laser = ammo_effects.count( "LASER" );
 
     if( const optional_vpart_position vp = veh_at( p ) ) {
@@ -4524,8 +4525,11 @@ void map::shoot( const tripoint &p, projectile &proj, const bool hit_items )
                 add_msg( _( "The shot is stopped by the %s!" ), data.name() );
             }
             // only very flammable furn/ter can be set alight with incendiary rounds
-            if( incendiary && data.has_flag( ter_furn_flag::TFLAG_FLAMMABLE_ASH ) ) {
-                if( x_in_y( 1, 10 ) ) { // 10% chance
+            if( data.has_flag( ter_furn_flag::TFLAG_FLAMMABLE_ASH ) ) {
+                if( incendiary && x_in_y( 1, 10 ) ) { // 10% chance
+                    add_field( p, fd_fire, 1 );
+                }
+                if( ignite ) {
                     add_field( p, fd_fire, 1 );
                 }
             }
