@@ -233,6 +233,8 @@ static const efftype_id effect_disinfected( "disinfected" );
 static const efftype_id effect_disrupted_sleep( "disrupted_sleep" );
 static const efftype_id effect_downed( "downed" );
 static const efftype_id effect_drunk( "drunk" );
+static const efftype_id effect_fasting( "fasting" );
+static const efftype_id effect_fasting_prolonged( "fasting_prolonged" );
 static const efftype_id effect_fearparalyze( "fearparalyze" );
 static const efftype_id effect_flu( "flu" );
 static const efftype_id effect_foodpoison( "foodpoison" );
@@ -585,6 +587,8 @@ Character::Character() :
     set_anatomy( anatomy_human_anatomy );
     update_type_of_scent( true );
     pkill = 0;
+    fasting_days = 0;
+    fasting_bmr = 0; //tracks BMR at start of fasting period because weight changes BMR over time
     // 55 Mcal or 55k kcal
     healthy_calories = 55'000'000;
     base_cardio_acc = 1000;
@@ -4228,17 +4232,17 @@ int Character::get_lifestyle() const
 {
     // gets your health_tally variable + the factor of your bmi on your healthiness.
 
-    // being over or underweight makes your "effective healthiness" lower.
-    // for example, you have a lifestyle of 0 and a bmi_fat of 15 (border between obese and very obese)
-    // 0 - 25 - 0 = -25. So your "effective lifestyle" is -25 (feel a little cruddy)
-    // ex2 you have a lifestyle of 50 and a bmi_fat of 15 because you get exercise and eat well
-    // 50 - 25 - 0 = 25. So your "effective lifestyle" is 25 (feel decent despite being obese)
-    // ex3 you have a lifestyle of -50 and a bmi_fat of 15 because you eat candy and don't exercise
-    // -50 - 25 - 0 = -75. So your "effective lifestyle" is -75 (you'd feel crappy normally but because of your weight you feel worse)
+    // being overweight or *especially* underweight makes your "effective healthiness" lower. Examples:
+    // 1) you have a lifestyle of 0 and a bmi_fat of 15.0 (border between obese and very obese)
+    //  0 - 50 - 0 = -50. So your "effective lifestyle" is -50 (feel pretty cruddy)
+    // 2) instead you have a lifestyle of 50 because you get exercise and eat well
+    //  50 - 25 - 0 = 25. So your "effective lifestyle" is 25 (feel decent despite being obese)
+    // 3) instead you have a lifestyle of 0 and a bmi_fat of 2.0 (underweight)
+    //  0 - 0 - 50 = -50. So your "effective lifestyle" is -50 (feel pretty cruddy)
 
     const float bmi = get_bmi_fat();
     int over_factor = std::round( std::max( 0.0f,
-                                            5 * ( bmi - character_weight_category::obese ) ) );
+                                            5 * ( bmi - character_weight_category::overweight ) ) );
     int under_factor = std::round( std::max( 0.0f,
                                    50 * ( character_weight_category::normal - bmi ) ) );
     return std::max( lifestyle - ( over_factor + under_factor ), -200 );
@@ -4572,6 +4576,60 @@ void Character::set_sleep_deprivation( int nsleep_deprivation )
 {
     sleep_deprivation = std::min( static_cast< int >( SLEEP_DEPRIVATION_MASSIVE ), std::max( 0,
                                   nsleep_deprivation ) );
+}
+
+void Character::set_fasting_days( int nfasting_days )
+{
+    fasting_days = nfasting_days;
+}
+
+int Character::get_fasting_days() const
+{
+    return fasting_days;
+}
+
+void Character::set_fasting_bmr( int nfasting_bmr )
+{
+    fasting_bmr = nfasting_bmr;
+}
+
+int Character::get_fasting_bmr() const
+{
+    return fasting_bmr;
+}
+
+void Character::update_fasting()
+{
+    if( needs_food() ) {
+        if( !has_effect( effect_fasting ) ) {
+            set_fasting_bmr( get_bmr() );
+        }
+        const int current_fasting_days = get_fasting_days();
+        const int total_entries = ( as_avatar() )->get_calorie_diary_entries();
+        int fast_total_days = 0;
+        while( fast_total_days < total_entries &&
+               ( as_avatar() )->get_daily_ingested_kcal( fast_total_days ) < ( get_fasting_bmr() / 10 ) ) {
+            fast_total_days++;
+        }
+        if( fast_total_days < current_fasting_days ) {
+            const int fast_bonus = std::clamp( ( 2 + current_fasting_days ), 2, 30 );
+            add_morale( MORALE_FASTING_BROKE, fast_bonus, fast_bonus, 60_minutes, 60_minutes, true );
+            remove_effect( effect_fasting );
+            remove_effect( effect_fasting_prolonged );
+            set_fasting_days( 0 );
+        }
+        //fasting must occur over at least one whole day
+        if( fast_total_days > 1 ) {
+            set_fasting_days( fast_total_days );
+            if( fast_total_days > 3 ) {
+                remove_effect( effect_fasting );
+                time_duration duration = 30_minutes * activity_history.average_activity();
+                add_effect( effect_fasting_prolonged, duration, true );
+            } else if( !has_effect( effect_fasting ) && !has_effect( effect_fasting_prolonged ) ) {
+                add_effect( effect_fasting, 30_minutes, true );
+            }
+        }
+    }
 }
 
 time_duration Character::get_daily_sleep() const

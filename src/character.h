@@ -691,6 +691,8 @@ class Character : public Creature, public visitable
         int get_starvation() const;
         virtual int get_thirst() const;
         virtual int get_instant_thirst() const;
+        int get_fasting_days() const;
+        int get_fasting_bmr() const;
 
         time_duration get_daily_sleep() const;
         void mod_daily_sleep( time_duration mod );
@@ -716,6 +718,9 @@ class Character : public Creature, public visitable
         void set_sleepiness( int nsleepiness );
         void set_sleepiness( sleepiness_levels nsleepiness );
         void set_sleep_deprivation( int nsleep_deprivation );
+        void set_fasting_days( int nfasting );
+        void set_fasting_bmr( int nfasting_bmr );
+        void update_fasting();
 
     protected:
 
@@ -4018,6 +4023,8 @@ class Character : public Creature, public visitable
 
         int cardio_acc;
         int base_cardio_acc;
+        int fasting_days;
+        int fasting_bmr;
 
         // All indices represent the percentage compared to normal.
         // i.e. a value of 1.1 means 110% of normal.

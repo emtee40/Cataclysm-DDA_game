@@ -132,6 +132,12 @@ void Character::apply_persistent_morale()
             rem_morale( MORALE_PERM_FPMODE_ON );
         }
     }
+
+    const int fasting_days = get_fasting_days();
+    if( fasting_days > 0 ) {
+        const int fast_pen = std::clamp( 6 + ( fasting_days * 2 ), 2, 40 );
+        add_morale( MORALE_FASTING, -fast_pen, -fast_pen, 1_minutes, 1_minutes, true );
+    }
 }
 
 int Character::get_morale_level() const
