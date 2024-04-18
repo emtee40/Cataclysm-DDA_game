@@ -15,7 +15,6 @@
 #include "cata_assert.h"
 #include "color.h"
 #include "cuboid_rectangle.h"
-#include "cursesdef.h"
 #include "input_context.h"
 #include "memory_fast.h"
 #include "pimpl.h"
@@ -39,6 +38,7 @@ const int MENU_AUTOASSIGN = -1;
 
 class string_input_popup;
 class ui_adaptor;
+class uilist_impl;
 
 catacurses::window new_centered_win( int nlines, int ncols );
 
@@ -230,6 +230,7 @@ class uilist_callback
 
 class uilist // NOLINT(cata-xy)
 {
+    friend class uilist_impl;
     public:
         class size_scalar
         {
@@ -285,7 +286,6 @@ class uilist // NOLINT(cata-xy)
         void setup();
         // initialize the window or reposition it after screen size change.
         void reposition( ui_adaptor &ui );
-        void show( ui_adaptor &ui );
         bool scrollby( int scrollby );
         void query( bool loop = true, int timeout = -1 );
         void filterlist();
@@ -394,14 +394,13 @@ class uilist // NOLINT(cata-xy)
         //     menu.query()
         //     // before `ui` or `menu` is deconstructed, the menu will always be
         //     // displayed on screen.
-        shared_ptr_fast<ui_adaptor> create_or_get_ui_adaptor();
+        //shared_ptr_fast<ui_adaptor> create_or_get_ui_adaptor();
+        shared_ptr_fast<uilist_impl> create_or_get_ui();
         // NOLINTNEXTLINE(google-explicit-constructor)
         operator int() const;
 
     private:
         int scroll_amount_from_action( const std::string &action );
-        std::unique_ptr<scrollbar> uilist_scrollbar;
-        void apply_scrollbar();
         // This function assumes it's being called from `query` and should
         // not be made public.
         void inputfilter();
@@ -476,7 +475,6 @@ class uilist // NOLINT(cata-xy)
         // TODO make private
         std::vector<std::string> textformatted;
 
-        catacurses::window window;
         int w_x = 0;
         int w_y = 0;
         int w_width = 0;
@@ -494,7 +492,8 @@ class uilist // NOLINT(cata-xy)
         std::map<input_event, int, std::function<bool( const input_event &, const input_event & )>>
         keymap { input_event::compare_type_mod_code };
 
-        weak_ptr_fast<ui_adaptor> ui;
+        //weak_ptr_fast<ui_adaptor> ui;
+        weak_ptr_fast<uilist_impl> ui;
 
         std::unique_ptr<string_input_popup> filter_popup;
         std::string filter;
