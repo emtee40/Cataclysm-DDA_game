@@ -161,6 +161,7 @@ IDENTIFIER_CHECK_BLACKLIST = {
     "needlegun",
     "needlepistol",
     "rm298",
+    "ruger_pcc"
 }
 NAME_CHECK_BLACKLIST = {
     # FIXME: fix and remove these
