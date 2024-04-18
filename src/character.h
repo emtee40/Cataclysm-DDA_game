@@ -628,11 +628,13 @@ class Character : public Creature, public visitable
         int legs_power_use;     // millijoules
         float arms_stam_mult;
         float legs_stam_mult;
+        float arms_strain_mult;
         /** Getters for above stats */
         int get_arms_power_use() const;
         int get_legs_power_use() const;
         float get_arms_stam_mult() const;
         float get_legs_stam_mult() const;
+        float get_arms_strain_mult() const;
 
     private:
         /** Modifiers to character speed, with descriptions */
@@ -3079,6 +3081,11 @@ class Character : public Creature, public visitable
         int get_stamina() const;
         int get_stamina_max() const;
         void set_stamina( int new_stamina );
+        int get_strain() const;
+        int get_strain_max() const;
+        int get_strain_burn() const;
+        void set_strain( int new_strain );
+        void set_strain_burn( int new_strain_burn );
         // burn_energy looks at whether to use bionic power depending on how many limbs are cybernetic, then passes to mod_stamina after
         void burn_energy_arms( int mod );
         void burn_energy_legs( int mod );
@@ -3089,6 +3096,10 @@ class Character : public Creature, public visitable
         void burn_move_stamina( int moves );
         /** Regenerates stamina */
         void update_stamina( int turns );
+
+        void mod_strain( int mod );
+        void update_strain( int turns );
+        void mod_strain_burn( int mod );
 
         int get_cardiofit() const;
 
@@ -4015,6 +4026,10 @@ class Character : public Creature, public visitable
         int hunger;
         int thirst;
         int stamina;
+        int strain;
+        int strain_burn;
+        bool used_strain_this_turn = false;
+        int recover_burn_ticker = 4;
 
         int cardio_acc;
         int base_cardio_acc;

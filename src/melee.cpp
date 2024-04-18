@@ -666,6 +666,21 @@ bool Character::melee_attack_abstract( Creature &t, bool allow_special,
 
     const bool hits = hit_spread >= 0;
 
+    /** @EFFECT_MELEE reduces stamina cost of melee attacks */
+    const int deft_bonus = !hits && has_trait( trait_DEFT ) ? 50 : 0;
+    const int base_stam = get_base_melee_stamina_cost();
+    const int total_stam = enchantment_cache->modify_value(
+                               enchant_vals::mod::MELEE_STAMINA_CONSUMPTION,
+                               get_total_melee_stamina_cost() );
+    const int strain_cost = std::min( -50, total_stam + deft_bonus );
+
+    if( get_strain() < get_strain_max() * 0.75 && get_strain() < abs( strain_cost ) ) {
+        add_msg( m_bad, _( "Your muscles are too strained to make an attack!" ) );
+        add_msg_debug( debugmode::DF_CHARACTER, "Strain cost: %i, max strain: %1 strain left: %i",
+                       strain_cost, get_strain_max(), get_strain() );
+        return false;
+    }
+
     if( monster *m = t.as_monster() ) {
         cata::event e = cata::event::make<event_type::character_melee_attacks_monster>( getID(),
                         cur_weap.typeId(), hits, m->type->id );
@@ -947,12 +962,6 @@ bool Character::melee_attack_abstract( Creature &t, bool allow_special,
         handle_melee_wear( cur_weapon );
     }
 
-    /** @EFFECT_MELEE reduces stamina cost of melee attacks */
-    const int deft_bonus = !hits && has_trait( trait_DEFT ) ? 50 : 0;
-    const int base_stam = get_base_melee_stamina_cost();
-    const int total_stam = enchantment_cache->modify_value(
-                               enchant_vals::mod::MELEE_STAMINA_CONSUMPTION,
-                               get_total_melee_stamina_cost() );
 
     // Train weapon proficiencies
     for( const weapon_category_id &cat : wielded_weapon_categories( *this ) ) {

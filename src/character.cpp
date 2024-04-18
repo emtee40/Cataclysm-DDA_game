@@ -578,10 +578,13 @@ Character::Character() :
     set_stim( 0 );
     arms_power_use = 0;
     legs_power_use = 0;
-    arms_stam_mult = 1.0f;
+    arms_stam_mult = 0.25f;
     legs_stam_mult = 1.0f;
+    arms_strain_mult = 1.0f;
     set_stamina( 10000 ); //Temporary value for stamina. It will be reset later from external json option.
     cardio_acc = 1000; // Temporary cardio accumulator. It will be updated when reset_cardio_acc is called.
+    set_strain( 5000 ); //As above for stamina
+    set_strain_burn( 0 ); //As above for stamina
     set_anatomy( anatomy_human_anatomy );
     update_type_of_scent( true );
     pkill = 0;
@@ -800,6 +803,8 @@ void Character::mod_stat( const std::string &stat, float modifier )
         oxygen += modifier;
     } else if( stat == "stamina" ) {
         mod_stamina( modifier );
+    } else if( stat == "strain" ) {
+        mod_strain( modifier );
     } else if( stat == "str" ) {
         mod_str_bonus( modifier );
     } else if( stat == "dex" ) {
@@ -6841,6 +6846,57 @@ void Character::set_stamina( int new_stamina )
     stamina = new_stamina;
 }
 
+int Character::get_strain() const
+{
+    if( is_npc() ) {
+        // No point in doing a bunch of checks on NPCs for now since they can't use strain.
+        return 10000;
+    }
+    return strain;
+}
+
+int Character::get_strain_burn() const
+{
+    if( is_npc() ) {
+        // No point in doing a bunch of checks on NPCs for now since they can't use strain.
+        return 0;
+    }
+    return strain_burn;
+}
+
+int Character::get_strain_max() const
+{
+    if( is_npc() ) {
+        // No point in doing a bunch of checks on NPCs for now since they can't use strain.
+        return 10000;
+    }
+
+    // to start with your strain will be determined pretty chonkily as a global setting for "base
+    // strain", modified by your fitness determined by cardiofit, which should be 1000-3000.
+    // This is not meant to be permanent, here I am writing this in March 2024.
+    // Let's hope this doesn't become one of those funny comments.
+    static const std::string player_base_strain( "PLAYER_BASE_STRAIN" );
+
+    int max_strain = get_option<int>( player_base_strain ) + get_cardiofit() / 5;
+    max_strain = enchantment_cache->modify_value( enchant_vals::mod::MAX_STRAIN, max_strain );
+
+    // max possible strain is reduced by muscle burn, which takes longer to recover.  However,
+    // your muscles should never be so strained that you can't do anything at all.
+    max_strain = std::max( max_strain / 4, max_strain - get_strain_burn() );
+
+    return max_strain;
+}
+
+void Character::set_strain( int new_strain )
+{
+    strain = new_strain;
+}
+
+void Character::set_strain_burn( int new_strain_burn )
+{
+    strain_burn = new_strain_burn;
+}
+
 int Character::get_arms_power_use() const
 {
     // millijoules
@@ -6863,6 +6919,11 @@ float Character::get_legs_stam_mult() const
     return legs_stam_mult;
 }
 
+float Character::get_arms_strain_mult() const
+{
+    return arms_strain_mult;
+}
+
 void Character::recalc_limb_energy_usage()
 {
     // calculate energy usage of arms
@@ -6879,9 +6940,11 @@ void Character::recalc_limb_energy_usage()
     }
     arms_power_use = bionic_powercost;
     if( bionic_limb_count > 0 ) {
-        arms_stam_mult = 1 - ( bionic_limb_count / total_limb_count );
+        arms_stam_mult = 0.25f * ( 1 - ( bionic_limb_count / total_limb_count ) );
+        arms_strain_mult = 1 - ( bionic_limb_count / total_limb_count );
     } else {
-        arms_stam_mult = 1.0f;
+        arms_stam_mult = 0.25f;
+        arms_strain_mult = 1.0f;
     }
     //sanity check ourselves in debug
     add_msg_debug( debugmode::DF_CHAR_HEALTH, "Total arms in use: %.1f, Bionic arms: %.1f",
@@ -6889,6 +6952,7 @@ void Character::recalc_limb_energy_usage()
                    bionic_limb_count );
     add_msg_debug( debugmode::DF_CHAR_HEALTH, "bionic power per arms stamina: %d", arms_power_use );
     add_msg_debug( debugmode::DF_CHAR_HEALTH, "arms stam usage mult by %.1f", arms_stam_mult );
+    add_msg_debug( debugmode::DF_CHAR_HEALTH, "arms strain usage mult by %.1f", arms_strain_mult );
 
     // calculate energy usage of legs
     total_limb_count = 0.0f;
@@ -6919,6 +6983,7 @@ void Character::recalc_limb_energy_usage()
 void Character::burn_energy_arms( int mod )
 {
     mod_stamina( mod * get_arms_stam_mult() );
+    mod_strain( mod * get_arms_strain_mult() );
     if( get_arms_power_use() > 0 ) {
         mod_power_level( units::from_millijoule( mod * get_arms_power_use() ) );
     }
@@ -6935,6 +7000,7 @@ void Character::burn_energy_legs( int mod )
 void Character::burn_energy_all( int mod )
 {
     mod_stamina( mod * ( get_arms_stam_mult() + get_legs_stam_mult() ) * 0.5f );
+    mod_strain( mod * ( get_arms_strain_mult() * 0.5f ) );
     if( ( get_arms_power_use() + get_legs_power_use() ) > 0 ) {
         mod_power_level( units::from_millijoule( mod * ( get_arms_power_use() + get_legs_power_use() ) ) );
     }
@@ -7086,6 +7152,114 @@ void Character::update_stamina( int turns )
 
     // Cap at max
     set_stamina( std::min( std::max( get_stamina(), 0 ), max_stam ) );
+}
+
+void Character::mod_strain( int mod )
+{
+    // At least for now, let's just use the same debug trait as stamina.
+    if( is_npc() || has_trait( trait_DEBUG_STAMINA ) ) {
+        return;
+    }
+    strain += mod;
+    int max_strain = get_strain_max();
+
+    if( mod < 0 ) {
+        used_strain_this_turn = true;
+        add_msg_debug( debugmode::DF_CHARACTER,
+                       "<color_blue>Used strain this turn, recovery disabled</color>" );
+    }
+
+    if( mod < 0 && strain < max_strain / 2 ) {
+        // if strain is decreasing and getting into the higher numbers, bump burn up.
+        // burn rises a little regardless, but far more if you're doing something really
+        // powerful.
+        int burn_denominator = -18 + clamp( max_strain / ( strain + 1 ), 2, 8 );
+        int burn = mod / burn_denominator;
+        add_msg_debug( debugmode::DF_CHARACTER, "Burn increased by %i", burn );
+        mod_strain_burn( burn );
+    }
+    strain = clamp( strain, 0, max_strain );
+}
+
+void Character::mod_strain_burn( int mod )
+{
+    if( is_npc() ) {
+        return;
+    }
+
+    strain_burn += mod;
+    strain_burn = clamp( strain_burn, 0, get_strain_max() );
+}
+
+
+void Character::update_strain( int turns )
+{
+    if( used_strain_this_turn ) {
+        // Don't recover strain if we used it, just flip the flag.
+        // This is necessary because strain recovers so quickly that without this,
+        // it's not possible to build up strain on lightweight things.
+        turns -= 1;
+        used_strain_this_turn = false;
+        if( turns == 0 ) {
+            return;
+        }
+    }
+    static const std::string player_base_strain_regen_rate( "PLAYER_BASE_STRAIN_REGEN_RATE" );
+    const float base_regen_rate = get_option<float>( player_base_strain_regen_rate );
+    // Your strain regen rate works as a function of how fit you are compared to your body size.
+    // This allows it to scale more quickly than your strain, so that at higher fitness levels you
+    // recover faster. For now we are using cardiofit as a stand-in for a dedicated fitness score
+    // for strain.
+    const float effective_regen_rate = base_regen_rate * ( get_cardiofit() / get_cardio_acc_base() )
+                                       * std::min( 1.0f, 2000.0f / weariness() );
+    add_msg_debug( debugmode::DF_CHARACTER,
+                   "effective strain regen rate: %f, base rate: %f, cardio mod: %d, weary mod: %f",
+                   effective_regen_rate, base_regen_rate, get_cardiofit() / get_cardio_acc_base(), std::min( 1.0f,
+                           2000.0f / weariness() ) );
+    // Values above or below normal will increase or decrease strain regen
+    const float mod_regen = enchantment_cache->modify_value( enchant_vals::mod::STRAIN_REGEN_MOD, 0 );
+    const float base_multiplier = mod_regen + 1.0f;
+    // Ensure multiplier is at least 0.1
+    const float strain_multiplier = std::max<float>( 0.1f, base_multiplier );
+
+    // Recover some strain every turn. Start with zero, then increase recovery factor based on
+    // mutations.  Bionics should get added in here eventually.  Stimulants are a matter worth
+    // debating, but aren't appropriate for a first pass.
+    float strain_recovery = 0.0f;
+    strain_recovery += strain_multiplier * std::max( 1.0f, effective_regen_rate );
+
+    strain_recovery = enchantment_cache->modify_value( enchant_vals::mod::REGEN_STRAIN,
+                      strain_recovery );
+
+    const int current_strain = get_strain();
+    const int max_strain = get_strain_max();
+    const int current_strain_burn = get_strain_burn();
+
+    int recover_amount = std::ceil( strain_recovery * turns );
+    int recover_burn_amount = 0;
+    mod_strain( recover_amount );
+    if( current_strain > max_strain / 2 ) {
+        // this should get a bonus if we're sleeping or resting.
+        recover_burn_amount = recover_amount / 100;
+        if( recover_burn_amount <= 0 ) {
+            if( recover_burn_ticker <= 0 ) {
+                // make sure that we never completely stop recovering burn
+                recover_burn_amount = 1;
+                recover_burn_ticker = 4;
+            } else {
+                recover_burn_ticker -= 1;
+            }
+        }
+        mod_strain_burn( recover_burn_amount * -1 );
+    }
+    add_msg_debug( debugmode::DF_CHARACTER, "Current strain: %i, Max strain: %i, Current burn: %i",
+                   current_strain,
+                   max_strain, current_strain_burn );
+    add_msg_debug( debugmode::DF_CHARACTER, "Strain recovery: %i, burn recovery: %i", recover_amount,
+                   recover_burn_amount );
+
+    // Cap at max
+    set_strain( std::min( std::max( get_strain(), 0 ), max_strain ) );
 }
 
 int Character::get_cardiofit() const
