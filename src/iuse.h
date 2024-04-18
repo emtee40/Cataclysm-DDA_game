@@ -80,6 +80,11 @@ std::optional<int> call_of_tindalos( Character *, item *, const tripoint & );
 std::optional<int> camera( Character *, item *, const tripoint & );
 std::optional<int> can_goo( Character *, item *, const tripoint & );
 std::optional<int> capture_monster_act( Character *, item *, const tripoint & );
+std::optional<int> heat_solid_items( Character *p, item *it, const tripoint & );
+std::optional<int> heat_liquid_items( Character *p, item *it, const tripoint & );
+std::optional<int> heat_all_items( Character *p, item *it, const tripoint & );
+std::optional<int> heat_items( Character *p, item *it, bool liquid_items, bool solid_items );
+std::optional<int> heat_single_item( Character *p, item *it );
 std::optional<int> capture_monster_veh( Character *, item *, const tripoint & );
 std::optional<int> change_eyes( Character *, item *, const tripoint & );
 std::optional<int> change_skin( Character *, item *, const tripoint & );
@@ -245,6 +250,13 @@ struct washing_requirements {
     int time;
 };
 washing_requirements washing_requirements_for_volume( const units::volume & );
+
+struct heating_requirements {
+    int ammo;
+    int time;
+};
+heating_requirements heating_requirements_for_weight( const units::mass &,
+        const units::mass & );
 
 using use_function_pointer = std::optional<int> ( * )( Character *, item *,
                              const tripoint & );
